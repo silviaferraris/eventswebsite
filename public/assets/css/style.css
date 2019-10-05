@@ -53,7 +53,7 @@ body{
 .btn-custom:hover,
 .btn-custom:active,
 .btn-custom:active:focus{
-  background: #D59595;
+  background: #CD9999;
   border-color: #3C2B3B;
   color:#fff;
 }
@@ -65,3 +65,24 @@ body{
 	padding-left: 10px;
 	
 }
+/*footer*/
+a {
+  color: #CD9999;
+  text-decoration: none;
+  background-color: transparent;
+}
+.widget li a:hover{color: #CD9999}
+
+.btn{background-color: #CD9999; color:#fff;}
+ul.social-footer2 li a:hover {background-color: #CD9999}
+footer .main-footer{	padding: 20px 0;	background: #252525;}
+.footer-copyright {	background: #222;	padding: 5px 0;}
+.footer-copyright nav ul li {	border-left: 1px solid #505050;	display: inline-block;	line-height: 12px;	margin: 0;	padding: 0 8px;}
+.footer-copyright nav ul li a{	color: #969696;}
+.footer-copyright p {	color: #969696;	margin: 2px 0 0;}
+.footer-top{	background: #252525;	padding-bottom: 30px;	margin-bottom: 30px;	border-bottom: 3px solid #222;}
+
+
+
+
+
