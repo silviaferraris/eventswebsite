@@ -91,7 +91,8 @@ app.get('/user', (req, res) =>
                 username: req.user.username,
                 name: req.user.name,
                 surname: req.user.surname,
-                email: req.user.email
+                email: req.user.email,
+                avatar: req.user.avatar
             };
 
         res.send(JSON.stringify(userData));
@@ -121,8 +122,6 @@ app.get('/related', (req, res) =>
 
 });
 
-//app.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login' }));
-
 app.post('/register', (req, res) =>
 {
     let body = req.body;
@@ -140,7 +139,8 @@ app.post('/register', (req, res) =>
             surname: body.surname,
             email: body.email,
             password: body.password,
-            date: body.date
+            date: body.date,
+            avatar: 1+Math.floor(Math.random() * 8)
         }
     ).then(result => res.send(JSON.stringify(result))).catch(reason =>
     {
