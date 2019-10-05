@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <title>Silvia's website | sign up</title>
+    <style>
+        .form
+        {
+            background: url("https://images.squarespace-cdn.com/content/v1/5cc26e247980b306116878e3/1556286763182-ZD59QHZA0R8Y40WW56ZV/ke17ZwdGBToddI8pDm48kBPPUAtoMM-S9zkoNS2SkHxZw-zPPgdn4jUwVcJE1ZvWQUxwkmyExglNqGp0IvTJZUJFbgE-7XRK3dMEBRBhUpyKKd0VYeSeMVdPmD8VHmRP5jk42KObVMEolie5WWhB_2oln_CXhmrrVJ0jCx53c0w/CLW10-212700-600+right.jpg") no-repeat center;
+        }
+        .title
+        {
+            color: blueviolet;
+            animation: title_anim 2s infinite;
+            animation-direction: alternate-reverse;
+        }
+        .red-input
+        {
+            border-color: red;
+            background-color: rgba(255, 0, 17, 0.3);
+            color: white;
+        }
+        p
+        {
+            color: wheat;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: inline-block;
+        }
+
+        @keyframes title_anim
+        {
+            from
+            {
+                color: blueviolet;
+            }
+            to
+            {
+                color: gold;
+            }
+        }
+    </style>
+
+    <script>
+        function send()
+        {
+            let user = {
+                name : document.getElementById("input-name").value,
+                surname: document.getElementById("input-surname").value,
+                username: document.getElementById("input-username").value,
+                email: document.getElementById("input-email").value,
+                password: document.getElementById("input-password").value,
+                date: document.getElementById("input-date").value
+            };
+
+            let options = {
+                method: 'post',
+                body: JSON.stringify(user),
+                headers: {'Content-Type': 'application/json'}
+                mode: 'cors'
+            };
+
+            fetch('/register', options).then(response =>
+            {
+                console.log(response);
+            });
+        }
+
+        function checkUserName()
+        {
+            let username = document.getElementById("input-username").value;
+            fetch(`/checkUsername?username=${username}`).then(async result =>
+            {
+                console.log(await result.text());
+                if(result.status !== 404) document.getElementById("input-username").className = "red-input";
+                else document.getElementById("input-username").className = "";
+            });
+
+        }
+    </script>
+
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="index.html"><span class="flaticon-lotus"></span>Silvia's Website</a>
+        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="oi oi-menu"></span> menu
+        </button>
+        <div class="navbar-collapse collapse" id="ftco-nav" style="">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a href="/index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="/signup/" class="nav-link">sign up</a></li>
+                <li class="nav-item"><a href="/faq/" class="nav-link">FAQ</a></li>
+                <li class="nav-item"><a href="/mycart/" class="nav-link">mycart</a></li>
+                <li class="nav-item"><a href="/login/" class="nav-link">login</a></li>
+                <li class="nav-item"><a href="/contactus/" class="nav-link">Contact me</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<form class="login-form text-center">
+    <h1 class="mb-5 font-weight-light text-uppercase">Sign Up</h1>
+    <div class="form-group">
+        <input type="text" class="form-control rounded-pill form-control-lg" placeholder="surname" id="surname-up">
+        <!--<h6 style="display: none" id="sur-msg" class="message-error">please insert a surname</h6>-->
+    </div>
+
+    <div class="form-group">
+        <input type="text" class="form-control rounded-pill form-control-lg" placeholder="name" id="name-up">
+        <!--<h6 style="display: none" id="pass_msg" class="message-error">please insert a name</h6>-->
+    </div>
+    <div class="form-group">
+        <input type="text" class="form-control rounded-pill form-control-lg" placeholder="username" id="username-up" onchange="checkUserName()">
+        <!--  <h6 style="display: none" id="pass_msg" class="message-error">please insert a username</h6>-->
+    </div>
+    <div class="form-group">
+        <input type="date" class="form-control rounded-pill form-control-lg" placeholder="birthday" id="birthday-up">
+        <!-- <h6 style="display: none" id="pass_msg" class="message-error">please insert a valid date</h6>-->
+    </div>
+    <div class="form-group">
+        <input type="email" class="form-control rounded-pill form-control-lg" placeholder="e-mail" id="email-up">
+        <!--<h6 style="display: none" id="email-msg" class="message-error">please insert a valid email address</h6>-->
+    </div>
+    <div class="form-group">
+        <input type="password" class="form-control rounded-pill form-control-lg" placeholder="password" id="psw-up">
+        <!--<h6 style="display: none" id="pass_msg" class="message-error">please insert a name</h6>-->
+    </div>
+    <div class="forgot-link form-group d-flex justify-content-between align-items-center">
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="remember">
+            <label class="form-check-label" for="remember">Remember Password</label>
+        </div>
+    </div>
+    <!--  <a href="#">Forgot Password?</a> </div>-->
+    <input type="button" class="btn mt-5 rounded-pill btn-lg btn-custom btn-block text-uppercase" value="Sign up" onClick="sign()">
+    <p class="mt-3 font-weight-normal">Have already an account?<a href="/login"><strong> Login </strong></a></p>
+</form>
+<div class="d-flex justify-content-center align-items-center login-container" onclick="send()"> </div>
+
+
+<!--
+
+<h1 align="center" class="title">Sign Up</h1>
+<br>
+<div align="center" class="form">
+    <p>Nome:</p><br>
+    <input type="text" id="input-name">
+    <br><br><p>Cognome:</p><br>
+    <input type="text" id="input-surname">
+    <br><br><p>Username:</p><br>
+    <input type="text" id="input-username" onchange="checkUserName()">
+    <br><br><p>E-mail:</p><br>
+    <input type="email" id="input-email">
+    <br><br><p>Password:</p><br>
+    <input type="password" id="input-password">
+    <br><br><p>Data di nascita:</p><br>
+    <input type="date" id="input-date">
+    <br><br>
+    <input type="submit" onClick="send()">
+</div>
+-->
+
+</body>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+</html>
