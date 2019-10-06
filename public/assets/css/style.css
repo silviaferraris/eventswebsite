@@ -2,11 +2,13 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700,800,300');
 
 body{
+  overflow: auto;
+  padding-top: 56px; /*for navbar fixed*/
+  z-index: -1;
   font-family: 'Poppins', sans-serif;
   font-size: 16px;
   background: #000000;
   color: #CD9999;
-  overflow: hidden;
 }
 .banner {
   position: relative;
@@ -51,6 +53,7 @@ h2{
     font-size: 2.5rem;
   }
 }
+
 .user-data-div {
   max-height: 100px;
   white-space: nowrap;
@@ -70,6 +73,13 @@ h2{
 }
 .navbar{
   z-index: 1001;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+.dropdown-toggle{
+  max-height: 40px;
+  padding: 5px;
 }
 .btn-outline-success {
   color: #aaaaaa;
@@ -149,6 +159,12 @@ h2{
   min-height: 100px;
 }
 /*footer*/
+.footer-1{
+  bottom: 0;
+  position: static;
+  width: 100%;
+  display: none;
+}
 a {
   color: #CD9999;
   text-decoration: none;
