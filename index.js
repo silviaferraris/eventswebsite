@@ -174,7 +174,6 @@ app.post('/register', async (req, res) =>
 
 });
 
-
 app.use(express.static("public"));
 app.use(express.static("public/pages"));
 

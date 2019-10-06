@@ -11,39 +11,11 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
     <style>
-        .form
-        {
-            background: url("https://images.squarespace-cdn.com/content/v1/5cc26e247980b306116878e3/1556286763182-ZD59QHZA0R8Y40WW56ZV/ke17ZwdGBToddI8pDm48kBPPUAtoMM-S9zkoNS2SkHxZw-zPPgdn4jUwVcJE1ZvWQUxwkmyExglNqGp0IvTJZUJFbgE-7XRK3dMEBRBhUpyKKd0VYeSeMVdPmD8VHmRP5jk42KObVMEolie5WWhB_2oln_CXhmrrVJ0jCx53c0w/CLW10-212700-600+right.jpg") no-repeat center;
-        }
-        .title
-        {
-            color: blueviolet;
-            animation: title_anim 2s infinite;
-            animation-direction: alternate-reverse;
-        }
-        .red-input
-        {
-            border-color: red;
-            background-color: rgba(255, 0, 17, 0.3);
-            color: white;
-        }
         p
         {
             color: wheat;
             background-color: rgba(0, 0, 0, 0.4);
             display: inline-block;
-        }
-
-        @keyframes title_anim
-        {
-            from
-            {
-                color: blueviolet;
-            }
-            to
-            {
-                color: gold;
-            }
         }
     </style>
 
@@ -82,8 +54,6 @@
         {
             let username = document.getElementById("username-up").value;
             let response = await fetch(`/checkUsername?username=${username}`);
-
-            //console.log(await response.text());
             return response.status === 404;
         }
     </script>

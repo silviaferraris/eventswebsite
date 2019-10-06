@@ -1,6 +1,5 @@
 <script>
     $("#ftco-navbar").hide();
-    //$("#nav-logout-btn").hide();
     $("#navbarDropdownMenuLink").hide();
 
     fetch('/user').then(async response =>
@@ -10,7 +9,6 @@
         let body = await response.json();
 
         $("#nav-login-btn").hide();
-        //$("#nav-logout-btn").show();
         $("#navbarDropdownMenuLink").show();
 
         let avatar = body.avatar;
@@ -34,7 +32,6 @@
         if(path.startsWith('/login') || path.startsWith('/signup'))
         {
             $("#nav-login-btn").hide();
-            //$("#nav-logout-btn").hide();
             $("#navbarDropdownMenuLink").hide();
         }
 
@@ -75,13 +72,11 @@
                     </div>
 
                     <a class="dropdown-item" href="#"><img src="/assets/images/menu-icons/cart-icon.png" width="24" height="24"><span style="padding-left: 10px">My Cart</span></a>
-                    <!--<a class="dropdown-item" href="#"><img src="/assets/images/menu-icons/settings-icon.png" width="24" height="24"><span style="padding-left: 10px">Account settings</span></a>-->
                     <a class="dropdown-item" href="/logout"><img src="/assets/images/menu-icons/logout-icon.png" width="24" height="24"><span style="padding-left: 10px">Logout</span></a>
                 </div>
             </li>
             <!--<button class="btn btn-outline-success" type="button" onclick="location.href='/login'" id="nav-login-btn">Login / Sign up</button>-->
             <a class="btn" href="/login" type="button" id="nav-login-btn" target="_blank">login or signup</a>
-            <!--<button class="btn btn-sm btn-outline-secondary" type="button" style="min-width: 100px" onclick="location.href='/logout'" id="nav-logout-btn">Logout</button>-->
         </ul>
     </div>
 

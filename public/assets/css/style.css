@@ -78,6 +78,9 @@ h2{
 .login-form label{
   padding-left: 10px;
 }
+.invalid-feedback {
+  padding-left: 10px;
+}
 .login-form .form-control{
   font-size: 15px;
   min-height: 48px;
