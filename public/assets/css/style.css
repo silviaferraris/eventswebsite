@@ -51,8 +51,25 @@ h2{
     font-size: 2.5rem;
   }
 }
+.user-data-div {
+  max-height: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dropdown-menu {
+  width: 360px;
+}
+@media (max-width: 992px) {
+  .dropdown-menu {
+    width: auto;
+  }
+}
 .ftco-navbar-light .navbar-nav > .nav-item.active > a {
   color: #d291bc;
+}
+.navbar{
+  z-index: 1001;
 }
 .btn-outline-success {
   color: #aaaaaa;
@@ -130,9 +147,6 @@ h2{
   margin-left: 20px;
   margin-bottom: 15px;
   min-height: 100px;
-}
-.dropdown-menu {
-  width: 350px !important;
 }
 /*footer*/
 a {
