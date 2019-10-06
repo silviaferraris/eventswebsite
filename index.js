@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const fs = require('fs');
 const knex = require('knex');
 const bodyParser = require('body-parser');
 const passport = require('passport'), LocalStrategy = require('passport-local').Strategy;
@@ -19,8 +20,6 @@ const db = knex({
 });
 
 app.use(bodyParser.json());
-app.use(express.static("public"));
-app.use(express.static("public/pages"));
 
 app.use(session(
     {
@@ -74,6 +73,21 @@ app.post('/login', (req, res, next) =>
             return res.redirect(301, '/');
         });
     })(req, res, next);
+});
+
+app.get('/login', (req, res) =>
+{
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+
+    if(req.user) return res.redirect(301, '/');
+    fs.readFile(`${__dirname}/public/pages/login/index.html`, (err, data) =>
+    {
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.write(data);
+        res.end();
+    });
 });
 
 app.get('/logout', (req, res) =>
@@ -160,10 +174,15 @@ app.post('/register', async (req, res) =>
 
 });
 
+
+app.use(express.static("public"));
+app.use(express.static("public/pages"));
+
 app.get("*", (req, res) =>
 {
    res.status(404).end();
 });
+
 
 app.listen(port, () =>
 {
