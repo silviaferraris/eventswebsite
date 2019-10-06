@@ -4,11 +4,63 @@
 body{
   font-family: 'Poppins', sans-serif;
   font-size: 16px;
-  background: #eee;
-  color:#666;
+  background: #000000;
+  color: #CD9999;
+  overflow: hidden;
+}
+.banner {
+  position: relative;
+  padding: 70px 0;
+  background: url("/assets/images/musicpazzo.jpg") left center no-repeat;
+  background-size: cover;
+}
+.container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 0 3rem;
+}
+h1,h2 {
+  font-weight: 200;
+  margin: 0.4rem;
+}
+
+h1{
+  font-size: 3.5rem;
+}
+h2{
+  font-size: 2rem;
+  color: #aaa;
+}
+@media(min-width: 1200px) {
+  h1 {
+    font-size: 5rem;
+  }
+}
+@media(max-width: 800px) {
+  .container{
+    padding: 0 1rem;
+  }
+  h1 {
+    font-size: 3rem;
+  }
+}
+@media (max-width: 500px) {
+  h1 {
+    font-size: 2.5rem;
+  }
 }
 .ftco-navbar-light .navbar-nav > .nav-item.active > a {
   color: #d291bc;
+}
+.btn-outline-success {
+  color: #aaaaaa;
+  border-color: #3C2B3B;
+}
+.btn-outline-success {
+  color: #969696;
+  border-color: #3C2B3B;
 }
 .login-container{
   height: 100vh;
@@ -30,14 +82,14 @@ body{
   color:#666;
 }
 .login-form a:hover{
-  color:#723dbe;
+  color: #3C2B3B;
 }
 .forgot-link{
   font-size: 13px;
 }
 
 .form-control:focus{
-  border-color:#723dbe;
+  border-color: #3C2B3B;
   box-shadow: 0 0 0 0.2rem rgba(114,61,190,.25);
 }
 .btn-custom{
@@ -62,7 +114,6 @@ body{
 .message-error{
 	text-align: left;
 	padding-left: 10px;
-	
 }
 .logout-btn{
   background-color: transparent;
@@ -87,8 +138,6 @@ footer .main-footer{	padding: 20px 0;	background: #252525;}
 .footer-copyright nav ul li a{	color: #969696;}
 .footer-copyright p {	color: #969696;	margin: 2px 0 0;}
 .footer-top{	background: #252525;	padding-bottom: 30px;	margin-bottom: 30px;	border-bottom: 3px solid #222;}
-
-
 
 
 
