@@ -11,7 +11,7 @@ body{
 .banner {
   position: relative;
   padding: 70px 0;
-  background: url("/assets/images/musicpazzo.jpg") left center no-repeat;
+  background: url("/assets/images/fire.jpg") left center no-repeat;
   background-size: cover;
 }
 .container{
