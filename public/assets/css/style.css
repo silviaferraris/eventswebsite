@@ -72,6 +72,12 @@ h2{
   padding: 15px;
   max-width: 100%;
 }
+.login-form h1{
+  text-align: center;
+}
+.login-form label{
+  padding-left: 10px;
+}
 .login-form .form-control{
   font-size: 15px;
   min-height: 48px;
@@ -115,12 +121,15 @@ h2{
 	text-align: left;
 	padding-left: 10px;
 }
-.logout-btn{
-  background-color: transparent;
-  transition: background-color 700ms;
+.avatar-div {
+  float: left;
+  margin-right: 20px;
+  margin-left: 20px;
+  margin-bottom: 15px;
+  min-height: 100px;
 }
-.logout-btn:hover{
-  background-color: rgba(255, 0, 0, 0.4) !important;
+.dropdown-menu {
+  width: 350px !important;
 }
 /*footer*/
 a {

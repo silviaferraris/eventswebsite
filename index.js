@@ -122,15 +122,21 @@ app.get('/related', (req, res) =>
 
 });
 
-app.post('/register', (req, res) =>
+app.post('/register', async (req, res) =>
 {
     let body = req.body;
 
-    if(!(body.username && body.name && body.surname && body.email && body.password && body.email))
-        res.status(400).send("missing data");
+    if(!body.date)body.date = null;
 
-    if(checkUsername(body.username))
+    if(!(body.username && body.name && body.surname && body.email && body.password && body.email)) {
+        res.status(400).send("missing data");
+        return;
+    }
+
+    if(await checkUsername(body.username)) {
         res.status(400).send(`username ${body.username} already exist`);
+        return;
+    }
 
     db("users").insert(
         {
@@ -142,7 +148,10 @@ app.post('/register', (req, res) =>
             date: body.date,
             avatar: 1+Math.floor(Math.random() * 8)
         }
-    ).then(result => res.send(JSON.stringify(result))).catch(reason =>
+    ).then(result =>
+    {
+        res.redirect("/login");
+    }).catch(reason =>
     {
         console.log(reason);
         res.status(500);
