@@ -26,7 +26,7 @@ app.use(session(
     secret: 'secret',
     name: 'session',
     proxy: true,
-    resave: true,
+    resave: false,
     saveUninitialized: false
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -70,6 +70,8 @@ app.post('/login', (req, res, next) =>
         req.login(user, err =>
         {
             if (err) next(err);
+            if(req.body.remember) req.session.cookie.expires = 315360000000; /*10 years*/
+            else req.session.cookie.expires = undefined;
             return res.redirect(301, '/');
         });
     })(req, res, next);

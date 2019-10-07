@@ -3,7 +3,8 @@ async function login(noanim)
 	let auth =
 		{
 			username: document.getElementById("username").value,
-			password: document.getElementById("password").value
+			password: document.getElementById("password").value,
+			remember: document.getElementById("remember").checked
 		};
 
 	let options = {

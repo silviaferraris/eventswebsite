@@ -158,6 +158,9 @@ h2{
   margin-bottom: 15px;
   min-height: 100px;
 }
+.stay-logged-check{
+  margin-left: 10px;
+}
 /*footer*/
 .footer-1{
   bottom: 0;
