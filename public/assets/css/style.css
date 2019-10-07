@@ -161,7 +161,7 @@ h2{
 /*footer*/
 .footer-1{
   bottom: 0;
-  position: static;
+  position: fixed;
   width: 100%;
   display: none;
 }

@@ -1,4 +1,4 @@
-async function login()
+async function login(noanim)
 {
 	let auth =
 		{
@@ -18,21 +18,25 @@ async function login()
 
 	if(response.status === 401)
 	{
-		$("form").slideDown(500);
+		if(!noanim)$("form").slideDown(500);
 		$("#wrong-credential-alert").slideDown(200).delay(1000).slideUp(400);
 	}
 }
 
 $(document).ready(function()
 {
-	$("#send_btn").click(() =>
+	$("#send_btn").click(async () =>
 	{
+		let footerPos = $('footer').css('position');
+		let noanim = footerPos === 'static'; /*In mobile view the scroll up and scroll down animation will not be executed*/
+
 		let loginForm = document.getElementById("login-form");
 		let valid = loginForm.checkValidity();
 		if(!loginForm.classList.contains('was-validated'))loginForm.classList.add('was-validated');
 
 		if(!valid) return;
 
-		$("form").slideUp(500, () => login());
+		if(noanim)await login(noanim);
+		else $("form").slideUp(500, () => login(noanim));
 	});
 });
