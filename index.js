@@ -77,19 +77,40 @@ app.post('/login', (req, res, next) =>
     })(req, res, next);
 });
 
-app.get('/login', (req, res) =>
+function disablePageCache(res)
 {
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
+}
 
-    if(req.user) return res.redirect(301, '/');
-    fs.readFile(`${__dirname}/public/pages/login/index.html`, (err, data) =>
+function sendPage(res, pagePath)
+{
+    fs.readFile(pagePath, (err, data) =>
     {
+        if(err)return res.status(500).end();
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.write(data);
         res.end();
     });
+}
+
+function redirectIfLogged(req, res, redirectTo, elsePath)
+{
+    disablePageCache(res);
+    if(!elsePath.startsWith('/'))elsePath = `/${elsePath}`;
+    if(req.user)return res.redirect(301, redirectTo);
+    sendPage(res, `${__dirname}${elsePath}`);
+}
+
+app.get('/login', (req, res) =>
+{
+    redirectIfLogged(req, res, '/', 'public/pages/login/index.html');
+});
+
+app.get('/signup', (req, res) =>
+{
+    redirectIfLogged(req, res, '/', 'public/pages/signup/index.html');
 });
 
 app.get('/logout', (req, res) =>
