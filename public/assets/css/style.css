@@ -175,7 +175,10 @@ a {
 }
 .widget li a:hover{color: #CD9999}
 
-.btn{background-color: #CD9999; color:#fff;}
+.btn{
+  background-color: #CD9999;
+  color:#ffffff;
+}
 ul.social-footer2 li a:hover {background-color: #CD9999}
 footer .main-footer{	padding: 20px 0;	background: #252525;}
 .footer-copyright {	background: #222;	padding: 5px 0;}

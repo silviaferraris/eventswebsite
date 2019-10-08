@@ -49,12 +49,12 @@ passport.use(new LocalStrategy(async (username, password, done) =>
 
 passport.serializeUser((user, done) =>
 {
-    done(null, user.username);
+    done(null, user.id);
 });
 
-passport.deserializeUser(async (username, done) =>
+passport.deserializeUser(async (id, done) =>
 {
-    let user = await db('users').select("*").where({username: username});
+    let user = await db('users').select("*").where({id: id});
     //TODO Handle possible errors (with middleware error handling function)
     done(null, user[0]);
 });
@@ -126,8 +126,8 @@ app.get('/user', (req, res) =>
         let userData =
             {
                 username: req.user.username,
-                name: req.user.name,
-                surname: req.user.surname,
+                first_name: req.user.first_name,
+                last_name: req.user.last_name,
                 email: req.user.email,
                 avatar: req.user.avatar
             };
@@ -163,9 +163,9 @@ app.post('/register', async (req, res) =>
 {
     let body = req.body;
 
-    if(!body.date)body.date = null;
+    if(!body.birthday)body.birthday = null;
 
-    if(!(body.username && body.name && body.surname && body.email && body.password && body.email)) {
+    if(!(body.username && body.first_name && body.last_name && body.password && body.email)) {
         res.status(400).send("missing data");
         return;
     }
@@ -178,11 +178,11 @@ app.post('/register', async (req, res) =>
     db("users").insert(
         {
             username: body.username,
-            name: body.name,
-            surname: body.surname,
             email: body.email,
             password: body.password,
-            date: body.date,
+            first_name: body.first_name,
+            last_name: body.last_name,
+            birthday: body.birthday,
             avatar: 1+Math.floor(Math.random() * 8)
         }
     ).then(result =>
