@@ -77,32 +77,6 @@ app.post('/login', (req, res, next) =>
     })(req, res, next);
 });
 
-function disablePageCache(res)
-{
-    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
-}
-
-function sendPage(res, pagePath)
-{
-    fs.readFile(pagePath, (err, data) =>
-    {
-        if(err)return res.status(500).end();
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.write(data);
-        res.end();
-    });
-}
-
-function redirectIfLogged(req, res, redirectTo, elsePath)
-{
-    disablePageCache(res);
-    if(!elsePath.startsWith('/'))elsePath = `/${elsePath}`;
-    if(req.user)return res.redirect(301, redirectTo);
-    sendPage(res, `${__dirname}${elsePath}`);
-}
-
 app.get('/login', (req, res) =>
 {
     redirectIfLogged(req, res, '/', 'public/pages/login/index.html');
@@ -129,6 +103,7 @@ app.get('/user', (req, res) =>
                 first_name: req.user.first_name,
                 last_name: req.user.last_name,
                 email: req.user.email,
+                birthday: req.user.birthday,
                 avatar: req.user.avatar
             };
 
@@ -137,26 +112,20 @@ app.get('/user', (req, res) =>
     else res.status(401).end();
 });
 
+app.get('/insert_product', (req, res) =>
+{
+
+});
+
 app.get('/imlogged', (req, res) =>
 {
-    if(req.user)res.send("YESSS :)");
-    else res.send("No :(");
+    if(req.user)res.send(JSON.stringify({logged: true}));
+    else res.send(JSON.stringify({logged: false}));
 });
 
-app.get('/checkUsername', async (req,res) =>
+app.get('/check_username', async (req,res) =>
 {
-    if(await checkUsername(req.query.username)) res.status(200).send("username already exist!");
-    else res.status(404).end();
-});
-
-app.get('/related', (req, res) =>
-{
-    db("users").select("*").where({username: req.query.username}).then(users =>
-    {
-        console.log(users);
-        res.send(JSON.stringify(users));
-    });
-
+    res.send(JSON.stringify({exist: await isUsernameAlreadyExisting(req.query.username)}));
 });
 
 app.post('/register', async (req, res) =>
@@ -170,7 +139,7 @@ app.post('/register', async (req, res) =>
         return;
     }
 
-    if(await checkUsername(body.username)) {
+    if(await isUsernameAlreadyExisting(body.username)) {
         res.status(400).send(`username ${body.username} already exist`);
         return;
     }
@@ -218,8 +187,34 @@ app.listen(port, () =>
  * @param username The username to check
  * @returns {Promise<boolean>} Return true if the username exist in the database
  */
-async function checkUsername(username)
+async function isUsernameAlreadyExisting(username)
 {
     let result = await db("users").select("*").where({username: username});
     return !(result.length === 0);
+}
+
+function disablePageCache(res)
+{
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+}
+
+function sendPage(res, pagePath)
+{
+    fs.readFile(pagePath, (err, data) =>
+    {
+        if(err)return res.status(500).end();
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.write(data);
+        res.end();
+    });
+}
+
+function redirectIfLogged(req, res, redirectTo, elsePath)
+{
+    disablePageCache(res);
+    if(!elsePath.startsWith('/'))elsePath = `/${elsePath}`;
+    if(req.user)return res.redirect(301, redirectTo);
+    sendPage(res, `${__dirname}${elsePath}`);
 }
