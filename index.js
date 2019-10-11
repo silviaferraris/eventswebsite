@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const admin = express();
 const fs = require('fs');
 const knex = require('knex');
 const bodyParser = require('body-parser');
@@ -19,7 +20,10 @@ const db = knex({
     }
 });
 
-app.use(bodyParser.json());
+const USER_TABLE = 'users';
+const EVENTS_TABLE = 'events';
+const SEMINARS_TABLE = 'seminars';
+const PERFORMERS_TABLE = 'performers';
 
 app.use(session(
     {
@@ -29,7 +33,8 @@ app.use(session(
     resave: false,
     saveUninitialized: false
 }));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -37,7 +42,7 @@ app.use(passport.session());
 passport.use(new LocalStrategy(async (username, password, done) =>
     {
 
-        let user = await db('users').select("*").where({username: username, password: password}).catch(reason =>
+        let user = await db(USER_TABLE).select("*").where({username: username, password: password}).catch(reason =>
         {
             done(reason);
         });
@@ -54,9 +59,17 @@ passport.serializeUser((user, done) =>
 
 passport.deserializeUser(async (id, done) =>
 {
-    let user = await db('users').select("*").where({id: id});
+    let user = await db(USER_TABLE).select("*").where({id: id});
     //TODO Handle possible errors (with middleware error handling function)
     done(null, user[0]);
+});
+
+app.use('/admin', admin);
+
+admin.use('/', (req, res, next) =>
+{
+    if(req.user && req.user.admin)next();
+    else res.status(403).end();
 });
 
 app.post('/login', (req, res, next) =>
@@ -104,7 +117,8 @@ app.get('/user', (req, res) =>
                 last_name: req.user.last_name,
                 email: req.user.email,
                 birthday: req.user.birthday,
-                avatar: req.user.avatar
+                avatar: req.user.avatar,
+                admin: req.user.admin
             };
 
         res.send(JSON.stringify(userData));
@@ -112,9 +126,103 @@ app.get('/user', (req, res) =>
     else res.status(401).end();
 });
 
-app.get('/insert_product', (req, res) =>
+admin.post('/add_new_event', async (req, res) =>
 {
+    let body = req.body;
 
+    if(!(body.id && body.title && body.description && body.date && body.performer_id)) return res.status(400).send("missing data");
+    if(await isEventIdAlreadyExisting(body.id)) return res.status(400).send('id already exist');
+
+    let dirPath = __dirname+`/public/assets/images/events/event_${body.id}`;
+    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath);
+
+    let imageCount = body.images.length;
+    let hasCoverImage = false;
+
+    for(let i = 0; i < imageCount; i++)
+    {
+        let img = body.images[i].replace(/^data:image\/\w+;base64,/, '');
+        fs.writeFile(`${dirPath}/img${i}.jpg`, img, 'base64', function(err) {
+            if(err)console.log(err);
+        });
+    }
+
+    if(body.cover_image)hasCoverImage = true;
+
+    db(EVENTS_TABLE).insert(
+        {
+            id: body.id,
+            title: body.title,
+            description: body.description,
+            date: body.date,
+            performer_id: body.performer_id,
+            tags: body.tags,
+            seminar_ids: body.seminar_ids,
+            has_cover_image: hasCoverImage,
+            images_number: imageCount
+        }
+    ).then(result => res.status(201).end()).catch(reason => {
+        console.log(reason);
+        res.status(500);
+        res.send(JSON.stringify(reason));
+    });
+});
+
+admin.get('/check_event_id', (req, res) =>
+{
+    db(EVENTS_TABLE).select('*').where({id: req.query.event_id}).then(result => {
+        res.send(JSON.stringify({exist: result.length !== 0}));
+    }).catch(cause =>{
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
+app.get('/all_events', (req, res) =>
+{
+    db(EVENTS_TABLE).select('*').then(result =>
+    {
+        res.send(JSON.stringify(result));
+    }).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
+app.get('/events_on_date', (req, res) =>
+{
+    let date = req.query.date;
+    db(EVENTS_TABLE).select('*').where({date: date}).then(result =>
+    {
+        res.send(JSON.stringify(result));
+    }).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    })
+});
+
+app.get('/events_on_same_date', (req, res) =>
+{
+    let event_id = req.query.event_id;
+
+    db(EVENTS_TABLE).select('date').where({id: `${event_id}`}).then(result =>
+    {
+        if(result.length === 0)return res.send(JSON.stringify([]));
+        let date = parseDateForDB(result[0].date);
+
+        db(EVENTS_TABLE).select('*').where({date: date}).whereNot({id: event_id}).then(events =>
+        {
+            res.send(JSON.stringify(events));
+        }).catch(cause => {
+            console.error(cause);
+            res.status(500).end();
+        })
+    }).catch(cause =>{
+        console.error(cause);
+        res.status(500).end();
+    });
 });
 
 app.get('/imlogged', (req, res) =>
@@ -144,7 +252,7 @@ app.post('/register', async (req, res) =>
         return;
     }
 
-    db("users").insert(
+    db(USER_TABLE).insert(
         {
             username: body.username,
             email: body.email,
@@ -189,7 +297,13 @@ app.listen(port, () =>
  */
 async function isUsernameAlreadyExisting(username)
 {
-    let result = await db("users").select("*").where({username: username});
+    let result = await db(USER_TABLE).select("*").where({username: username});
+    return !(result.length === 0);
+}
+
+async function isEventIdAlreadyExisting(event_id)
+{
+    let result = await db(EVENTS_TABLE).select("*").where({id: event_id});
     return !(result.length === 0);
 }
 
@@ -217,4 +331,10 @@ function redirectIfLogged(req, res, redirectTo, elsePath)
     if(!elsePath.startsWith('/'))elsePath = `/${elsePath}`;
     if(req.user)return res.redirect(301, redirectTo);
     sendPage(res, `${__dirname}${elsePath}`);
+}
+
+function parseDateForDB(date)
+{
+    date = new Date(date);
+    return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
 }
