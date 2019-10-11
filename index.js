@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const admin = express();
 const fs = require('fs');
+const shell = require('shelljs');
 const knex = require('knex');
 const bodyParser = require('body-parser');
 const passport = require('passport'), LocalStrategy = require('passport-local').Strategy;
@@ -20,10 +21,17 @@ const db = knex({
     }
 });
 
+const ASSETS_PATH = `${__dirname}/public/assets`;
+const EVENT_IMAGES_PATH = `${ASSETS_PATH}/images/events`;
+const SEMINAR_IMAGES_PATH = `${ASSETS_PATH}/images/seminars`;
+const PERFORMER_IMAGES_PATH = `${ASSETS_PATH}/images/performers`;
+
 const USER_TABLE = 'users';
 const EVENTS_TABLE = 'events';
 const SEMINARS_TABLE = 'seminars';
 const PERFORMERS_TABLE = 'performers';
+
+init();
 
 app.use(session(
     {
@@ -71,6 +79,8 @@ admin.use('/', (req, res, next) =>
     if(req.user && req.user.admin)next();
     else res.status(403).end();
 });
+
+//############################################# APP ROUTES ###################################################//
 
 app.post('/login', (req, res, next) =>
 {
@@ -126,58 +136,6 @@ app.get('/user', (req, res) =>
     else res.status(401).end();
 });
 
-admin.post('/add_new_event', async (req, res) =>
-{
-    let body = req.body;
-
-    if(!(body.id && body.title && body.description && body.date && body.performer_id)) return res.status(400).send("missing data");
-    if(await isEventIdAlreadyExisting(body.id)) return res.status(400).send('id already exist');
-
-    let dirPath = __dirname+`/public/assets/images/events/event_${body.id}`;
-    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath);
-
-    let imageCount = body.images.length;
-    let hasCoverImage = false;
-
-    for(let i = 0; i < imageCount; i++)
-    {
-        let img = body.images[i].replace(/^data:image\/\w+;base64,/, '');
-        fs.writeFile(`${dirPath}/img${i}.jpg`, img, 'base64', function(err) {
-            if(err)console.log(err);
-        });
-    }
-
-    if(body.cover_image)hasCoverImage = true;
-
-    db(EVENTS_TABLE).insert(
-        {
-            id: body.id,
-            title: body.title,
-            description: body.description,
-            date: body.date,
-            performer_id: body.performer_id,
-            tags: body.tags,
-            seminar_ids: body.seminar_ids,
-            has_cover_image: hasCoverImage,
-            images_number: imageCount
-        }
-    ).then(result => res.status(201).end()).catch(reason => {
-        console.log(reason);
-        res.status(500);
-        res.send(JSON.stringify(reason));
-    });
-});
-
-admin.get('/check_event_id', (req, res) =>
-{
-    db(EVENTS_TABLE).select('*').where({id: req.query.event_id}).then(result => {
-        res.send(JSON.stringify({exist: result.length !== 0}));
-    }).catch(cause =>{
-        console.error(cause);
-        res.status(500).end();
-    });
-});
-
 app.get('/all_events', (req, res) =>
 {
     db(EVENTS_TABLE).select('*').then(result =>
@@ -201,6 +159,72 @@ app.get('/events_on_date', (req, res) =>
         console.error(cause);
         res.status(500).end();
     })
+});
+
+app.get('/performer_of_event', (req, res) =>
+{
+    let event_id = req.query.event_id;
+    db(EVENTS_TABLE).select('performer_id').where({id: event_id}).then(result =>
+    {
+        db(PERFORMERS_TABLE).select('*').where({id: result[0].performer_id}).then(result =>
+        {
+            if(result.length === 0)return res.send(JSON.stringify({}));
+            res.send(JSON.stringify(result[0]));
+        }).catch(cause =>
+        {
+            console.error(cause);
+            res.status(500).end();
+        });;
+    }).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
+app.get('/seminars_of_event', (req, res) =>
+{
+    let event_id = req.query.event_id;
+    db(EVENTS_TABLE).select('seminar_ids').where({id: event_id}).then(async result =>
+    {
+        if(result.length === 0)return res.send(JSON.stringify([]));
+        let seminar_ids = result[0].seminar_ids;
+        let seminars = [];
+        for(let seminar_id of seminar_ids)
+        {
+            let seminar_result = await db(SEMINARS_TABLE).select('*').where({id: seminar_id});
+            if(seminar_result.length === 0)continue;
+            seminars.push(seminar_result[0]);
+        }
+        res.send(JSON.stringify(seminars));
+    }).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
+app.get('/seminars_on_same_date', (req, res) =>
+{
+    let seminar_id = req.query.seminar_id;
+
+    db(SEMINARS_TABLE).select('date').where({id: seminar_id}).then(result =>
+    {
+        if(result.length === 0)return res.send(JSON.stringify([]));
+        let date = parseDateForDB(result[0].date);
+
+        db(SEMINARS_TABLE).select('*').where({date: date}).whereNot({id: seminar_id}).then(events =>
+        {
+            res.send(JSON.stringify(events));
+        }).catch(cause => {
+            console.error(cause);
+            res.status(500).end();
+        })
+    }).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    });
 });
 
 app.get('/events_on_same_date', (req, res) =>
@@ -274,6 +298,64 @@ app.post('/register', async (req, res) =>
 
 });
 
+//############################################# END APP ROUTES ################################################//
+
+//############################################# ADMIN ROUTES #################################################//
+
+admin.post('/add_new_event', async (req, res) =>
+{
+    let body = req.body;
+
+    if(!(body.id && body.title && body.description && body.date && body.performer_id)) return res.status(400).send("missing data");
+    if(await isEventIdAlreadyExisting(body.id)) return res.status(400).send('id already exist');
+
+    let dirPath = `${EVENT_IMAGES_PATH}/event_${body.id}`;
+    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath);
+
+    let imageCount = body.images.length;
+    let hasCoverImage = false;
+
+    for(let i = 0; i < imageCount; i++)
+    {
+        let img = body.images[i].replace(/^data:image\/\w+;base64,/, '');
+        fs.writeFile(`${dirPath}/img${i}.jpg`, img, 'base64', function(err) {
+            if(err)console.log(err);
+        });
+    }
+
+    if(body.cover_image)hasCoverImage = true;
+
+    db(EVENTS_TABLE).insert(
+        {
+            id: body.id,
+            title: body.title,
+            description: body.description,
+            date: body.date,
+            performer_id: body.performer_id,
+            tags: body.tags,
+            seminar_ids: body.seminar_ids,
+            has_cover_image: hasCoverImage,
+            images_number: imageCount
+        }
+    ).then(result => res.status(201).end()).catch(reason => {
+        console.log(reason);
+        res.status(500);
+        res.send(JSON.stringify(reason));
+    });
+});
+
+admin.get('/check_event_id', (req, res) =>
+{
+    db(EVENTS_TABLE).select('*').where({id: req.query.event_id}).then(result => {
+        res.send(JSON.stringify({exist: result.length !== 0}));
+    }).catch(cause =>{
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
+//############################################# END ADMIN ROUTES ##############################################//
+
 app.use(express.static("public"));
 app.use(express.static("public/pages"));
 
@@ -288,7 +370,7 @@ app.listen(port, () =>
     console.log(`Server started on port ${port}`);
 });
 
-
+//############################################# FUNCTIONS ##############################################//
 
 /**
  *
@@ -337,4 +419,16 @@ function parseDateForDB(date)
 {
     date = new Date(date);
     return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
+}
+
+function init()
+{
+    createFolder(EVENT_IMAGES_PATH);
+    createFolder(SEMINAR_IMAGES_PATH);
+    createFolder(PERFORMER_IMAGES_PATH);
+}
+
+function createFolder(path)
+{
+    if(!fs.existsSync(path))shell.mkdir('-p', path);
 }

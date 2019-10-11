@@ -18,5 +18,8 @@
     "passport-local": "^1.0.0",
     "pg": "^7.12.1",
     "body-parser": "latest"
+  },
+  "devDependencies": {
+    "shelljs": "^0.8.3"
   }
 }
