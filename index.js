@@ -76,12 +76,14 @@ app.use('/admin', admin);
 
 admin.use('/', (req, res, next) =>
 {
-    console.log("aaa");
-
     if(req.user && req.user.admin)next();
     else res.status(403).end();
 });
 
+app.use('/pages/', (req, res, next) =>
+{
+    res.status(403).end();
+});
 
 app.use(express.static("public"));
 app.use(express.static("public/pages"));
@@ -308,7 +310,7 @@ app.post('/register', async (req, res) =>
 
 //############################################# ADMIN ROUTES #################################################//
 
-admin.post('/add_new_event', async (req, res) =>
+admin.post('/event/add_new', async (req, res) =>
 {
     let body = req.body;
 
@@ -329,7 +331,14 @@ admin.post('/add_new_event', async (req, res) =>
         });
     }
 
-    if(body.cover_image)hasCoverImage = true;
+    if(body.cover_image)
+    {
+        hasCoverImage = true;
+        let coverImage = body.cover_image.replace(/^data:image\/\w+;base64,/, '');
+        fs.writeFile(`${dirPath}/cover.jpg`, coverImage, 'base64', function(err) {
+            if(err)console.log(err);
+        });
+    }
 
     db(EVENTS_TABLE).insert(
         {
@@ -350,14 +359,62 @@ admin.post('/add_new_event', async (req, res) =>
     });
 });
 
-admin.get('/check_event_id', (req, res) =>
+admin.post('/seminar/add_new', async (req, res) =>
 {
-    db(EVENTS_TABLE).select('*').where({id: req.query.event_id}).then(result => {
-        res.send(JSON.stringify({exist: result.length !== 0}));
-    }).catch(cause =>{
-        console.error(cause);
-        res.status(500).end();
+    let body = req.body;
+
+    if(!(body.id && body.title && body.description && body.date && body.performer_id)) return res.status(400).send("missing data");
+    if(await isSeminarIdAlreadyExisting(body.id)) return res.status(400).send('id already exist');
+
+    let dirPath = `${SEMINAR_IMAGES_PATH}/seminar_${body.id}`;
+    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath);
+
+    let imageCount = body.images.length;
+    let hasCoverImage = false;
+
+    for(let i = 0; i < imageCount; i++)
+    {
+        let img = body.images[i].replace(/^data:image\/\w+;base64,/, '');
+        fs.writeFile(`${dirPath}/img${i}.jpg`, img, 'base64', function(err) {
+            if(err)console.log(err);
+        });
+    }
+
+    if(body.cover_image)
+    {
+        hasCoverImage = true;
+        let coverImage = body.cover_image.replace(/^data:image\/\w+;base64,/, '');
+        fs.writeFile(`${dirPath}/cover.jpg`, coverImage, 'base64', function(err) {
+            if(err)console.log(err);
+        });
+    }
+
+    db(SEMINARS_TABLE).insert(
+        {
+            id: body.id,
+            title: body.title,
+            description: body.description,
+            date: body.date,
+            performer_id: body.performer_id,
+            event_ids: body.event_ids,
+            has_cover_image: hasCoverImage,
+            images_number: imageCount
+        }
+    ).then(result => res.status(201).end()).catch(reason => {
+        console.log(reason);
+        res.status(500);
+        res.send(JSON.stringify(reason));
     });
+});
+
+admin.get('/event/check_id', (req, res) =>
+{
+    checkID(EVENTS_TABLE, req.query.event_id, res);
+});
+
+admin.get('/seminar/check_id', (req, res) =>
+{
+    checkID(SEMINARS_TABLE, req.query.seminar_id, res);
 });
 
 //############################################# END ADMIN ROUTES ##############################################//
@@ -388,9 +445,25 @@ async function isUsernameAlreadyExisting(username)
     return !(result.length === 0);
 }
 
+function checkID(table, id, res)
+{
+    db(table).select('*').where({id: id}).then(result => {
+        res.send(JSON.stringify({exist: result.length !== 0}));
+    }).catch(cause =>{
+        console.error(cause);
+        res.status(500).end();
+    });
+}
+
 async function isEventIdAlreadyExisting(event_id)
 {
     let result = await db(EVENTS_TABLE).select("*").where({id: event_id});
+    return !(result.length === 0);
+}
+
+async function isSeminarIdAlreadyExisting(seminar_id)
+{
+    let result = await db(SEMINARS_TABLE).select("*").where({id: seminar_id});
     return !(result.length === 0);
 }
 

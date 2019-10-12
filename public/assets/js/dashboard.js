@@ -1,5 +1,15 @@
 let fileID = 0;
 let imagesToUpload = new Map();
+let unsaved = false;
+
+$(document).click((e) =>
+{
+    if(!$(e.target).hasClass("sidebar-link"))
+    {
+        let menus = $(".sidebar-link");
+        for(let menu of menus)if(!menu.classList.contains("collapsed"))menu.click();
+    }
+});
 
 $(document).ready(() =>
 {
@@ -11,6 +21,18 @@ function initJS()
 {
     fileID = 0;
     imagesToUpload = new Map();
+    unsaved = false;
+
+    $("[data-toggle=popover]").popover();
+
+    $(".dashboard-form").change(function ()
+    {
+        unsaved = true;
+    });
+
+    $('.popover-dismiss').popover({
+        trigger: 'focus'
+    });
 
     $(".count-length-text-area").on('input', function()
     {
@@ -78,7 +100,28 @@ function initJS()
 
 function showAddNewEventForm()
 {
-    loadForm('/pages/admin/dashboard/add_event_form.html');
+    showForm('/admin/dashboard/add_event_form.html');
+}
+
+function showAddNewSeminarForm()
+{
+    showForm('/admin/dashboard/add_seminar_form.html');
+}
+
+function showForm(path)
+{
+    if(unsaved)
+    {
+        $('#exit-dialog').modal('show');
+        let exitBtn = $('#exit-dialog-exit_btn');
+        exitBtn.off('click');
+        exitBtn.on('click', () =>
+        {
+            $('#exit-dialog').modal('hide');
+            loadForm(path);
+        })
+    }
+    else loadForm(path);
 }
 
 function loadForm(path)
@@ -101,7 +144,7 @@ async function sendAddEventForm()
     if(!form.classList.contains('was-validated'))form.classList.add('was-validated');
 
     let id = $("#input--event-id").val();
-    let response = await fetch(`/admin/check_event_id?event_id=${id}`);
+    let response = await fetch(`/admin/event/check_id?event_id=${id}`);
 
     if(response.status === 500)return; //TODO Add error handling
 
@@ -109,6 +152,10 @@ async function sendAddEventForm()
 
     if(!validId)document.getElementById("input--event-id").setCustomValidity("Invalid field.");
     else document.getElementById("input--event-id").setCustomValidity("");
+
+    let coverImage = await readFileAsync(document.getElementById("input--event-cover-image").files[0]);
+
+    console.log(coverImage);
 
     if(valid && validId)
     {
@@ -121,7 +168,7 @@ async function sendAddEventForm()
             tags: splitTags($("#input--event-tags").val()),
             performer_id: $("#input--event-performer_id").val(),
             seminar_ids: splitIDs($("#input--event-seminar_ids").val()),
-            cover_image: document.getElementById("input--event-cover-image").files[0],
+            cover_image: coverImage,
             images: images
         };
         let options = {
@@ -129,11 +176,103 @@ async function sendAddEventForm()
             body: JSON.stringify(data),
             headers: {'Content-Type': 'application/json'}
         };
-        fetch("/admin/add_new_event", options).then(response =>
+        fetch("/admin/event/add_new", options).then(response =>
         {
-           console.log(response.status);
+            if(response.status === 201)
+            {
+                showSuccessMessage("The event was successfully saved");
+                hideForm();
+            }
+            else if(response.status === 500)showErrorMessage("An internal server error has occurred. Please retry later.")
+            else showErrorMessage("An error has occurred. Please retry.");
         });
     }
+}
+
+async function sendAddSeminarForm()
+{
+    let form = document.getElementById("add-seminar-form");
+
+    let valid = form.checkValidity();
+    if(!form.classList.contains('was-validated'))form.classList.add('was-validated');
+
+    let id = $("#input--seminar-id").val();
+    let response = await fetch(`/admin/seminar/check_id?seminar_id=${id}`);
+
+    if(response.status === 500)return; //TODO Add error handling
+
+    let validId = !(await response.json()).exist;
+
+    if(!validId)document.getElementById("input--seminar-id").setCustomValidity("Invalid field.");
+    else document.getElementById("input--seminar-id").setCustomValidity("");
+
+    let coverImage = await readFileAsync(document.getElementById("input--seminar-cover-image").files[0]);
+
+    if(valid && validId)
+    {
+        let images = Array.from(imagesToUpload.values());
+        let data = {
+            id: removeSpace($("#input--seminar-id").val()),
+            title: $("#input--seminar-title").val(),
+            description: $("#input--seminar-description").val(),
+            date: $("#input--seminar-date").val(),
+            performer_id: $("#input--seminar-performer_id").val(),
+            event_ids: splitIDs($("#input--seminar-event_ids").val()),
+            cover_image: coverImage,
+            images: images
+        };
+        let options = {
+            method: 'post',
+            body: JSON.stringify(data),
+            headers: {'Content-Type': 'application/json'}
+        };
+        fetch("/admin/seminar/add_new", options).then(response =>
+        {
+            if(response.status === 201)
+            {
+                showSuccessMessage("The seminar was successfully saved");
+                hideForm();
+            }
+            else if(response.status === 500)showErrorMessage("An internal server error has occurred. Please retry later.")
+            else showErrorMessage("An error has occurred. Please retry.");
+        });
+    }
+}
+
+function hideForm()
+{
+    $("#container").fadeOut(400);
+}
+
+function showErrorMessage(message)
+{
+    let alert = $("#error-alert");
+    alert.text(message);
+    alert.slideDown(200).delay(2000).slideUp(400);
+}
+
+function showSuccessMessage(message)
+{
+    let alert = $("#success-alert");
+    alert.text(message);
+    alert.slideDown(200).delay(2000).slideUp(400);
+}
+
+function readFileAsync(file)
+{
+    return new Promise((resolve, reject) =>
+    {
+        let fileReader = new FileReader();
+
+        fileReader.onload = () =>
+        {
+            resolve(fileReader.result);
+        };
+
+        fileReader.onerror = reject;
+
+        fileReader.readAsDataURL(file);
+    });
 }
 
 function removeSpace(str)
@@ -148,9 +287,10 @@ function splitIDs(str)
 
 function splitTags(str)
 {
+    if(str.startsWith("#"))str = str.substring(1);
     return str.split("#").map(str =>
     {
-        str = removeSpace(str).trim()
+        str = removeSpace(str).trim();
         return `#${str}`;
     });
 }

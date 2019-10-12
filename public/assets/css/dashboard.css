@@ -1,5 +1,20 @@
-html, body {
+
+#background{
+    position: absolute;
+    background-image: url("/assets/images/dashboard/dashboard-bg.svg");
+    background-repeat: no-repeat;
+    background-size: 40%;
+    background-position: center;
+    background-origin: content-box;
+    min-width: 600px;
+    width: 100%;
     height: 100%;
+    padding-left: 6rem;
+}
+
+.modal-backdrop {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .sidebar-divider{
@@ -15,14 +30,14 @@ html, body {
 .sidebar {
     background-color: #4e73df;
     position: fixed;
-    min-height: 100vh;
+    min-height: 100%;
     min-width: 6rem;
     display: flex;
     flex-direction: column;
     list-style-type: none;
     align-items: center;
     padding-left: 0;
-    z-index: 1;
+    z-index: 10;
 }
 
 #container{
@@ -30,7 +45,16 @@ html, body {
     justify-content: center;
     padding-left: 6rem;
     padding-top: 3rem;
+    min-width: 600px;
     height: 100%;
+}
+
+.alert-message{
+    display: none;
+    text-align: center;
+    padding-left: 6rem;
+    width: 100%;
+    position: absolute;
 }
 
 .sidebar .sidebar-brand{
@@ -53,7 +77,9 @@ html, body {
     display: block;
     min-height: 50px;
     min-width: 50px;
-    background-image: url("/assets/images/menu-icons/settings-icon.png");
+    background-image: url("/assets/images/menu-icons/settings-icon.svg");
+    background-position: center;
+    background-size: 100%;
     background-repeat: no-repeat;
 }
 
@@ -155,6 +181,12 @@ html, body {
     #container{
         padding-left: 18rem;
     }
+    #background{
+        padding-left: 18rem;
+    }
+    .alert-message{
+        padding-left: 18rem;
+    }
     .sidebar{
         min-width: 18rem;
     }
@@ -185,8 +217,10 @@ html, body {
 
 .dashboard-form{
     width: 45%;
+    min-width: 400px;
     z-index: 1;
     padding: 2%;
+    background-color: #ffffff;
     border-radius: 10px;
     height: fit-content;
     box-shadow: 0 0 8px 0 #aaaaaa;
@@ -210,12 +244,12 @@ html, body {
     background-size: calc(.75em + .375rem) calc(.75em + .375rem); !important;
 }
 
-#event-id-container{
+.id-container{
     display: flex;
     flex-flow: row;
 }
 
-#event-id-container .form-control{
+.id-container .form-control{
     border-bottom-left-radius: 0; !important;
     border-top-left-radius: 0; !important;
 }
@@ -323,4 +357,23 @@ html, body {
 
 .image-card:hover .delete-image-overlay{
     opacity: 1;
+}
+
+.question-popover{
+    display: inline-flex;
+    flex-direction: column;
+    margin-left: 5px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 0 2px 0 #afafaf;
+    color: #b90000;
+}
+
+.question-popover:focus{
+    outline: 0;
 }
