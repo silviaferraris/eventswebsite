@@ -22,10 +22,11 @@ html, body {
     list-style-type: none;
     align-items: center;
     padding-left: 0;
+    z-index: 1;
 }
 
 #container{
-    display: flex;
+    display: none;
     justify-content: center;
     padding-left: 6rem;
     padding-top: 3rem;
@@ -224,7 +225,7 @@ html, body {
     border-top-right-radius: 0; !important;
 }
 
-#description-length-label{
+.length-label{
     margin: auto;
     text-align: right;
     color: #aaaaaa;
@@ -277,7 +278,7 @@ html, body {
     color: #ffffff;
 }
 
-.input-images{
+.input-images, .input-single-image{
     width: 0.1px;
     height: 0.1px;
     opacity: 0;
@@ -285,6 +286,7 @@ html, body {
     position: absolute;
     z-index: -1;
 }
+
 
 .images-container{
     width: fit-content;

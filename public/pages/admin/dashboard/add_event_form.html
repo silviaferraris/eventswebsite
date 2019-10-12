@@ -1,0 +1,62 @@
+<form class="dashboard-form needs-validation" id="add-event-form" novalidate>
+    <div class="form-group">
+        <label for="input--event-id" class="h4">Event ID*</label>
+        <div id="event-id-container">
+            <div class="input-group-prepend">
+                <div class="input-group-text">@</div>
+            </div>
+            <input type="text" class="form-control nospace-input id-check" data-check-api="/admin/check_event_id?event_id=" id="input--event-id" maxlength="40" placeholder="Event ID" required>
+        </div>
+        <div class="invalid-feedback">Please insert an ID.</div>
+    </div>
+    <div class="form-group">
+        <label for="input--event-title" class="h6">Title*</label>
+        <input type="text" class="form-control" id="input--event-title" maxlength="50" placeholder="Title" required>
+        <div class="invalid-feedback">Please insert a title.</div>
+    </div>
+    <div class="form-group">
+        <label for="input--event-description" class="h6">Description*</label>
+        <textarea class="form-control count-length-text-area" id="input--event-description" maxlength="500" required></textarea>
+        <small class="length-label">0/500</small>
+        <div class="invalid-feedback">Please insert a description.</div>
+    </div>
+    <div class="form-group">
+        <label for="input--event-date" class="h6">Date*</label>
+        <input type="date" class="form-control" id="input--event-date" required>
+        <div class="invalid-feedback">Please insert a date.</div>
+    </div>
+    <div class="form-group">
+        <label for="input--event-tags" class="h6">Tags</label>
+        <input type="text" class="form-control" id="input--event-tags" placeholder="Tags">
+    </div>
+    <div class="form-group">
+        <label for="input--event-performer_id" class="h6">Performer ID*</label>
+        <input type="text" class="form-control" id="input--event-performer_id" placeholder="Performer ID" required>
+        <div class="invalid-feedback">Please insert a performer ID.</div>
+    </div>
+    <div class="form-group">
+        <label for="input--event-seminar_ids" class="h6">Seminar IDs</label>
+        <input type="text" class="form-control" id="input--event-seminar_ids" placeholder="Seminar IDs">
+    </div>
+    <div class="form-group">
+        <label for="input--event-cover-image" class="h6">Cover image*</label>
+        <div style="width: 100%;display: flex; flex-direction: row">
+            <input type="file" accept="image/*" class="input-single-image" id="input--event-cover-image" required>
+            <label class="input-single-image-container-label" for="input--event-cover-image">Select image</label>
+            <div class="input-single-image-container">
+                <img class="cover-image" src="">
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="input--event-add-images" class="h6">Images</label>
+        <div class="input-images-container">
+            <input type="file" accept="image/*" class="input-images" id="input--event-add-images" multiple>
+            <label class="btn btn-primary" for="input--event-add-images">Add images</label>
+            <div class="images-container"></div>
+        </div>
+    </div>
+    <div style="display:flex; width:100%; justify-content: center">
+        <button class="btn btn-primary" type="button" onclick="sendAddEventForm()">Save</button>
+    </div>
+</form>

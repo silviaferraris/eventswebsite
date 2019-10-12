@@ -76,9 +76,15 @@ app.use('/admin', admin);
 
 admin.use('/', (req, res, next) =>
 {
+    console.log("aaa");
+
     if(req.user && req.user.admin)next();
     else res.status(403).end();
 });
+
+
+app.use(express.static("public"));
+app.use(express.static("public/pages"));
 
 //############################################# APP ROUTES ###################################################//
 
@@ -356,8 +362,7 @@ admin.get('/check_event_id', (req, res) =>
 
 //############################################# END ADMIN ROUTES ##############################################//
 
-app.use(express.static("public"));
-app.use(express.static("public/pages"));
+
 
 app.get("*", (req, res) =>
 {

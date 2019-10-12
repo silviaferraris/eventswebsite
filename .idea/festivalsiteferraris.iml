@@ -12,8 +12,8 @@
     <orderEntry type="library" name="@types/express-session" level="application" />
     <orderEntry type="library" name="@types/passport" level="application" />
     <orderEntry type="library" name="@types/passport-local" level="application" />
-    <orderEntry type="library" name="jquery-3.3.1" level="application" />
     <orderEntry type="library" name="bootstrap" level="application" />
+    <orderEntry type="library" name="jquery" level="application" />
     <orderEntry type="library" name="popper" level="application" />
   </component>
 </module>

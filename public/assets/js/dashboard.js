@@ -3,41 +3,63 @@ let imagesToUpload = new Map();
 
 $(document).ready(() =>
 {
-    $("#input--event-description").on('input', () =>
+    $("#container").css('display', 'flex').hide();
+    initJS();
+});
+
+function initJS()
+{
+    fileID = 0;
+    imagesToUpload = new Map();
+
+    $(".count-length-text-area").on('input', function()
     {
-        let text = $("#input--event-description").val();
-        $("#description-length-label").text(`${text.length}/500`);
+        let text = $(this).val();
+        let maxlength = $(this).attr('maxlength');
+        let label = $(this).parent().find(".length-label");
+        if(label)label.text(`${text.length}/${maxlength}`);
     });
 
-    $("#input--event-id").on('input', async function()
+    $(".nospace-input").on({
+        keydown: function(e)
+        {
+            if (e.which === 32) return false;
+        },
+        change: function()
+        {
+            this.value = this.value.replace(/\s/g, "");
+        }
+    });
+
+    $(".id-check").on('input', async function()
     {
         let id = $(this).val();
-        let response = await fetch(`/admin/check_event_id?event_id=${id}`);
+        let api = $(this).attr('data-check-api');
+        let response = await fetch(`${api}${id}`);
         if(response.status === 500)return; //TODO Add error handling
         let validId = !(await response.json()).exist && id.length !== 0;
         if(!validId)
         {
-            document.getElementById("input--event-id").setCustomValidity("Invalid field.");
-            document.getElementById("input--event-id").classList.add("dashboard-invalid-input");
-            document.getElementById("input--event-id").classList.remove("dashboard-valid-input");
+            $(this)[0].setCustomValidity("Invalid field.");
+            $(this)[0].classList.add("dashboard-invalid-input");
+            $(this)[0].classList.remove("dashboard-valid-input");
         }
         else
         {
-            document.getElementById("input--event-id").setCustomValidity("");
-            document.getElementById("input--event-id").classList.remove("dashboard-invalid-input");
-            document.getElementById("input--event-id").classList.add("dashboard-valid-input");
+            $(this)[0].setCustomValidity("");
+            $(this)[0].classList.remove("dashboard-invalid-input");
+            $(this)[0].classList.add("dashboard-valid-input");
         }
-
     });
 
-    $("#input--event-add-images").change(() =>
+    $(".input-images").change(function ()
     {
-        addImages(document.getElementById("input--event-add-images"));
+        addImages($(this)[0]);
     });
 
-    $("#input--event-cover-image").change(() =>
+    $(".input-single-image").change(function ()
     {
-        let img = document.getElementById("input--event-cover-image").files[0];
+        let img = $(this)[0].files[0];
         let fileReader = new FileReader();
         fileReader.onload = e =>
         {
@@ -52,7 +74,24 @@ $(document).ready(() =>
         imagesToUpload.delete(id.substring(8));
         $(`#${id}`).remove();
     });
-});
+}
+
+function showAddNewEventForm()
+{
+    loadForm('/pages/admin/dashboard/add_event_form.html');
+}
+
+function loadForm(path)
+{
+    $("#container").fadeOut(400, () =>
+    {
+        $('#container').load(path, () =>
+        {
+            initJS();
+            $("#container").fadeIn(400);
+        });
+    });
+}
 
 async function sendAddEventForm()
 {
@@ -75,13 +114,13 @@ async function sendAddEventForm()
     {
         let images = Array.from(imagesToUpload.values());
         let data = {
-            id: $("#input--event-id").val(),
+            id: removeSpace($("#input--event-id").val()),
             title: $("#input--event-title").val(),
             description: $("#input--event-description").val(),
             date: $("#input--event-date").val(),
-            tags: $("#input--event-tags").val().split(",").map(str => str.trim()),
+            tags: splitTags($("#input--event-tags").val()),
             performer_id: $("#input--event-performer_id").val(),
-            seminar_ids: $("#input--event-seminar_ids").val().split(",").map(str => str.trim()),
+            seminar_ids: splitIDs($("#input--event-seminar_ids").val()),
             cover_image: document.getElementById("input--event-cover-image").files[0],
             images: images
         };
@@ -95,6 +134,25 @@ async function sendAddEventForm()
            console.log(response.status);
         });
     }
+}
+
+function removeSpace(str)
+{
+    return str.split(" ").join("");
+}
+
+function splitIDs(str)
+{
+    return removeSpace(str).split(",").map(str => str.trim());
+}
+
+function splitTags(str)
+{
+    return str.split("#").map(str =>
+    {
+        str = removeSpace(str).trim()
+        return `#${str}`;
+    });
 }
 
 function addImages(input)
