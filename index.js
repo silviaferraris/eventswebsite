@@ -22,9 +22,10 @@ const db = knex({
 });
 
 const ASSETS_PATH = `${__dirname}/public/assets`;
-const EVENT_IMAGES_PATH = `${ASSETS_PATH}/images/events`;
-const SEMINAR_IMAGES_PATH = `${ASSETS_PATH}/images/seminars`;
-const PERFORMER_IMAGES_PATH = `${ASSETS_PATH}/images/performers`;
+const STORAGE_PATH = `${__dirname}/public/storage`;
+const EVENT_IMAGES_PATH = `${STORAGE_PATH}/images/events`;
+const SEMINAR_IMAGES_PATH = `${STORAGE_PATH}/images/seminars`;
+const PERFORMER_IMAGES_PATH = `${STORAGE_PATH}/images/performers`;
 
 const USER_TABLE = 'users';
 const EVENTS_TABLE = 'events';
@@ -144,53 +145,56 @@ app.get('/user', (req, res) =>
     else res.status(401).end();
 });
 
-app.get('/all_events', (req, res) =>
+app.get('/event/all', (req, res) =>
 {
-    db(EVENTS_TABLE).select('*').then(result =>
-    {
-        res.send(JSON.stringify(result));
-    }).catch(cause =>
+    db(EVENTS_TABLE).select('*').then(result => res.send(JSON.stringify(result))).catch(cause =>
     {
         console.error(cause);
         res.status(500).end();
     });
 });
 
-app.get('/events_on_date', (req, res) =>
+app.get('/event/on_date', (req, res) =>
 {
     let date = req.query.date;
-    db(EVENTS_TABLE).select('*').where({date: date}).then(result =>
-    {
-        res.send(JSON.stringify(result));
-    }).catch(cause =>
-    {
-        console.error(cause);
-        res.status(500).end();
-    })
-});
-
-app.get('/performer_of_event', (req, res) =>
-{
-    let event_id = req.query.event_id;
-    db(EVENTS_TABLE).select('performer_id').where({id: event_id}).then(result =>
-    {
-        db(PERFORMERS_TABLE).select('*').where({id: result[0].performer_id}).then(result =>
-        {
-            if(result.length === 0)return res.send(JSON.stringify({}));
-            res.send(JSON.stringify(result[0]));
-        }).catch(cause =>
-        {
-            console.error(cause);
-            res.status(500).end();
-        });;
-    }).catch(cause =>
+    db(EVENTS_TABLE).select('*').where({date: date}).then(result => res.send(JSON.stringify(result))).catch(cause =>
     {
         console.error(cause);
         res.status(500).end();
     });
 });
 
-app.get('/seminars_of_event', (req, res) =>
+app.get('/event/on_same_date', (req, res) =>
+{
+    let event_id = req.query.event_id;
+
+    db(EVENTS_TABLE).select('date').where({id: `${event_id}`}).then(result =>
+    {
+        if(result.length === 0)return res.send(JSON.stringify([]));
+        let date = parseDateForDB(result[0].date);
+
+        db(EVENTS_TABLE).select('*').where({date: date}).whereNot({id: event_id}).then(events =>
+        {
+            res.send(JSON.stringify(events));
+        }).catch(cause => {
+            console.error(cause);
+            res.status(500).end();
+        })
+    }).catch(cause =>{
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
+app.get('/seminar/all', (req, res) =>
+{
+    db(SEMINARS_TABLE).select('*').then(result => res.send(JSON.stringify(result))).catch(cause => {
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
+app.get('/seminar/of_event', (req, res) =>
 {
     let event_id = req.query.event_id;
     db(EVENTS_TABLE).select('seminar_ids').where({id: event_id}).then(async result =>
@@ -212,7 +216,7 @@ app.get('/seminars_of_event', (req, res) =>
     });
 });
 
-app.get('/seminars_on_same_date', (req, res) =>
+app.get('/seminar/on_same_date', (req, res) =>
 {
     let seminar_id = req.query.seminar_id;
 
@@ -235,23 +239,52 @@ app.get('/seminars_on_same_date', (req, res) =>
     });
 });
 
-app.get('/events_on_same_date', (req, res) =>
+app.get('/performer/all', (req, res) =>
 {
-    let event_id = req.query.event_id;
-
-    db(EVENTS_TABLE).select('date').where({id: `${event_id}`}).then(result =>
+    db(PERFORMERS_TABLE).select('*').then(result => res.send(JSON.stringify(result))).catch(cause =>
     {
-        if(result.length === 0)return res.send(JSON.stringify([]));
-        let date = parseDateForDB(result[0].date);
+        console.error(cause);
+        res.status(500).end();
+    });
+});
 
-        db(EVENTS_TABLE).select('*').where({date: date}).whereNot({id: event_id}).then(events =>
+app.get('/performer/of_seminar', (req, res) =>
+{
+    let seminar_id = req.query.seminar_id;
+    db(PERFORMERS_TABLE).select('performer_id').where({id: seminar_id}).then(result =>
+    {
+        db(PERFORMERS_TABLE).select('*').where({id: result[0].performer_id}).then(result =>
         {
-            res.send(JSON.stringify(events));
-        }).catch(cause => {
+            if(result.length === 0)return res.send(JSON.stringify({}));
+            res.send(JSON.stringify(result[0]));
+        }).catch(cause =>
+        {
             console.error(cause);
             res.status(500).end();
-        })
-    }).catch(cause =>{
+        });
+    }).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
+app.get('/performer/of_event', (req, res) =>
+{
+    let event_id = req.query.event_id;
+    db(EVENTS_TABLE).select('performer_id').where({id: event_id}).then(result =>
+    {
+        db(PERFORMERS_TABLE).select('*').where({id: result[0].performer_id}).then(result =>
+        {
+            if(result.length === 0)return res.send(JSON.stringify({}));
+            res.send(JSON.stringify(result[0]));
+        }).catch(cause =>
+        {
+            console.error(cause);
+            res.status(500).end();
+        });
+    }).catch(cause =>
+    {
         console.error(cause);
         res.status(500).end();
     });
