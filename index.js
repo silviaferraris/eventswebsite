@@ -31,6 +31,7 @@ const USER_TABLE = 'users';
 const EVENTS_TABLE = 'events';
 const SEMINARS_TABLE = 'seminars';
 const PERFORMERS_TABLE = 'performers';
+const EVENTS_SEMINAR_TABLE = 'EventsSeminars';
 
 init();
 
@@ -154,6 +155,19 @@ app.get('/event/all', (req, res) =>
     });
 });
 
+app.get('/event/by_id', (req, res) =>
+{
+    db(EVENTS_TABLE).select('*').where({id: req.query.event_id}).then(result =>
+    {
+        if(result.length === 0)return res.status(404).end();
+        res.send(JSON.stringify(result[0]))
+    }).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
 app.get('/event/on_date', (req, res) =>
 {
     let date = req.query.date;
@@ -186,6 +200,60 @@ app.get('/event/on_same_date', (req, res) =>
     });
 });
 
+app.get('/event/of_seminar', (req, res) =>
+{
+   let seminar_id = req.query.seminar_id;
+
+   db(EVENTS_SEMINAR_TABLE).select('event_id').where({seminar_id: seminar_id}).then(async result1 =>
+   {
+       if(result1.length === 0)return res.send(JSON.stringify([]));
+       let events = [];
+
+       for(let eventId of result1)
+       {
+           try
+           {
+               let result2 = await db(EVENTS_TABLE).select('*').where({id: eventId.event_id});
+               if(result2.length !== 0) events.push(result2[0]);
+           }
+           catch (e)
+           {
+               console.error(e);
+               res.status(500).end();
+           }
+       }
+       res.send(JSON.stringify(events));
+   }).catch(cause =>{
+       console.error(cause);
+       res.status(500).end();
+   });
+});
+
+app.get('/event/of_performer', (req, res) =>
+{
+    let performer_id = req.query.performer_id;
+    db(EVENTS_TABLE).select('*').where({performer_id: performer_id}).then(result => JSON.stringify(result)).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
+
+/*app.get('/event/related', (req, res) =>
+{
+    let event_id = req.query.event_id;
+
+    db(EVENTS_TABLE).select('tags').where({id: event_id}).then(result =>
+    {
+        db(EVENTS_TABLE).select('*').whereRaw(`find_in_set()`)
+    }).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    });
+});*/
+
 app.get('/seminar/all', (req, res) =>
 {
     db(SEMINARS_TABLE).select('*').then(result => res.send(JSON.stringify(result))).catch(cause => {
@@ -194,23 +262,45 @@ app.get('/seminar/all', (req, res) =>
     });
 });
 
+app.get('/seminar/by_id', (req, res) =>
+{
+   let seminar_id = req.query.seminar_id;
+   db(SEMINARS_TABLE).select('*').where({id: seminar_id}).then(result =>
+   {
+      if(result.length === 0)return res.status(404).end();
+      res.send(JSON.stringify(result[0]));
+   }).catch(cause =>
+   {
+       console.error(cause);
+       res.status(500).end();
+   });
+});
+
+
 app.get('/seminar/of_event', (req, res) =>
 {
     let event_id = req.query.event_id;
-    db(EVENTS_TABLE).select('seminar_ids').where({id: event_id}).then(async result =>
+
+    db(EVENTS_SEMINAR_TABLE).select('seminar_id').where({event_id: event_id}).then(async result1 =>
     {
-        if(result.length === 0)return res.send(JSON.stringify([]));
-        let seminar_ids = result[0].seminar_ids;
+        if(result1.length === 0)return res.send(JSON.stringify([]));
         let seminars = [];
-        for(let seminar_id of seminar_ids)
+
+        for(let seminarId of result1)
         {
-            let seminar_result = await db(SEMINARS_TABLE).select('*').where({id: seminar_id});
-            if(seminar_result.length === 0)continue;
-            seminars.push(seminar_result[0]);
+            try
+            {
+                let result2 = await db(SEMINARS_TABLE).select('*').where({id: seminarId.seminar_id});
+                if(result2.length !== 0) seminars.push(result2[0]);
+            }
+            catch (e)
+            {
+                console.error(e);
+                res.status(500).end();
+            }
         }
         res.send(JSON.stringify(seminars));
-    }).catch(cause =>
-    {
+    }).catch(cause =>{
         console.error(cause);
         res.status(500).end();
     });
@@ -239,6 +329,26 @@ app.get('/seminar/on_same_date', (req, res) =>
     });
 });
 
+app.get('/seminar/on_date', (req, res) =>
+{
+    let date = req.query.date;
+    db(SEMINARS_TABLE).select('*').where({date: date}).then(result => res.send(JSON.stringify(result))).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
+app.get('/seminar/of_performer', (req, res) =>
+{
+    let performer_id = req.query.performer_id;
+    db(SEMINARS_TABLE).select('*').where({performer_id: performer_id}).then(result => JSON.stringify(result)).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
 app.get('/performer/all', (req, res) =>
 {
     db(PERFORMERS_TABLE).select('*').then(result => res.send(JSON.stringify(result))).catch(cause =>
@@ -248,14 +358,30 @@ app.get('/performer/all', (req, res) =>
     });
 });
 
+app.get('/performer/by_id', (req, res) =>
+{
+    let performer_id = req.query.performer_id;
+    db(PERFORMERS_TABLE).select('*').where({id: performer_id}).then(result =>
+    {
+        if(result.length === 0)return res.status(404).end();
+        res.send(JSON.stringify(result[0]));
+    }).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    })
+});
+
 app.get('/performer/of_seminar', (req, res) =>
 {
     let seminar_id = req.query.seminar_id;
-    db(PERFORMERS_TABLE).select('performer_id').where({id: seminar_id}).then(result =>
+    db(SEMINARS_TABLE).select('performer_id').where({id: seminar_id}).then(result =>
     {
+        if(result.length === 0)return res.status(404).end();
+
         db(PERFORMERS_TABLE).select('*').where({id: result[0].performer_id}).then(result =>
         {
-            if(result.length === 0)return res.send(JSON.stringify({}));
+            if(result.length === 0)return res.status(404).end();
             res.send(JSON.stringify(result[0]));
         }).catch(cause =>
         {
@@ -276,7 +402,7 @@ app.get('/performer/of_event', (req, res) =>
     {
         db(PERFORMERS_TABLE).select('*').where({id: result[0].performer_id}).then(result =>
         {
-            if(result.length === 0)return res.send(JSON.stringify({}));
+            if(result.length === 0)return res.status(404).end();
             res.send(JSON.stringify(result[0]));
         }).catch(cause =>
         {
@@ -348,7 +474,9 @@ admin.post('/event/add_new', async (req, res) =>
     let body = req.body;
 
     if(!(body.id && body.title && body.description && body.date && body.performer_id)) return res.status(400).send("missing data");
-    if(await isEventIdAlreadyExisting(body.id)) return res.status(400).send('id already exist');
+    if(await isEventIdAlreadyExisting(body.id)) return res.status(400).send(`event ${id} already exist!`);
+
+    if(!(await isPerformerIdAlreadyExisting(body.performer_id)))return res.status(400).send(`performer ${body.performer_id} does not exist!`);
 
     let dirPath = `${EVENT_IMAGES_PATH}/event_${body.id}`;
     if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath);
@@ -381,7 +509,6 @@ admin.post('/event/add_new', async (req, res) =>
             date: body.date,
             performer_id: body.performer_id,
             tags: body.tags,
-            seminar_ids: body.seminar_ids,
             has_cover_image: hasCoverImage,
             images_number: imageCount
         }
@@ -396,8 +523,15 @@ admin.post('/seminar/add_new', async (req, res) =>
 {
     let body = req.body;
 
-    if(!(body.id && body.title && body.description && body.date && body.performer_id)) return res.status(400).send("missing data");
-    if(await isSeminarIdAlreadyExisting(body.id)) return res.status(400).send('id already exist');
+    if(!(body.id && body.title && body.description && body.date && body.performer_id && body.event_ids.length > 0)) return res.status(400).send("missing data");
+    if(await isSeminarIdAlreadyExisting(body.id)) return res.status(400).send(`seminar ${id} already exist!`);
+
+    if(!(await isPerformerIdAlreadyExisting(body.performer_id)))return res.status(400).send(`performer ${body.performer_id} does not exist!`);
+
+    for(let event_id of body.event_ids)
+    {
+        if(!(await isEventIdAlreadyExisting(event_id))) return res.status(400).send(`event ${event_id} does not exist!`);
+    }
 
     let dirPath = `${SEMINAR_IMAGES_PATH}/seminar_${body.id}`;
     if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath);
@@ -429,9 +563,52 @@ admin.post('/seminar/add_new', async (req, res) =>
             description: body.description,
             date: body.date,
             performer_id: body.performer_id,
-            event_ids: body.event_ids,
             has_cover_image: hasCoverImage,
             images_number: imageCount
+        }
+    ).then(result =>
+    {
+        let values = [];
+        for(let event_id of body.event_ids) values.push({event_id: event_id, seminar_id: body.seminar_id});
+
+        db(EVENTS_SEMINAR_TABLE).insert(values).then(() => res.status(201).end()).catch(reason =>
+        {
+            console.log(reason);
+            res.status(500);
+            res.send(JSON.stringify(reason));
+        });
+
+    }).catch(reason => {
+        console.log(reason);
+        res.status(500);
+        res.send(JSON.stringify(reason));
+    });
+});
+
+admin.post('/performer/add_new', async (req, res) =>
+{
+    let body = req.body;
+
+    if(!(body.id && body.first_name && body.last_name && body.biography)) return res.status(400).send("missing data");
+    if(await isPerformerIdAlreadyExisting(body.id)) return res.status(400).send(`performer ${id} already exist!`);
+
+    let dirPath = `${PERFORMER_IMAGES_PATH}/performer_${body.id}`;
+    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath);
+
+    if(body.photo)
+    {
+        let photo = body.photo.replace(/^data:image\/\w+;base64,/, '');
+        fs.writeFile(`${dirPath}/photo.jpg`, photo, 'base64', function(err) {
+            if(err)console.log(err);
+        });
+    }
+
+    db(PERFORMERS_TABLE).insert(
+        {
+            id: body.id,
+            first_name: body.first_name,
+            last_name: body.last_name,
+            biography: body.biography
         }
     ).then(result => res.status(201).end()).catch(reason => {
         console.log(reason);
@@ -497,6 +674,12 @@ async function isEventIdAlreadyExisting(event_id)
 async function isSeminarIdAlreadyExisting(seminar_id)
 {
     let result = await db(SEMINARS_TABLE).select("*").where({id: seminar_id});
+    return !(result.length === 0);
+}
+
+async function isPerformerIdAlreadyExisting(performer_id)
+{
+    let result = await db(PERFORMERS_TABLE).select("*").where({id: performer_id});
     return !(result.length === 0);
 }
 

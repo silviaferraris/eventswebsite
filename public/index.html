@@ -19,6 +19,36 @@
     <script src="/assets/js/typewriter.js"></script>
     <script src="/assets/js/navbar_and_footer_loader.js"></script>
 
+
+    <script type="module" src="/assets/js/event.mjs"></script>
+    <script type="module" src="/assets/js/seminar.mjs"></script>
+    <script type="module" src="/assets/js/performer.mjs"></script>
+
+    <script type="module">
+        import Event from '/assets/js/event.mjs'
+        import Performer from "/assets/js/performer.mjs";
+        import Seminar from "/assets/js/seminar.mjs";
+
+        /*let event = new Event("evento_di_prova1");
+
+        event.getSeminars().then(seminars =>
+        {
+            console.log(seminars[0]);
+            seminars[0].getPerformer().then(performer =>
+            {
+                console.log(performer);
+            })
+        })*/
+
+        let seminar = new Seminar("seminario_di_prova1");
+
+        seminar.getEvents().then(events =>
+        {
+            console.log(events);
+        })
+
+    </script>
+
 </head>
 <body>
 
