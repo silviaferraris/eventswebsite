@@ -31,6 +31,7 @@ const USER_TABLE = 'users';
 const EVENTS_TABLE = 'events';
 const SEMINARS_TABLE = 'seminars';
 const PERFORMERS_TABLE = 'performers';
+const USERS_EVENTS_TABLE = "UsersEvents";
 const EVENTS_SEMINAR_TABLE = 'EventsSeminars';
 
 init();
@@ -92,7 +93,7 @@ app.use(express.static("public/pages"));
 
 //############################################# APP ROUTES ###################################################//
 
-app.post('/login', (req, res, next) =>
+app.post('/user/login', (req, res, next) =>
 {
     passport.authenticate('local', function(err, user, info)
     {
@@ -100,17 +101,19 @@ app.post('/login', (req, res, next) =>
 
         if (!user)return res.status(401).send({message : info});
 
+        let redirectUrl = req.body.redirect_to ? req.body.redirect_to : '/';
+
         req.login(user, err =>
         {
             if (err) next(err);
             if(req.body.remember) req.session.cookie.expires = 315360000000; /*10 years*/
             else req.session.cookie.expires = undefined;
-            return res.redirect(301, '/');
+            return res.redirect(301, redirectUrl);
         });
     })(req, res, next);
 });
 
-app.get('/login', (req, res) =>
+/*app.get('/login', (req, res) =>
 {
     redirectIfLogged(req, res, '/', 'public/pages/login/index.html');
 });
@@ -118,15 +121,16 @@ app.get('/login', (req, res) =>
 app.get('/signup', (req, res) =>
 {
     redirectIfLogged(req, res, '/', 'public/pages/signup/index.html');
-});
+});*/
 
-app.get('/logout', (req, res) =>
+app.get('/user/logout', (req, res) =>
 {
+    let redirectUrl = req.query.redirect_to ? req.query.redirect_to : '/';
     req.logout();
-    res.redirect('/');
+    res.redirect(redirectUrl);
 });
 
-app.get('/user', (req, res) =>
+app.get('/user/data', (req, res) =>
 {
     if(req.user)
     {
@@ -144,6 +148,42 @@ app.get('/user', (req, res) =>
         res.send(JSON.stringify(userData));
     }
     else res.status(401).end();
+});
+
+app.get('/user/cart/add_event', async (req, res) =>
+{
+    if(!req.user)return res.status(401).end();
+
+    if(!(await isEventIdAlreadyExisting(req.query.event_id)))return res.status(400).end();
+
+    db(USERS_EVENTS_TABLE).insert({user_id: req.user.id, event_id: req.query.event_id}).then(result => res.status(204).end()).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
+app.get('/user/cart/remove_event', (req, res) =>
+{
+    if(!req.user)return res.status(401).end();
+
+    if(!req.query.event_id)return res.status(400).end();
+
+    db(USERS_EVENTS_TABLE).where({user_id: req.user.id, event_id: req.query.event_id}).del().then(result => res.status(204).end()).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
+app.get('/user/cart/clear', (req, res) =>
+{
+    if(!req.user)return res.status(401).end();
+    db(USERS_EVENTS_TABLE).where({user_id: req.user.id}).del().then(result => res.status(204).end()).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    });
 });
 
 app.get('/event/all', (req, res) =>

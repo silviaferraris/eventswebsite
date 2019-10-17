@@ -1,6 +1,25 @@
+import User from "./user.js";
+
 async function login(noanim)
 {
-	let auth =
+	User.login(document.getElementById("username").value, document.getElementById("password").value, document.getElementById("remember").checked, '/').then(response => {
+
+		if(response.redirected)window.location.href = response.url;
+
+		if(response.status === 401)
+		{
+			if(!noanim)$("form").slideDown(500);
+			$("#wrong-credential-alert").slideDown(200).delay(1000).slideUp(400);
+		}
+	}).catch(e =>
+	{
+		console.error(e);
+
+		if(!noanim)$("form").slideDown(500);
+		$("#wrong-credential-alert").slideDown(200).delay(1000).slideUp(400);
+	});
+
+	/*let auth =
 		{
 			username: document.getElementById("username").value,
 			password: document.getElementById("password").value,
@@ -15,13 +34,9 @@ async function login(noanim)
 
 	let response = await fetch('/login', options);
 
-	if(response.redirected)window.location.href = response.url;
+	if(!noanim)$("form").slideDown(500);
+	$("#wrong-credential-alert").slideDown(200).delay(1000).slideUp(400);*/
 
-	if(response.status === 401)
-	{
-		if(!noanim)$("form").slideDown(500);
-		$("#wrong-credential-alert").slideDown(200).delay(1000).slideUp(400);
-	}
 }
 
 $(document).ready(function()

@@ -1,8 +1,12 @@
+<script src="/assets/js/user.js"></script>
 <script>
+
+    console.log("module");
+
     $("#ftco-navbar").hide();
     $("#navbarDropdownMenuLink").hide();
 
-    fetch('/user').then(async response =>
+    User.userData().then(async response =>
     {
         if(response.status === 401) return;
 
