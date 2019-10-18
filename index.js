@@ -532,29 +532,6 @@ admin.post('/event/add_new', async (req, res) =>
     if(!(await isPerformerIdAlreadyExisting(body.performer_id)))return res.status(400).send(`performer ${body.performer_id} does not exist!`);
     if(!EVENT_TYPES.includes(body.event_type))return res.status(400).send(`invalid event type: ${body.event_type}`);
 
-    let dirPath = `${EVENT_IMAGES_PATH}/event_${body.id}`;
-    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath);
-
-    let imageCount = body.images.length;
-    let hasCoverImage = false;
-
-    for(let i = 0; i < imageCount; i++)
-    {
-        let img = body.images[i].replace(/^data:image\/\w+;base64,/, '');
-        fs.writeFile(`${dirPath}/img${i}.jpg`, img, 'base64', function(err) {
-            if(err)console.log(err);
-        });
-    }
-
-    if(body.cover_image)
-    {
-        hasCoverImage = true;
-        let coverImage = body.cover_image.replace(/^data:image\/\w+;base64,/, '');
-        fs.writeFile(`${dirPath}/cover.jpg`, coverImage, 'base64', function(err) {
-            if(err)console.log(err);
-        });
-    }
-
     db(EVENTS_TABLE).insert(
         {
             id: body.id,
@@ -562,9 +539,9 @@ admin.post('/event/add_new', async (req, res) =>
             description: body.description,
             date: body.date,
             performer_id: body.performer_id,
-            event_type: body.event_type,
-            has_cover_image: hasCoverImage,
-            images_number: imageCount
+            type: body.event_type,
+            cover_image: body.cover_image,
+            images: body.images
         }
     ).then(result => res.status(201).end()).catch(reason => {
         console.log(reason);
@@ -587,29 +564,6 @@ admin.post('/seminar/add_new', async (req, res) =>
         if(!(await isEventIdAlreadyExisting(event_id))) return res.status(400).send(`event ${event_id} does not exist!`);
     }
 
-    let dirPath = `${SEMINAR_IMAGES_PATH}/seminar_${body.id}`;
-    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath);
-
-    let imageCount = body.images.length;
-    let hasCoverImage = false;
-
-    for(let i = 0; i < imageCount; i++)
-    {
-        let img = body.images[i].replace(/^data:image\/\w+;base64,/, '');
-        fs.writeFile(`${dirPath}/img${i}.jpg`, img, 'base64', function(err) {
-            if(err)console.log(err);
-        });
-    }
-
-    if(body.cover_image)
-    {
-        hasCoverImage = true;
-        let coverImage = body.cover_image.replace(/^data:image\/\w+;base64,/, '');
-        fs.writeFile(`${dirPath}/cover.jpg`, coverImage, 'base64', function(err) {
-            if(err)console.log(err);
-        });
-    }
-
     db(SEMINARS_TABLE).insert(
         {
             id: body.id,
@@ -617,13 +571,13 @@ admin.post('/seminar/add_new', async (req, res) =>
             description: body.description,
             date: body.date,
             performer_id: body.performer_id,
-            has_cover_image: hasCoverImage,
-            images_number: imageCount
+            cover_image: body.cover_image,
+            images: body.images
         }
     ).then(result =>
     {
         let values = [];
-        for(let event_id of body.event_ids) values.push({event_id: event_id, seminar_id: body.seminar_id});
+        for(let event_id of body.event_ids) values.push({event_id: event_id, seminar_id: body.id});
 
         db(EVENTS_SEMINAR_TABLE).insert(values).then(() => res.status(201).end()).catch(reason =>
         {
@@ -646,23 +600,13 @@ admin.post('/performer/add_new', async (req, res) =>
     if(!(body.id && body.first_name && body.last_name && body.biography)) return res.status(400).send("missing data");
     if(await isPerformerIdAlreadyExisting(body.id)) return res.status(400).send(`performer ${id} already exist!`);
 
-    let dirPath = `${PERFORMER_IMAGES_PATH}/performer_${body.id}`;
-    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath);
-
-    if(body.photo)
-    {
-        let photo = body.photo.replace(/^data:image\/\w+;base64,/, '');
-        fs.writeFile(`${dirPath}/photo.jpg`, photo, 'base64', function(err) {
-            if(err)console.log(err);
-        });
-    }
-
     db(PERFORMERS_TABLE).insert(
         {
             id: body.id,
             first_name: body.first_name,
             last_name: body.last_name,
-            biography: body.biography
+            biography: body.biography,
+            photo: body.photo
         }
     ).then(result => res.status(201).end()).catch(reason => {
         console.log(reason);

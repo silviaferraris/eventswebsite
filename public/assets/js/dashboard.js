@@ -214,7 +214,7 @@ async function sendAddSeminarForm()
     if(!validId)document.getElementById("input--seminar-id").setCustomValidity("Invalid field.");
     else document.getElementById("input--seminar-id").setCustomValidity("");
 
-    let performerId = $("#input--event-performer_id").val();
+    let performerId = $("#input--seminar-performer_id").val();
     let validPerformer = await isValidPerformer(performerId);
     if(!validPerformer)document.getElementById("input--seminar-performer_id").setCustomValidity("Invalid field.");
     else document.getElementById("input--seminar-performer_id").setCustomValidity("");
