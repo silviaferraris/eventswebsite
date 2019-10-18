@@ -2,7 +2,7 @@ $(document).ready(function()
 {
     let scrollPoint;
 
-    /*$("#navbar").load("/navbar.html", () =>
+    $("#navbar").load("/navbar.html", () =>
     {
         $(document).scroll(function ()
         {
@@ -26,13 +26,7 @@ $(document).ready(function()
 
             }
         });
-    });*/
-
-    fetch('/navbar.html').then(async response =>
-    {
-       $("#navbar").html(await response.text());
     });
-
 
 
     $("#footer").load("/footer.html");
