@@ -219,7 +219,7 @@ async function sendAddSeminarForm()
     if(!validPerformer)document.getElementById("input--seminar-performer_id").setCustomValidity("Invalid field.");
     else document.getElementById("input--seminar-performer_id").setCustomValidity("");
 
-    let eventIds = $("#input--seminar-event_ids").val().split(',');
+    let eventIds = splitIDs($("#input--seminar-event_ids").val());
     let validEventIds = true;
     for(let eventId of eventIds)
     {
@@ -260,7 +260,7 @@ async function sendAddSeminarForm()
             showSuccessMessage("The seminar was successfully saved");
             hideForm();
         }
-        else if(response.status === 500)showErrorMessage("An internal server error has occurred. Please retry later.")
+        else if(response.status === 500)showErrorMessage("An internal server error has occurred. Please retry later.");
         else showErrorMessage("An error has occurred. Please retry.");
     });
 }
