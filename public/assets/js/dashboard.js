@@ -216,10 +216,24 @@ async function sendAddSeminarForm()
 
     let performerId = $("#input--event-performer_id").val();
     let validPerformer = await isValidPerformer(performerId);
-    if(!validPerformer)document.getElementById("input--event-performer_id").setCustomValidity("Invalid field.");
-    else document.getElementById("input--event-performer_id").setCustomValidity("");
+    if(!validPerformer)document.getElementById("input--seminar-performer_id").setCustomValidity("Invalid field.");
+    else document.getElementById("input--seminar-performer_id").setCustomValidity("");
 
-    if(!(valid && validId && validPerformer))return;
+    let eventIds = $("#input--seminar-event_ids").val().split(',');
+    let validEventIds = true;
+    for(let eventId of eventIds)
+    {
+        let response = await fetch(`/admin/event/check_id?event_id=${eventId}`);
+        if(!(await response.json()).exist)
+        {
+            validEventIds = false;
+            break;
+        }
+    }
+    if(!validEventIds)document.getElementById("input--seminar-event_ids").setCustomValidity("Invalid field.");
+    else document.getElementById("input--seminar-event_ids").setCustomValidity("");
+
+    if(!(valid && validId && validPerformer && validEventIds))return;
 
     let coverImage = await readFileAsync(document.getElementById("input--seminar-cover-image").files[0]);
 
