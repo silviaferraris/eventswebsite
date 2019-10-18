@@ -73,7 +73,7 @@ h2{
 }*/
 
 :root {
-  --navbar-height: 100px;
+  --navbar-height: 50px;
 }
 
 .navbar{
@@ -124,13 +124,11 @@ h2{
 }
 
 .nav-item img{
-  display: block;
-  width: 40px;
-  height: 40px;
+  display: none;
 }
 
 .nav-item span{
-  font-size: 12px;
+  font-size: 15px;
 }
 
 .navbar.small-fixed .nav-item img{
@@ -151,7 +149,7 @@ h2{
 
 .navbar.small-fixed{
   position: fixed;
-  --navbar-height: 60px;
+  --navbar-height: 50px;
   max-height: var(--navbar-height);
   min-height: var(--navbar-height);
   top: 0;
@@ -264,7 +262,7 @@ h2{
   padding: 15px;
   max-width: 100%;
 }
-.login-form h1{
+.login-form h3{
   text-align: center;
 }
 .login-form label{
@@ -352,5 +350,104 @@ footer .main-footer{	padding: 20px 0;	background: #252525;}
 .footer-copyright p {	color: #969696;	margin: 2px 0 0;}
 .footer-top{	background: #252525;	padding-bottom: 30px;	margin-bottom: 30px;	border-bottom: 3px solid #222;}
 
+@media (max-width: 900px) {
+  footer .main-footer{
+
+  }
+}
+
+.bg-overlay .container {
+  position: relative;
+  z-index: 1;
+}
 
 
+/* Countdown
+================================================== */
+
+.countdown > div {
+  display: inline-block;
+  margin: 0 40px;
+  text-align: center;
+}
+.countdown div > span {
+  line-height: 100%;
+  font-size: 62px;
+  font-weight: 700;
+}
+
+.countdown > div.counter-day {
+  color: mediumspringgreen;
+}
+.countdown > div.counter-hour {
+  color: lavenderblush;
+}
+.countdown > div.counter-minute {
+  color: skyblue;
+}
+.countdown > div.counter-second {
+  color: mediumpurple;
+}
+.countdown.bg-style > div.counter-day .days {
+  background: mediumspringgreen;
+}
+.countdown.bg-style > div.counter-day .text {
+  color: mediumspringgreen;
+}
+.countdown.bg-style > div.counter-hour .hours {
+  background: lavenderblush;
+}
+.countdown.bg-style > div.counter-hour .text {
+  color: lavenderblush;
+}
+.countdown.bg-style > div.counter-minute .minutes {
+  background: skyblue;
+}
+.countdown.bg-style > div.counter-hour .text {
+  color: skyblue;
+}
+.countdown.bg-style > div.counter-second .seconds {
+  background: mediumpurple;
+}
+.countdown.bg-style > div.counter-second .text {
+  color: mediumpurple;
+}
+
+
+/* Countdown col */
+
+.countdown.countdown-col{
+  border-left: 1px solid #dedede;
+  border-left: 1px solid rgba(255,255,255,0.1);
+  padding-left: 25px;
+}
+
+.countdown.countdown-col > div{
+  margin: 0 40px 0 0;
+}
+
+.countdown.countdown-col div > span {
+  font-size: 48px;
+}
+
+.countdown.countdown-col .text {
+  font-size: 20px;
+}
+/* Countdown bg */
+.countdown.bg-style > div{
+  margin: 0 30px;
+}
+.countdown.bg-style div > span {
+  font-size: 28px;
+  width: 65px;
+  height: 60px;
+  line-height: 60px;
+  border-radius: 3px;
+  margin-bottom: 15px;
+  display: block;
+  color: #fff;
+}
+.countdown.bg-style div > .text{
+  font-size: 20px;
+  text-transform: capitalize;
+}

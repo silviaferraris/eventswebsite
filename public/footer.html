@@ -1,5 +1,4 @@
 <script>
-
     $(document).ready(() =>
     {
         $(window).resize(() => correctPosition());
@@ -12,9 +11,7 @@
         let diff = footerPos === 'fixed' ? $(window).height()-footer.outerHeight() : $(window).height();
         footer.css('position', $('body').height() < diff ? "fixed" : "static").show();
     }
-
     correctPosition();
-
 </script>
 
 <footer class="footer-1">
