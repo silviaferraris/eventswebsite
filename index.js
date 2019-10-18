@@ -34,7 +34,7 @@ const PERFORMERS_TABLE = 'performers';
 const USERS_EVENTS_TABLE = "UsersEvents";
 const EVENTS_SEMINAR_TABLE = 'EventsSeminars';
 
-init();
+let EVENT_TYPES = [];
 
 app.use(session(
     {
@@ -101,14 +101,14 @@ app.post('/user/login', (req, res, next) =>
 
         if (!user)return res.status(401).send({message : info});
 
-        let redirectUrl = req.body.redirect_to ? req.body.redirect_to : '/';
+        let redirectTo = req.body.redirect_to ? req.body.redirect_to : '/';
 
         req.login(user, err =>
         {
             if (err) next(err);
             if(req.body.remember) req.session.cookie.expires = 315360000000; /*10 years*/
             else req.session.cookie.expires = undefined;
-            return res.redirect(301, redirectUrl);
+            return res.redirect(301, redirectTo);
         });
     })(req, res, next);
 });
@@ -125,9 +125,9 @@ app.get('/signup', (req, res) =>
 
 app.get('/user/logout', (req, res) =>
 {
-    let redirectUrl = req.query.redirect_to ? req.query.redirect_to : '/';
+    let redirectTo = req.query.redirect_to ? req.query.redirect_to : '/';
     req.logout();
-    res.redirect(redirectUrl);
+    res.redirect(redirectTo);
 });
 
 app.get('/user/data', (req, res) =>
@@ -206,6 +206,20 @@ app.get('/event/by_id', (req, res) =>
         console.error(cause);
         res.status(500).end();
     });
+});
+
+app.get('/event/by_type', (req, res) =>
+{
+    db(EVENTS_TABLE).select('*').where({type: req.query.type}).then(result => res.send(JSON.stringify(result))).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
+app.get('/event/types', (req, res) =>
+{
+    res.send(JSON.stringify(EVENT_TYPES));
 });
 
 app.get('/event/on_date', (req, res) =>
@@ -513,10 +527,10 @@ admin.post('/event/add_new', async (req, res) =>
 {
     let body = req.body;
 
-    if(!(body.id && body.title && body.description && body.date && body.performer_id)) return res.status(400).send("missing data");
+    if(!(body.id && body.title && body.description && body.date && body.performer_id && body.event_type)) return res.status(400).send("missing data");
     if(await isEventIdAlreadyExisting(body.id)) return res.status(400).send(`event ${id} already exist!`);
-
     if(!(await isPerformerIdAlreadyExisting(body.performer_id)))return res.status(400).send(`performer ${body.performer_id} does not exist!`);
+    if(!EVENT_TYPES.includes(body.event_type))return res.status(400).send(`invalid event type: ${body.event_type}`);
 
     let dirPath = `${EVENT_IMAGES_PATH}/event_${body.id}`;
     if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath);
@@ -548,7 +562,7 @@ admin.post('/event/add_new', async (req, res) =>
             description: body.description,
             date: body.date,
             performer_id: body.performer_id,
-            tags: body.tags,
+            event_type: body.event_type,
             has_cover_image: hasCoverImage,
             images_number: imageCount
         }
@@ -667,6 +681,11 @@ admin.get('/seminar/check_id', (req, res) =>
     checkID(SEMINARS_TABLE, req.query.seminar_id, res);
 });
 
+admin.get('/performer/check_id', (req, res) =>
+{
+    checkID(PERFORMERS_TABLE, req.query.performer_id, res);
+});
+
 //############################################# END ADMIN ROUTES ##############################################//
 
 
@@ -676,11 +695,14 @@ app.get("*", (req, res) =>
    res.status(404).end();
 });
 
-
-app.listen(port, () =>
+init().then(() =>
 {
-    console.log(`Server started on port ${port}`);
+    app.listen(port, () =>
+    {
+        console.log(`Server started on port ${port}`);
+    });
 });
+
 
 //############################################# FUNCTIONS ##############################################//
 
@@ -755,11 +777,21 @@ function parseDateForDB(date)
     return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
 }
 
-function init()
+async function init()
 {
     createFolder(EVENT_IMAGES_PATH);
     createFolder(SEMINAR_IMAGES_PATH);
     createFolder(PERFORMER_IMAGES_PATH);
+
+    try
+    {
+        let types = await db.select('pg_enum.enumlabel').from('pg_type').join('pg_enum', 'pg_enum.enumtypid', '=', 'pg_type.oid').where({'pg_type.typname':'event_type'});
+        for(let type of types) EVENT_TYPES.push(type.enumlabel);
+        Object.freeze(EVENT_TYPES);
+    } catch (e) {
+        console.error(e);
+        process.exit(-1);
+    }
 }
 
 function createFolder(path)

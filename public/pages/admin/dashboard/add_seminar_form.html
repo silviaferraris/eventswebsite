@@ -5,7 +5,7 @@
             <div class="input-group-prepend">
                 <div class="input-group-text">@</div>
             </div>
-            <input type="text" class="form-control nospace-input id-check" data-check-api="/admin/seminar/check_id?seminar_id=" id="input--seminar-id" maxlength="40" placeholder="Seminar ID" required>
+            <input type="text" class="form-control nospace-input id-check" data-check-api="/admin/seminar/check_id?seminar_id=" data-validity="on-not-exist" id="input--seminar-id" maxlength="40" placeholder="Seminar ID" required>
         </div>
         <div class="invalid-feedback">Please insert an ID.</div>
     </div>
@@ -27,7 +27,7 @@
     </div>
     <div class="form-group">
         <label for="input--seminar-performer_id" class="h6">Performer ID*</label>
-        <input type="text" class="form-control nospace-input" id="input--seminar-performer_id" placeholder="Performer ID" required>
+        <input type="text" class="form-control nospace-input id-check" data-check-api="/admin/performer/check_id?performer_id=" data-validity="on-exist" id="input--seminar-performer_id" placeholder="Performer ID" required>
         <div class="invalid-feedback">Please insert a performer ID.</div>
     </div>
     <div class="form-group">

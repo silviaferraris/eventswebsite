@@ -1,3 +1,7 @@
+<script>
+    for(let type of eventTypes) $("#input--event-type").append(`<option value="${type}">${type.charAt(0).toUpperCase()}${type.substring(1)}</option>`);
+</script>
+
 <form class="dashboard-form needs-validation" id="add-event-form" novalidate>
     <div class="form-group">
         <label for="input--event-id" class="h4">Event ID*</label>
@@ -5,7 +9,7 @@
             <div class="input-group-prepend">
                 <div class="input-group-text">@</div>
             </div>
-            <input type="text" class="form-control nospace-input id-check" data-check-api="/admin/event/check_id?event_id=" id="input--event-id" maxlength="40" placeholder="Event ID" required>
+            <input type="text" class="form-control nospace-input id-check" data-check-api="/admin/event/check_id?event_id=" data-validity="on-not-exist" id="input--event-id" maxlength="40" placeholder="Event ID" required>
         </div>
         <div class="invalid-feedback">Please insert an ID.</div>
     </div>
@@ -26,19 +30,13 @@
         <div class="invalid-feedback">Please insert a date.</div>
     </div>
     <div class="form-group">
-        <label for="input--event-tags" class="h6">Tags</label>
-        <button type="button" class="question-popover" data-trigger="focus" data-container="body" data-toggle="popover" data-placement="right" data-content="Insert the tags separated by an hashtag. (e.g. #tag1#tag2#tag3)">?</button>
-        <input type="text" class="form-control nospace-input" id="input--event-tags" placeholder="Tags">
+        <label for="input--event-type" class="h6">Type*</label>
+        <select class="form-control" id="input--event-type" required></select>
     </div>
     <div class="form-group">
         <label for="input--event-performer_id" class="h6">Performer ID*</label>
-        <input type="text" class="form-control nospace-input" id="input--event-performer_id" placeholder="Performer ID" required>
+        <input type="text" class="form-control nospace-input id-check" data-check-api="/admin/performer/check_id?performer_id=" data-validity="on-exist" id="input--event-performer_id" placeholder="Performer ID" required>
         <div class="invalid-feedback">Please insert a performer ID.</div>
-    </div>
-    <div class="form-group">
-        <label for="input--event-seminar_ids" class="h6">Seminar IDs</label>
-        <button type="button" class="question-popover" data-trigger="focus" data-container="body" data-toggle="popover" data-placement="right" data-content="Insert the seminar IDs separated by a comma. (e.g. id1,id2,id3)">?</button>
-        <input type="text" class="form-control nospace-input" id="input--event-seminar_ids" placeholder="Seminar IDs">
     </div>
     <div class="form-group">
         <label for="input--event-cover-image" class="h6">Cover image*</label>

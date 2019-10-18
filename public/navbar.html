@@ -1,12 +1,15 @@
 <script src="/assets/js/user.js"></script>
 <script>
 
-    console.log("module");
+    $("#nav-login-btn").attr('href', `/login?redirect_to=${window.location.href}`);
+    $("#nav-logout-btn").attr('href', `/user/logout?redirect_to=${window.location.href}`);
+
 
     $("#ftco-navbar").hide();
     $("#navbarDropdownMenuLink").hide();
+    $("#nav-dashboard-btn").hide();
 
-    User.userData().then(async response =>
+    fetch('/user/data').then(async response =>
     {
         if(response.status === 401) return;
 
@@ -15,18 +18,12 @@
         $("#nav-login-btn").hide();
         $("#navbarDropdownMenuLink").show();
 
-        let avatar = body.avatar;
-        let username = body.username;
-        let firstName = body.first_name;
-        let lastName = body.last_name;
-        let email = body.email;
-
-        $("#navbarDropdownMenuLink img").attr('src', `/assets/images/default-avatars/avatar${avatar}.png`);
-        $("#drop-down-avatar").attr('src', `/assets/images/default-avatars/avatar${avatar}.png`);
-        $("#navbarDropdownMenuLink span").text(username);
-        $("#drop-down-firstname-and-lastname").text(`${firstName} ${lastName}`);
-        $("#drop-down-email").text(email);
-
+        $("#navbarDropdownMenuLink img").attr('src', `/assets/images/default-avatars/avatar${body.avatar}.png`);
+        $("#drop-down-avatar").attr('src', `/assets/images/default-avatars/avatar${body.avatar}.png`);
+        $("#navbarDropdownMenuLink span").text(body.username);
+        $("#drop-down-firstname-and-lastname").text(`${body.first_name} ${body.last_name}`);
+        $("#drop-down-email").text(body.email);
+        if(body.admin)$("#nav-dashboard-btn").show();
 
     }).finally(() => {
 
@@ -101,7 +98,8 @@
                         </div>
                     </li>
                     <li class="dropdown-item"><a href="#"><img src="/assets/images/menu-icons/cart-icon.png" width="24" height="24"><span style="padding-left: 10px">My Cart</span></a></li>
-                    <li class="dropdown-item"><a href="/logout"><img src="/assets/images/menu-icons/logout-icon.png" width="24" height="24"><span style="padding-left: 10px">Logout</span></a></li>
+                    <li class="dropdown-item"><a href="/user/logout" id="nav-logout-btn"><img src="/assets/images/menu-icons/logout-icon.png" width="24" height="24"><span style="padding-left: 10px">Logout</span></a></li>
+                    <li class="dropdown-item"><a href="/admin/dashboard" id="nav-dashboard-btn"><img src="/assets/images/menu-icons/settings-icon-black.svg" width="24" height="24"><span style="padding-left: 10px">Dashboard</span></a></li>
                 </ul>
             </li>
             <!--<button class="btn btn-outline-success" type="button" onclick="location.href='/login'" id="nav-login-btn">Login / Sign up</button>-->

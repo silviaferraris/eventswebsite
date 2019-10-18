@@ -2,6 +2,8 @@ let fileID = 0;
 let imagesToUpload = new Map();
 let unsaved = false;
 
+let eventTypes;
+
 $(document).click((e) =>
 {
     if(!$(e.target).hasClass("sidebar-link"))
@@ -14,6 +16,9 @@ $(document).click((e) =>
 $(document).ready(() =>
 {
     $("#container").css('display', 'flex').hide();
+
+    fetch('/event/types').then(async types => eventTypes = await types.json()).catch(e => console.error(e));
+
     initJS();
 });
 
@@ -57,9 +62,11 @@ function initJS()
     {
         let id = $(this).val();
         let api = $(this).attr('data-check-api');
+        let validity = $(this).attr('data-validity');
         let response = await fetch(`${api}${id}`);
         if(response.status === 500)return; //TODO Add error handling
-        let validId = !(await response.json()).exist && id.length !== 0;
+        let exist = (await response.json()).exist && id.length !== 0;
+        let validId = (validity === 'on-exist' && exist) || (validity === 'on-not-exist' && !exist);
         if(!validId)
         {
             $(this)[0].setCustomValidity("Invalid field.");
@@ -136,6 +143,12 @@ function loadForm(path)
     });
 }
 
+async function isValidPerformer(performerId)
+{
+    let response = await fetch(`/admin/performer/check_id?performer_id=${performerId}`);
+    return (await response.json()).exist;
+}
+
 async function sendAddEventForm()
 {
     let form = document.getElementById("add-event-form");
@@ -145,48 +158,46 @@ async function sendAddEventForm()
 
     let id = $("#input--event-id").val();
     let response = await fetch(`/admin/event/check_id?event_id=${id}`);
-
     if(response.status === 500)return; //TODO Add error handling
-
     let validId = !(await response.json()).exist;
-
     if(!validId)document.getElementById("input--event-id").setCustomValidity("Invalid field.");
     else document.getElementById("input--event-id").setCustomValidity("");
 
+    let performerId = $("#input--event-performer_id").val();
+    let validPerformer = await isValidPerformer(performerId);
+    if(!validPerformer)document.getElementById("input--event-performer_id").setCustomValidity("Invalid field.");
+    else document.getElementById("input--event-performer_id").setCustomValidity("");
+
+    if(!(valid && validId && validPerformer))return;
+
     let coverImage = await readFileAsync(document.getElementById("input--event-cover-image").files[0]);
 
-    console.log(coverImage);
-
-    if(valid && validId)
+    let images = Array.from(imagesToUpload.values());
+    let data = {
+        id: removeSpace($("#input--event-id").val()),
+        title: $("#input--event-title").val(),
+        description: $("#input--event-description").val(),
+        date: $("#input--event-date").val(),
+        event_type: $("#input--event-type").val(),
+        performer_id: $("#input--event-performer_id").val(),
+        cover_image: coverImage,
+        images: images
+    };
+    let options = {
+        method: 'post',
+        body: JSON.stringify(data),
+        headers: {'Content-Type': 'application/json'}
+    };
+    fetch("/admin/event/add_new", options).then(response =>
     {
-        let images = Array.from(imagesToUpload.values());
-        let data = {
-            id: removeSpace($("#input--event-id").val()),
-            title: $("#input--event-title").val(),
-            description: $("#input--event-description").val(),
-            date: $("#input--event-date").val(),
-            tags: splitTags($("#input--event-tags").val()),
-            performer_id: $("#input--event-performer_id").val(),
-            seminar_ids: splitIDs($("#input--event-seminar_ids").val()),
-            cover_image: coverImage,
-            images: images
-        };
-        let options = {
-            method: 'post',
-            body: JSON.stringify(data),
-            headers: {'Content-Type': 'application/json'}
-        };
-        fetch("/admin/event/add_new", options).then(response =>
+        if(response.status === 201)
         {
-            if(response.status === 201)
-            {
-                showSuccessMessage("The event was successfully saved");
-                hideForm();
-            }
-            else if(response.status === 500)showErrorMessage("An internal server error has occurred. Please retry later.")
-            else showErrorMessage("An error has occurred. Please retry.");
-        });
-    }
+            showSuccessMessage("The event was successfully saved");
+            hideForm();
+        }
+        else if(response.status === 500)showErrorMessage("An internal server error has occurred. Please retry later.")
+        else showErrorMessage("An error has occurred. Please retry.");
+    });
 }
 
 async function sendAddSeminarForm()
@@ -198,45 +209,46 @@ async function sendAddSeminarForm()
 
     let id = $("#input--seminar-id").val();
     let response = await fetch(`/admin/seminar/check_id?seminar_id=${id}`);
-
     if(response.status === 500)return; //TODO Add error handling
-
     let validId = !(await response.json()).exist;
-
     if(!validId)document.getElementById("input--seminar-id").setCustomValidity("Invalid field.");
     else document.getElementById("input--seminar-id").setCustomValidity("");
 
+    let performerId = $("#input--event-performer_id").val();
+    let validPerformer = await isValidPerformer(performerId);
+    if(!validPerformer)document.getElementById("input--event-performer_id").setCustomValidity("Invalid field.");
+    else document.getElementById("input--event-performer_id").setCustomValidity("");
+
+    if(!(valid && validId && validPerformer))return;
+
     let coverImage = await readFileAsync(document.getElementById("input--seminar-cover-image").files[0]);
 
-    if(valid && validId)
+    let images = Array.from(imagesToUpload.values());
+    let data = {
+        id: removeSpace($("#input--seminar-id").val()),
+        title: $("#input--seminar-title").val(),
+        description: $("#input--seminar-description").val(),
+        date: $("#input--seminar-date").val(),
+        performer_id: $("#input--seminar-performer_id").val(),
+        event_ids: splitIDs($("#input--seminar-event_ids").val()),
+        cover_image: coverImage,
+        images: images
+    };
+    let options = {
+        method: 'post',
+        body: JSON.stringify(data),
+        headers: {'Content-Type': 'application/json'}
+    };
+    fetch("/admin/seminar/add_new", options).then(response =>
     {
-        let images = Array.from(imagesToUpload.values());
-        let data = {
-            id: removeSpace($("#input--seminar-id").val()),
-            title: $("#input--seminar-title").val(),
-            description: $("#input--seminar-description").val(),
-            date: $("#input--seminar-date").val(),
-            performer_id: $("#input--seminar-performer_id").val(),
-            event_ids: splitIDs($("#input--seminar-event_ids").val()),
-            cover_image: coverImage,
-            images: images
-        };
-        let options = {
-            method: 'post',
-            body: JSON.stringify(data),
-            headers: {'Content-Type': 'application/json'}
-        };
-        fetch("/admin/seminar/add_new", options).then(response =>
+        if(response.status === 201)
         {
-            if(response.status === 201)
-            {
-                showSuccessMessage("The seminar was successfully saved");
-                hideForm();
-            }
-            else if(response.status === 500)showErrorMessage("An internal server error has occurred. Please retry later.")
-            else showErrorMessage("An error has occurred. Please retry.");
-        });
-    }
+            showSuccessMessage("The seminar was successfully saved");
+            hideForm();
+        }
+        else if(response.status === 500)showErrorMessage("An internal server error has occurred. Please retry later.")
+        else showErrorMessage("An error has occurred. Please retry.");
+    });
 }
 
 function hideForm()
