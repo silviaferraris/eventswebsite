@@ -2,32 +2,39 @@ $(document).ready(function()
 {
     let scrollPoint;
 
-    $("#navbar").load("/navbar.html", () =>
+    $(".mobile-nav").load("/mobile-nav-menu.html", () =>
     {
-        $(document).scroll(function ()
+        $("header").load("/navbar-new.html", () =>
         {
-            let currentScrollPoint = $(this).scrollTop();
-
-            if(currentScrollPoint > 850)
+            $(document).scroll(function ()
             {
-                if(!$("#navbar nav").hasClass("small-fixed")) $("#navbar nav").addClass("small-fixed");
-            }
-            else
-            {
-                $(".small-fixed").removeClass("small-fixed");
-            }
+                let currentScrollPoint = $(this).scrollTop();
 
-            if(currentScrollPoint > scrollPoint) //scrolling down
-            {
+                if(currentScrollPoint > 0)
+                {
+                    if(!$(".sf-navbar").hasClass("white"))
+                    {
+                        $(".sf-navbar").addClass("white");
+                        $("header").css("position", "fixed")
+                    }
+                }
+                else
+                {
+                    $(".sf-navbar").removeClass("white");
+                    $("header").css("position", "absolute")
+                }
 
-            }
-            else if(currentScrollPoint < scrollPoint) //scrolling up
-            {
+                if(currentScrollPoint > scrollPoint) //scrolling down
+                {
 
-            }
+                }
+                else if(currentScrollPoint < scrollPoint) //scrolling up
+                {
+
+                }
+            });
         });
     });
-
 
     $("#footer").load("/footer.html");
 });
