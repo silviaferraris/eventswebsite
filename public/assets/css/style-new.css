@@ -107,16 +107,23 @@ header{
 
 .mobile-menu{
     font-family: 'gilroy-medium', serif;
+    width: 100%;
     font-weight: bold;
     font-size: 26px;
     list-style-type: none;
     text-align: center;
     padding: 0;
+    overflow-scrolling: auto;
+    overflow: auto;
 }
 
 .sf-navbar-item-mobile{
-    padding-bottom: 25px;
-    padding-top: 25px;
+    padding-bottom: 4vh;
+    padding-top: 4vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .sf-navbar-item-mobile a{
@@ -169,6 +176,9 @@ header{
 
 .sf-dropdown-toggle{
     width: fit-content;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .sf-dropdown-toggle::after{
@@ -198,10 +208,12 @@ header{
     background-color: #FFFFFF;
     list-style-type: none;
     padding: 10px 20px 10px 0;
+    transform: scale(0);
 }
 
 .sf-dropdown-menu-mobile{
     display: none;
+    width: 90vw;
     font-size: 20px;
     color: #000000;
     text-align: left;
@@ -210,11 +222,12 @@ header{
     box-shadow: 0 0 5px 0 rgba(34, 34, 34, 0.41);
     background-color: #FFFFFF;
     list-style-type: none;
-    padding: 10px 20px 10px 0;
-    width: 90vw;
+    padding: 10px 10px 10px 0;
     top: 10px;
-    left: 0;
-    margin-bottom: 10px;
+    margin-left: 5vw;
+    margin-right: 5vw;
+    margin-bottom: 20px;
+    transform: scale(0);
 }
 
 .sf-dropdown-menu-mobile .user-data-div{
@@ -229,12 +242,83 @@ header{
     padding-left: 30%;
 }
 
-.sf-dropdown-menu-mobile.show, .sf-dropdown-menu.show{
+.sf-dropdown-menu.hiding{
     display: block;
+    animation-name: dropdown-close;
+    animation-direction: normal;
+    animation-duration: 0.2s;
+    transform: scale(0);
+
+}
+
+.sf-dropdown-menu-mobile.hiding{
+    display: block;
+    animation-name: dropdown-close-mobile;
+    animation-direction: normal;
+    animation-duration: 0.2s;
+    transform: scale(0);
+}
+
+.sf-dropdown-menu.show{
+    display: block;
+
+    animation-name: dropdown-open;
+    animation-duration: .2s;
+    animation-direction: normal;
+    transform: scale(1);
+}
+
+.sf-dropdown-menu-mobile.show{
+    display: block;
+
+    animation-name: dropdown-open-mobile;
+    animation-duration: .2s;
+    animation-direction: normal;
+    transform: scale(1);
 }
 
 .sf-navbar-menu a.active, .sf-navbar-menu-mobile a.active{
     color: rgba(255, 82, 0, 0.84);
+}
+
+@keyframes dropdown-open {
+    0% {
+        transform: scale(0) rotate(90deg);
+        transform-origin: 90% 0;
+    }
+    100%{
+        transform: scale(1) rotate(0deg);
+        transform-origin: 90% 0;
+    }
+}
+
+@keyframes dropdown-close {
+    0%{
+        transform: scale(1) rotate(0deg);
+        transform-origin: 90% 0;
+    }
+    100% {
+        transform: scale(0) rotate(90deg);
+        transform-origin: 90% 0;
+    }
+}
+
+@keyframes dropdown-open-mobile {
+    0% {
+        transform: scale(0);
+    }
+    100%{
+        transform: scale(1);
+    }
+}
+
+@keyframes dropdown-close-mobile {
+    0%{
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(0);
+    }
 }
 
 @media (max-width: 860px) {
@@ -254,7 +338,7 @@ header{
     .sf-navbar-item :not(.toggle-mobile-menu):not(.logo){
         display: none;
     }
-    .sf-dropdown-toggle::after{
+    .sf-navbar .sf-dropdown-toggle::after{
         display: none;
     }
 }

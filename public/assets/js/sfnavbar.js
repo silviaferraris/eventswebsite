@@ -13,6 +13,7 @@ $(document).ready(() =>
     $(".mobile-nav-exit-btn").click(() =>
     {
         mobileMenu.removeClass("show");
+        $(".sf-dropdown-menu-mobile").removeClass("show");
     });
 
 
@@ -58,7 +59,17 @@ $(document).ready(() =>
     {
         let destId = $(this).attr('data-destination');
         if(!destId)return;
-        $(`#${destId}`).toggleClass("show");
+        let dest = $(`#${destId}`);
+        if(dest.hasClass("show"))
+        {
+            dest.addClass("hiding").removeClass("show").delay(500).queue(function () {
+                $(this).removeClass("hiding").dequeue();
+            });
+        }
+        else{
+            dest.addClass("show");
+        }
+        //dest.toggleClass("show");
         $(this).toggleClass("toggled");
         event.preventDefault();
     });
