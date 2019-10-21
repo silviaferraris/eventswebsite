@@ -217,6 +217,20 @@ app.get('/event/by_type', (req, res) =>
     });
 });
 
+app.get('/event/next_date', (req, res) =>
+{
+    db(EVENTS_TABLE).first('date').orderBy('date').then(result =>
+    {
+        let found = false;
+        if(result.date)found = true;
+        res.send(JSON.stringify({found: found, date: result.date}));
+    }).catch(cause =>
+    {
+        console.error(cause);
+        res.status(500).end();
+    });
+});
+
 app.get('/event/types', (req, res) =>
 {
     res.send(JSON.stringify(EVENT_TYPES));
@@ -741,4 +755,16 @@ async function init()
 function createFolder(path)
 {
     if(!fs.existsSync(path))shell.mkdir('-p', path);
+}
+
+function removeId(json)
+{
+    delete json.id;
+    return json;
+}
+
+function removeIds(jsonArray)
+{
+    for(let json of jsonArray)delete json.id;
+    return jsonArray;
 }

@@ -115,6 +115,11 @@ function showAddNewSeminarForm()
     showForm('/admin/dashboard/add_seminar_form.html');
 }
 
+function showAddNewPerformerForm()
+{
+    showForm('/admin/dashboard/add_performer_form.html');
+}
+
 function showForm(path)
 {
     if(unsaved)
@@ -193,6 +198,7 @@ async function sendAddEventForm()
         if(response.status === 201)
         {
             showSuccessMessage("The event was successfully saved");
+            unsaved = false;
             hideForm();
         }
         else if(response.status === 500)showErrorMessage("An internal server error has occurred. Please retry later.")
@@ -258,9 +264,53 @@ async function sendAddSeminarForm()
         if(response.status === 201)
         {
             showSuccessMessage("The seminar was successfully saved");
+            unsaved = false;
             hideForm();
         }
         else if(response.status === 500)showErrorMessage("An internal server error has occurred. Please retry later.");
+        else showErrorMessage("An error has occurred. Please retry.");
+    });
+}
+
+async function sendAddPerformerForm()
+{
+    let form = document.getElementById("add-performer-form");
+
+    let valid = form.checkValidity();
+    if(!form.classList.contains('was-validated'))form.classList.add('was-validated');
+
+    let id = $("#input--performer-id").val();
+    let response = await fetch(`/admin/performer/check_id?performer_id=${id}`);
+    if(response.status === 500)return; //TODO Add error handling
+    let validId = !(await response.json()).exist;
+    if(!validId)document.getElementById("input--performer-id").setCustomValidity("Invalid field.");
+    else document.getElementById("input--performer-id").setCustomValidity("");
+
+    if(!(valid && validId))return;
+
+    let photo = await readFileAsync(document.getElementById("input--performer-photo").files[0]);
+
+    let data = {
+        id: removeSpace($("#input--performer-id").val()),
+        first_name: $("#input--performer-first-name").val(),
+        last_name: $("#input--performer-last-name").val(),
+        biography: $("#input--performer-biography").val(),
+        photo: photo
+    };
+    let options = {
+        method: 'post',
+        body: JSON.stringify(data),
+        headers: {'Content-Type': 'application/json'}
+    };
+    fetch("/admin/performer/add_new", options).then(response =>
+    {
+        if(response.status === 201)
+        {
+            showSuccessMessage("The performer was successfully saved");
+            unsaved = false;
+            hideForm();
+        }
+        else if(response.status === 500)showErrorMessage("An internal server error has occurred. Please retry later.")
         else showErrorMessage("An error has occurred. Please retry.");
     });
 }
