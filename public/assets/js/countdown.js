@@ -11,13 +11,17 @@ $(document).ready(() =>
             {
                 let date = new Date(jsonRes.date);
 
-                window.setInterval(() =>
+                if(date < new Date())setTime(thisCountdown, {days: 0, hours: 0, minutes: 0, seconds: 0});
+                else
                 {
-                    let currDate = new Date();
-                    let diffSeconds = (date - currDate)/1000;
-                    let remainTime = secondsToDHMS(diffSeconds);
-                    setTime(thisCountdown, remainTime)
-                }, 1000);
+                    window.setInterval(() =>
+                    {
+                        let currDate = new Date();
+                        let diffSeconds = (date - currDate)/1000;
+                        let remainTime = secondsToDHMS(diffSeconds);
+                        setTime(thisCountdown, remainTime)
+                    }, 1000);
+                }
             }
         })
     });
