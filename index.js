@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 const admin = express();
 const fs = require('fs');
-const shell = require('shelljs');
 const knex = require('knex');
 const bodyParser = require('body-parser');
 const passport = require('passport'), LocalStrategy = require('passport-local').Strategy;
@@ -20,12 +19,6 @@ const db = knex({
         database : 'deudf3nt0i7irb'
     }
 });
-
-const ASSETS_PATH = `${__dirname}/public/assets`;
-const STORAGE_PATH = `${__dirname}/public/storage`;
-const EVENT_IMAGES_PATH = `${STORAGE_PATH}/images/events`;
-const SEMINAR_IMAGES_PATH = `${STORAGE_PATH}/images/seminars`;
-const PERFORMER_IMAGES_PATH = `${STORAGE_PATH}/images/performers`;
 
 const USER_TABLE = 'users';
 const EVENTS_TABLE = 'events';
@@ -541,7 +534,8 @@ admin.post('/event/add_new', async (req, res) =>
 {
     let body = req.body;
 
-    if(!(body.id && body.title && body.description && body.date && body.performer_id && body.event_type)) return res.status(400).send("missing data");
+    if(!(body.id && body.title && body.description && body.date && body.performer_id && body.event_type && body.price)) return res.status(400).send("missing data");
+    if(body.price < 0)return res.status(400).send("price can't be negative!");
     if(await isEventIdAlreadyExisting(body.id)) return res.status(400).send(`event ${id} already exist!`);
     if(!(await isPerformerIdAlreadyExisting(body.performer_id)))return res.status(400).send(`performer ${body.performer_id} does not exist!`);
     if(!EVENT_TYPES.includes(body.event_type))return res.status(400).send(`invalid event type: ${body.event_type}`);
@@ -555,7 +549,8 @@ admin.post('/event/add_new', async (req, res) =>
             performer_id: body.performer_id,
             type: body.event_type,
             cover_image: body.cover_image,
-            images: body.images
+            images: body.images,
+            price: body.price
         }
     ).then(result => res.status(201).end()).catch(reason => {
         console.log(reason);
@@ -737,10 +732,6 @@ function parseDateForDB(date)
 
 async function init()
 {
-    createFolder(EVENT_IMAGES_PATH);
-    createFolder(SEMINAR_IMAGES_PATH);
-    createFolder(PERFORMER_IMAGES_PATH);
-
     try
     {
         let types = await db.select('pg_enum.enumlabel').from('pg_type').join('pg_enum', 'pg_enum.enumtypid', '=', 'pg_type.oid').where({'pg_type.typname':'event_type'});
@@ -750,11 +741,6 @@ async function init()
         console.error(e);
         process.exit(-1);
     }
-}
-
-function createFolder(path)
-{
-    if(!fs.existsSync(path))shell.mkdir('-p', path);
 }
 
 function removeId(json)

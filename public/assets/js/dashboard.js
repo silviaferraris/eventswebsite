@@ -186,7 +186,8 @@ async function sendAddEventForm()
         event_type: $("#input--event-type").val(),
         performer_id: $("#input--event-performer_id").val(),
         cover_image: coverImage,
-        images: images
+        images: images,
+        price: $("#input--event-price").val()
     };
     let options = {
         method: 'post',

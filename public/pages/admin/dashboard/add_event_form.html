@@ -39,6 +39,16 @@
         <div class="invalid-feedback">Please insert a performer ID.</div>
     </div>
     <div class="form-group">
+        <label for="input--event-price" class="h6">Price*</label>
+        <div class="id-container">
+            <div class="input-group-prepend">
+                <div class="input-group-text">€</div>
+            </div>
+            <input type="number" min="0" step="0.01" class="form-control" id="input--event-price" placeholder="Price" required>
+        </div>
+        <div class="invalid-feedback">Please insert a price.</div>
+    </div>
+    <div class="form-group">
         <label for="input--event-cover-image" class="h6">Cover image*</label>
         <div style="width: 100%;display: flex; flex-direction: row">
             <input type="file" accept="image/*" class="input-single-image" id="input--event-cover-image" required>
