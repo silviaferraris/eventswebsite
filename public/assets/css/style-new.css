@@ -496,8 +496,7 @@ body{
 }
 
 .end-of-card-list{
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin: 20px;
     display: flex;
     flex-direction: row;
     align-items: center;
