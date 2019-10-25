@@ -21,6 +21,8 @@ const db = knex({
     }
 });
 
+const hashKey = 'lavagna';
+
 const USER_TABLE = 'users';
 const EVENTS_TABLE = 'events';
 const SEMINARS_TABLE = 'seminars';
@@ -47,7 +49,7 @@ app.use(passport.session());
 passport.use(new LocalStrategy(async (username, password, done) =>
     {
 
-        let user = await db(USER_TABLE).select("*").where({username: username, password: md5(password)}).catch(reason =>
+        let user = await db(USER_TABLE).select("*").where({username: username, password: hashPassword(password)}).catch(reason =>
         {
             done(reason);
         });
@@ -122,6 +124,55 @@ app.get('/user/logout', (req, res) =>
     let redirectTo = req.query.redirect_to ? req.query.redirect_to : '/';
     req.logout();
     res.redirect(redirectTo);
+});
+
+app.get('/user/imlogged', (req, res) =>
+{
+    if(req.user)res.send(JSON.stringify({logged: true}));
+    else res.send(JSON.stringify({logged: false}));
+});
+
+app.get('/user/check_username', async (req,res) =>
+{
+    res.send(JSON.stringify({exist: await isUsernameAlreadyExisting(req.query.username)}));
+});
+
+app.post('/user/add_new', async (req, res) =>
+{
+    let body = req.body;
+
+    if(!body.birthday)body.birthday = null;
+
+    if(!(body.username && body.first_name && body.last_name && body.password && body.email)) {
+        res.status(400).send("missing data");
+        return;
+    }
+
+    if(await isUsernameAlreadyExisting(body.username)) {
+        res.status(400).send(`username ${body.username} already exist`);
+        return;
+    }
+
+    db(USER_TABLE).insert(
+        {
+            username: body.username,
+            email: body.email,
+            password: hashPassword(body.password),
+            first_name: body.first_name,
+            last_name: body.last_name,
+            birthday: body.birthday,
+            avatar: 1+Math.floor(Math.random() * 8)
+        }
+    ).then(result =>
+    {
+        res.redirect("/login");
+    }).catch(reason =>
+    {
+        console.log(reason);
+        res.status(500);
+        res.send(JSON.stringify(reason));
+    });
+
 });
 
 app.get('/user/data', (req, res) =>
@@ -478,54 +529,6 @@ app.get('/performer/of_event', (req, res) =>
     });
 });
 
-app.get('/imlogged', (req, res) =>
-{
-    if(req.user)res.send(JSON.stringify({logged: true}));
-    else res.send(JSON.stringify({logged: false}));
-});
-
-app.get('/check_username', async (req,res) =>
-{
-    res.send(JSON.stringify({exist: await isUsernameAlreadyExisting(req.query.username)}));
-});
-
-app.post('/register', async (req, res) =>
-{
-    let body = req.body;
-
-    if(!body.birthday)body.birthday = null;
-
-    if(!(body.username && body.first_name && body.last_name && body.password && body.email)) {
-        res.status(400).send("missing data");
-        return;
-    }
-
-    if(await isUsernameAlreadyExisting(body.username)) {
-        res.status(400).send(`username ${body.username} already exist`);
-        return;
-    }
-
-    db(USER_TABLE).insert(
-        {
-            username: body.username,
-            email: body.email,
-            password: md5(body.password),
-            first_name: body.first_name,
-            last_name: body.last_name,
-            birthday: body.birthday,
-            avatar: 1+Math.floor(Math.random() * 8)
-        }
-    ).then(result =>
-    {
-        res.redirect("/login");
-    }).catch(reason =>
-    {
-        console.log(reason);
-        res.status(500);
-        res.send(JSON.stringify(reason));
-    });
-
-});
 
 //############################################# END APP ROUTES ################################################//
 
@@ -535,7 +538,7 @@ admin.post('/event/add_new', async (req, res) =>
 {
     let body = req.body;
 
-    if(!(body.id && body.title && body.description && body.date && body.performer_id && body.event_type && body.price)) return res.status(400).send("missing data");
+    if(!(body.id && body.title && body.description && body.date && body.performer_id && body.event_type && body.price && body.location)) return res.status(400).send("missing data");
     if(body.price < 0)return res.status(400).send("price can't be negative!");
     if(await isEventIdAlreadyExisting(body.id)) return res.status(400).send(`event ${id} already exist!`);
     if(!(await isPerformerIdAlreadyExisting(body.performer_id)))return res.status(400).send(`performer ${body.performer_id} does not exist!`);
@@ -551,7 +554,8 @@ admin.post('/event/add_new', async (req, res) =>
             type: body.event_type,
             cover_image: body.cover_image,
             images: body.images,
-            price: body.price
+            price: body.price,
+            location: body.location
         }
     ).then(result => res.status(201).end()).catch(reason => {
         console.log(reason);
@@ -564,7 +568,7 @@ admin.post('/seminar/add_new', async (req, res) =>
 {
     let body = req.body;
 
-    if(!(body.id && body.title && body.description && body.date && body.performer_id && body.event_ids.length > 0)) return res.status(400).send("missing data");
+    if(!(body.id && body.title && body.description && body.date && body.performer_id && body.location && body.event_ids.length > 0)) return res.status(400).send("missing data");
     if(await isSeminarIdAlreadyExisting(body.id)) return res.status(400).send(`seminar ${id} already exist!`);
 
     if(!(await isPerformerIdAlreadyExisting(body.performer_id)))return res.status(400).send(`performer ${body.performer_id} does not exist!`);
@@ -582,7 +586,8 @@ admin.post('/seminar/add_new', async (req, res) =>
             date: body.date,
             performer_id: body.performer_id,
             cover_image: body.cover_image,
-            images: body.images
+            images: body.images,
+            location: body.location
         }
     ).then(result =>
     {
@@ -742,6 +747,11 @@ async function init()
         console.error(e);
         process.exit(-1);
     }
+}
+
+function hashPassword(password)
+{
+    return md5(`${hashKey}${md5(password)}`);
 }
 
 function removeId(json)

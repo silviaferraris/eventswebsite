@@ -15,7 +15,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="go-up-btn-icon.svg">
+   sodipodi:docname="load-more-icon.svg">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -63,7 +63,7 @@
        r="52.916668" />
     <path
        style="fill:none;stroke:#000000;stroke-width:5.29166651;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 134.18583,163.0795 105,133.89367 75.814167,163.0795"
+       d="M 75.814166,133.9205 105,163.10633 134.18583,133.9205"
        id="path4526"
        inkscape:connector-curvature="0" />
   </g>

@@ -31,6 +31,6 @@ $(document).ready(() =>
 async function isUsernameGood()
 {
     let username = document.getElementById("username-up").value;
-    let response = await fetch(`/check_username?username=${username}`);
+    let response = await fetch(`/user/check_username?username=${username}`);
     return !(await response.json()).exist;
 }

@@ -187,7 +187,8 @@ async function sendAddEventForm()
         performer_id: $("#input--event-performer_id").val(),
         cover_image: coverImage,
         images: images,
-        price: $("#input--event-price").val()
+        price: $("#input--event-price").val(),
+        location: $('#input--event-location').val()
     };
     let options = {
         method: 'post',
@@ -253,7 +254,8 @@ async function sendAddSeminarForm()
         performer_id: $("#input--seminar-performer_id").val(),
         event_ids: splitIDs($("#input--seminar-event_ids").val()),
         cover_image: coverImage,
-        images: images
+        images: images,
+        location: $('#input--seminar-location').val()
     };
     let options = {
         method: 'post',
