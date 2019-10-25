@@ -6,6 +6,7 @@ const knex = require('knex');
 const bodyParser = require('body-parser');
 const passport = require('passport'), LocalStrategy = require('passport-local').Strategy;
 const session = require("express-session");
+const md5 = require('md5');
 const port = process.env.PORT || 3000;
 const db = knex({
     client: 'pg',
@@ -46,7 +47,7 @@ app.use(passport.session());
 passport.use(new LocalStrategy(async (username, password, done) =>
     {
 
-        let user = await db(USER_TABLE).select("*").where({username: username, password: password}).catch(reason =>
+        let user = await db(USER_TABLE).select("*").where({username: username, password: md5(password)}).catch(reason =>
         {
             done(reason);
         });
@@ -508,7 +509,7 @@ app.post('/register', async (req, res) =>
         {
             username: body.username,
             email: body.email,
-            password: body.password,
+            password: md5(body.password),
             first_name: body.first_name,
             last_name: body.last_name,
             birthday: body.birthday,

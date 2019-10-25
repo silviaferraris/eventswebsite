@@ -16,6 +16,7 @@
     "express-session": "^1.16.2",
     "file-system": "^2.2.2",
     "knex": "^0.19.4",
+    "md5": "^2.2.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pg": "^7.12.1"
