@@ -23,6 +23,8 @@ const db = knex({
 
 const hashKey = 'lavagna';
 
+const _404pagePath = 'public/pages/404/404.html';
+
 const USER_TABLE = 'users';
 const EVENTS_TABLE = 'events';
 const SEMINARS_TABLE = 'seminars';
@@ -93,15 +95,22 @@ app.use(express.static("public/pages"));
 
 app.param('event_id', async (req, res, next, value) =>
 {
-    if(!await isEventIdExisting(value))return res.status(404).send(`Event ${value} does not exist!`);
+    if(!await isEventIdExisting(value))return send404Page(res);
     req.event_id = value;
     next();
 });
 
 app.param('seminar_id', async (req, res, next, value) =>
 {
-    if(!await isSeminarIdExisting(value))return res.status(404).send(`Seminar ${value} does not exist!`);
+    if(!await isSeminarIdExisting(value))return send404Page(res);
     req.seminar_id = value;
+    next();
+});
+
+app.param('performer_id', async (req, res, next, value) =>
+{
+    if(!await isPerformerIdExisting(value))return send404Page(res);
+    req.performer_id = value;
     next();
 });
 
@@ -237,56 +246,14 @@ app.get('/user/cart/clear', (req, res) =>
     db(USERS_EVENTS_TABLE).where({user_id: req.user.id}).del().then(result => res.status(204).end()).catch(cause => sendError500(res, cause));
 });
 
-app.get('/event/all', (req, res) =>
+app.get('/events/all', (req, res) =>
 {
     db(EVENTS_TABLE).select('*').then(result => res.send(JSON.stringify(result))).catch(cause => sendError500(res, cause));
 });
 
-app.get('/event/next_events/:limit(\\d+|all)', (req, res) =>
+app.get('/events/next_date', (req, res) =>
 {
-    let limit = req.params.limit  === 'all' ? Number.MAX_SAFE_INTEGER : Number.parseInt(req.params.limit);
-    db(EVENTS_TABLE).select('*').where('date', '>=', parseDateForDB(new Date())).orderBy('date').limit(limit).then(result => res.send(JSON.stringify(result))).catch(cause => sendError500(res, cause));
-});
-
-app.get('/event/:event_id', (req, res) =>
-{
-    db(EVENTS_TABLE).select('*').where({id: req.event_id}).then(result =>
-    {
-        if(result.length === 0)return res.status(404).end();
-        res.send(JSON.stringify(result[0]))
-    }).catch(cause => sendError500(res, cause));
-});
-
-app.get('/event/:event_id/images/:range(\\d+-\\d+|all)', async (req, res) =>
-{
-    let offset = req.params.range === 'all' ? 0 : Number.parseInt(req.params.range.split('-')[0]);
-    let limit = req.params.range === 'all' ? Number.MAX_SAFE_INTEGER : Number.parseInt(req.params.range.split('-')[1])+1;
-
-    db(EVENTS_IMAGES_TABLE).select('image').where({event_id: req.event_id}).orderBy('id').offset(offset).limit(limit).then(result => res.send(JSON.stringify(result))).catch(cause => sendError500(res, cause));
-});
-
-app.get('/event/:event_id/on_same_date', (req, res) =>
-{
-    db(EVENTS_TABLE).select('date').where({id: `${req.event_id}`}).then(result =>
-    {
-        if(result.length === 0)return res.send(JSON.stringify([]));
-        let date = parseDateForDB(result[0].date);
-
-        db(EVENTS_TABLE).select('*').where({date: date}).whereNot({id: req.event_id}).then(events =>
-        {
-            res.send(JSON.stringify(events));
-        }).catch(cause => sendError500(res, cause))
-    }).catch(cause => sendError500(res, cause));
-});
-
-app.get('/event/by_type', (req, res) =>
-{
-    db(EVENTS_TABLE).select('*').where({type: req.query.type}).then(result => res.send(JSON.stringify(result))).catch(cause => sendError500(res, cause));
-});
-
-app.get('/event/next_date', (req, res) =>
-{
-    db(EVENTS_TABLE).first('date').orderBy('date').then(result =>
+    db(EVENTS_TABLE).first('date').orderBy('date').where('date', '>=', parseDateForDB(new Date())).then(result =>
     {
         let found = false;
         if(result.date)found = true;
@@ -294,18 +261,23 @@ app.get('/event/next_date', (req, res) =>
     }).catch(cause => sendError500(res, cause));
 });
 
-app.get('/event/types', (req, res) =>
+app.get('/events/types', (req, res) =>
 {
     res.send(JSON.stringify(EVENT_TYPES));
 });
 
-app.get('/event/on_date', (req, res) =>
+app.get('/events/by_type', (req, res) =>
+{
+    db(EVENTS_TABLE).select('*').where({type: req.query.type}).then(result => res.send(JSON.stringify(result))).catch(cause => sendError500(res, cause));
+});
+
+app.get('/events/on_date', (req, res) =>
 {
     let date = req.query.date;
     db(EVENTS_TABLE).select('*').where({date: date}).then(result => res.send(JSON.stringify(result))).catch(cause => sendError500(res, cause));
 });
 
-app.get('/event/of_seminar', (req, res) =>
+app.get('/events/of_seminar', (req, res) =>
 {
    let seminar_id = req.query.seminar_id;
 
@@ -330,29 +302,71 @@ app.get('/event/of_seminar', (req, res) =>
    }).catch(cause => sendError500(res, cause));
 });
 
-app.get('/event/of_performer', (req, res) =>
+app.get('/events/of_performer', (req, res) =>
 {
     let performer_id = req.query.performer_id;
     db(EVENTS_TABLE).select('*').where({performer_id: performer_id}).then(result => JSON.stringify(result)).catch(cause => sendError500(res, cause));
 });
 
-app.get('/seminar/all', (req, res) =>
+app.get('/events/:event_id', (req, res) =>
+{
+    res.cookie('eveid', req.event_id);
+    sendPage(res, 'public/pages/events/event.html', 200);
+});
+
+app.get('/events/next_events/:limit(\\d+|all)', (req, res) =>
+{
+    let limit = req.params.limit  === 'all' ? Number.MAX_SAFE_INTEGER : Number.parseInt(req.params.limit);
+    db(EVENTS_TABLE).select('*').where('date', '>=', parseDateForDB(new Date())).orderBy('date').limit(limit).then(result => res.send(JSON.stringify(result))).catch(cause => sendError500(res, cause));
+});
+
+app.get('/events/:event_id/data', (req, res) =>
+{
+    db(EVENTS_TABLE).select('*').where({id: req.event_id}).then(result =>
+    {
+        if(result.length === 0)return res.status(404).end();
+        res.send(JSON.stringify(result[0]))
+    }).catch(cause => sendError500(res, cause));
+});
+
+app.get('/events/:event_id/images/:range(\\d+-\\d+|all)', async (req, res) =>
+{
+    let offset = req.params.range === 'all' ? 0 : Number.parseInt(req.params.range.split('-')[0]);
+    let limit = req.params.range === 'all' ? Number.MAX_SAFE_INTEGER : Number.parseInt(req.params.range.split('-')[1])+1;
+
+    db(EVENTS_IMAGES_TABLE).select('image').where({event_id: req.event_id}).orderBy('id').offset(offset).limit(limit).then(result => res.send(JSON.stringify(result))).catch(cause => sendError500(res, cause));
+});
+
+app.get('/events/:event_id/on_same_date', (req, res) =>
+{
+    db(EVENTS_TABLE).select('date').where({id: `${req.event_id}`}).then(result =>
+    {
+        if(result.length === 0)return res.send(JSON.stringify([]));
+        let date = parseDateForDB(result[0].date);
+
+        db(EVENTS_TABLE).select('*').where({date: date}).whereNot({id: req.event_id}).then(events =>
+        {
+            res.send(JSON.stringify(events));
+        }).catch(cause => sendError500(res, cause))
+    }).catch(cause => sendError500(res, cause));
+});
+
+app.get('/seminars/all', (req, res) =>
 {
     db(SEMINARS_TABLE).select('*').then(result => res.send(JSON.stringify(result))).catch(cause => sendError500(res, cause));
 });
 
-app.get('/seminar/by_id', (req, res) =>
+app.get('/seminars/next_date', (req, res) =>
 {
-   let seminar_id = req.query.seminar_id;
-   db(SEMINARS_TABLE).select('*').where({id: seminar_id}).then(result =>
-   {
-      if(result.length === 0)return res.status(404).end();
-      res.send(JSON.stringify(result[0]));
-   }).catch(cause => sendError500(res, cause));
+    db(SEMINARS_TABLE).first('date').orderBy('date').where('date', '>=', parseDateForDB(new Date())).then(result =>
+    {
+        let found = false;
+        if(result.date)found = true;
+        res.send(JSON.stringify({found: found, date: result.date}));
+    }).catch(cause => sendError500(res, cause));
 });
 
-
-app.get('/seminar/of_event', (req, res) =>
+app.get('/seminars/of_event', (req, res) =>
 {
     let event_id = req.query.event_id;
 
@@ -377,50 +391,67 @@ app.get('/seminar/of_event', (req, res) =>
     }).catch(cause => sendError500(res, cause));
 });
 
-app.get('/seminar/on_same_date', (req, res) =>
+app.get('/seminars/on_date', (req, res) =>
 {
-    let seminar_id = req.query.seminar_id;
+    let date = req.query.date;
+    db(SEMINARS_TABLE).select('*').where({date: date}).then(result => res.send(JSON.stringify(result))).catch(cause => sendError500(res, cause));
+});
 
-    db(SEMINARS_TABLE).select('date').where({id: seminar_id}).then(result =>
+app.get('/seminars/of_performer', (req, res) =>
+{
+    let performer_id = req.query.performer_id;
+    db(SEMINARS_TABLE).select('*').where({performer_id: performer_id}).then(result => JSON.stringify(result)).catch(cause => sendError500(res, cause));
+});
+
+app.get('/seminars/:seminar_id/on_same_date', (req, res) =>
+{
+    db(SEMINARS_TABLE).select('date').where({id: req.seminar_id}).then(result =>
     {
         if(result.length === 0)return res.send(JSON.stringify([]));
         let date = parseDateForDB(result[0].date);
 
-        db(SEMINARS_TABLE).select('*').where({date: date}).whereNot({id: seminar_id}).then(events =>
+        db(SEMINARS_TABLE).select('*').where({date: date}).whereNot({id: req.seminar_id}).then(events =>
         {
             res.send(JSON.stringify(events));
         }).catch(cause => sendError500(res, cause))
     }).catch(cause => sendError500(res, cause));
 });
 
-app.get('/seminar/on_date', (req, res) =>
+app.get('/seminars/next_seminars/:limit(\\d+|all)', (req, res) =>
 {
-    let date = req.query.date;
-    db(SEMINARS_TABLE).select('*').where({date: date}).then(result => res.send(JSON.stringify(result))).catch(cause => sendError500(res, cause));
+    let limit = req.params.limit  === 'all' ? Number.MAX_SAFE_INTEGER : Number.parseInt(req.params.limit);
+    db(SEMINARS_TABLE).select('*').where('date', '>=', parseDateForDB(new Date())).orderBy('date').limit(limit).then(result => res.send(JSON.stringify(result))).catch(cause => sendError500(res, cause));
 });
 
-app.get('/seminar/of_performer', (req, res) =>
+app.get('/seminars/:seminar_id', (req, res) =>
 {
-    let performer_id = req.query.performer_id;
-    db(SEMINARS_TABLE).select('*').where({performer_id: performer_id}).then(result => JSON.stringify(result)).catch(cause => sendError500(res, cause));
+    res.cookie('semid', req.seminar_id);
+    sendPage(res, 'public/pages/seminars/seminar.html', 200);
 });
 
-app.get('/performer/all', (req, res) =>
+app.get('/seminars/:seminar_id/data', (req, res) =>
+{
+    db(SEMINARS_TABLE).select('*').where({id: req.seminar_id}).then(result =>
+    {
+        if(result.length === 0)return res.status(404).end();
+        res.send(JSON.stringify(result[0]));
+    }).catch(cause => sendError500(res, cause));
+});
+
+app.get('/seminars/:seminar_id/images/:range(\\d+-\\d+|all)', async (req, res) =>
+{
+    let offset = req.params.range === 'all' ? 0 : Number.parseInt(req.params.range.split('-')[0]);
+    let limit = req.params.range === 'all' ? Number.MAX_SAFE_INTEGER : Number.parseInt(req.params.range.split('-')[1])+1;
+
+    db(SEMINARS_IMAGES_TABLE).select('image').where({seminar_id: req.seminar_id}).orderBy('id').offset(offset).limit(limit).then(result => res.send(JSON.stringify(result))).catch(cause => sendError500(res, cause));
+});
+
+app.get('/performers/all', (req, res) =>
 {
     db(PERFORMERS_TABLE).select('*').then(result => res.send(JSON.stringify(result))).catch(cause => sendError500(res, cause));
 });
 
-app.get('/performer/by_id', (req, res) =>
-{
-    let performer_id = req.query.performer_id;
-    db(PERFORMERS_TABLE).select('*').where({id: performer_id}).then(result =>
-    {
-        if(result.length === 0)return res.status(404).end();
-        res.send(JSON.stringify(result[0]));
-    }).catch(cause => sendError500(res, cause))
-});
-
-app.get('/performer/of_seminar', (req, res) =>
+app.get('/performers/of_seminar', (req, res) =>
 {
     let seminar_id = req.query.seminar_id;
     db(SEMINARS_TABLE).select('performer_id').where({id: seminar_id}).then(result =>
@@ -435,7 +466,7 @@ app.get('/performer/of_seminar', (req, res) =>
     }).catch(cause => sendError500(res, cause));
 });
 
-app.get('/performer/of_event', (req, res) =>
+app.get('/performers/of_event', (req, res) =>
 {
     let event_id = req.query.event_id;
     db(EVENTS_TABLE).select('performer_id').where({id: event_id}).then(result =>
@@ -454,6 +485,21 @@ app.get('/performer/of_event', (req, res) =>
         console.error(cause);
         res.status(500).end();
     });
+});
+
+app.get('/performers/:performer_id', (res, req) =>
+{
+    res.cookie('perid', req.performer_id);
+    sendPage(res, 'public/pages/performers/performer.html', 200);
+});
+
+app.get('/performers/:performer_id/data', (req, res) =>
+{
+    db(PERFORMERS_TABLE).select('*').where({id: req.performer_id}).then(result =>
+    {
+        if(result.length === 0)return res.status(404).end();
+        res.send(JSON.stringify(result[0]));
+    }).catch(cause => sendError500(res, cause))
 });
 
 
@@ -590,7 +636,7 @@ admin.get('/performer/check_id', (req, res) =>
 
 app.get("*", (req, res) =>
 {
-   res.status(404).end();
+   send404Page(res);
 });
 
 init().then(() =>
@@ -613,6 +659,12 @@ async function isUsernameAlreadyExisting(username)
 {
     let result = await db(USER_TABLE).select("*").where({username: username});
     return !(result.length === 0);
+}
+
+function send404Page(response)
+{
+    if(!fs.existsSync(_404pagePath))response.status(404).end();
+    else sendPage(response, _404pagePath, 404);
 }
 
 function sendError500(response, cause) {
@@ -655,12 +707,17 @@ function disablePageCache(res)
     res.setHeader("Expires", "0");
 }
 
-function sendPage(res, pagePath)
+function sendPage(res, pagePath, status)
 {
+    if(!fs.existsSync(pagePath))
+    {
+        send404Page(res);
+        return;
+    }
     fs.readFile(pagePath, (err, data) =>
     {
         if(err)return res.status(500).end();
-        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.writeHead(status, {'Content-Type': 'text/html'});
         res.write(data);
         res.end();
     });
@@ -671,7 +728,7 @@ function redirectIfLogged(req, res, redirectTo, elsePath)
     disablePageCache(res);
     if(!elsePath.startsWith('/'))elsePath = `/${elsePath}`;
     if(req.user)return res.redirect(301, redirectTo);
-    sendPage(res, `${__dirname}${elsePath}`);
+    sendPage(res, `${__dirname}${elsePath}`, 200);
 }
 
 function parseDateForDB(date)

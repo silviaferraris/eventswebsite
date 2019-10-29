@@ -13,18 +13,31 @@ class Event
     {
         return new Promise((resolve, reject) =>
         {
-            util.fetch200(`/event/all`).then(async response =>
+            util.fetch200(`/events/all`).then(async response =>
             {
                 resolve(await util.responseToObjArray(response, Event));
             }).catch(cause => reject(cause));
         });
     }
 
+    static getNextEvents(limit)
+    {
+        return new Promise((resolve, reject) =>
+        {
+            if(!(/\d+|all/.test(limit)))return reject(new Error("limit format error!"));
+
+            util.fetch200(`/events/next_events/${limit}`).then(async response =>
+            {
+                resolve(await util.responseToObjArray(response, Event));
+            }).catch(cause => reject(cause));
+        })
+    }
+
     static getEventsOnDate(date)
     {
         return new Promise((resolve, reject) =>
         {
-            util.fetch200(`/event/on_date?date=${date}`).then(async response =>
+            util.fetch200(`/events/on_date?date=${date}`).then(async response =>
             {
                 resolve(await util.responseToObjArray(response, Event));
             }).catch(cause => reject(cause));
@@ -38,7 +51,7 @@ class Event
             if(this.data)resolve(this.data);
             else
             {
-                util.fetch200(`/event/by_id?event_id=${this._eventId}`).then(async response =>
+                util.fetch200(`/events/${this._eventId}/data`).then(async response =>
                 {
                     this.data = await response.json();
                     resolve(this.data);
@@ -49,11 +62,24 @@ class Event
         }));
     };
 
+    getImages(range)
+    {
+        return new Promise((resolve, reject) =>
+        {
+            if(!/\d+-\d+|all/.test(range))return reject(new Error("range format error!"));
+
+            util.fetch200(`/events/${this._eventId}/images/${range}`).then(async response =>
+            {
+                resolve(await response.json());
+            }).catch(cause => reject(cause));
+        });
+    }
+
     getEventsOnSameDate()
     {
         return new Promise(((resolve, reject) =>
         {
-            util.fetch200(`/event/on_same_date?event_id=${this._eventId}`).then(async response =>
+            util.fetch200(`/events/${this._eventId}/on_same_date`).then(async response =>
             {
                 resolve(await util.responseToObjArray(response, Event));
             }).catch(cause => reject(cause));
@@ -64,7 +90,7 @@ class Event
     {
         return new Promise(((resolve, reject) =>
         {
-            util.fetch200(`/seminar/of_event?event_id=${this._eventId}`).then(async response =>
+            util.fetch200(`/seminars/of_event?event_id=${this._eventId}`).then(async response =>
             {
                 resolve(await util.responseToObjArray(response, Seminar));
             }).catch(cause => reject(cause));
@@ -75,7 +101,7 @@ class Event
     {
         return new Promise(((resolve, reject) =>
         {
-            util.fetch200(`/performer/of_event?event_id=${this._eventId}`).then(async response =>
+            util.fetch200(`/performers/of_event?event_id=${this._eventId}`).then(async response =>
             {
                 resolve(await util.responseToObj(response, Performer));
             }).catch(cause => reject(cause));
@@ -97,6 +123,11 @@ class Event
         if(this.data)return this.data.description;
     }
 
+    get coverImage()
+    {
+        if(this.data)return this.data.cover_image;
+    }
+
     get performerId()
     {
         if(this.data)return this.data.performer_id;
@@ -107,24 +138,24 @@ class Event
         if(this.data) return new Date(this.data.date);
     }
 
-    get hasCoverImage()
-    {
-        if(this.data) return this.data.has_cover_image;
-    }
-
     get imagesNumber()
     {
         if(this.data) return this.data.images_number;
     }
 
-    get seminarIds()
+    get price()
     {
-        if(this.data) return this.data.seminar_ids;
+        if(this.data) return this.data.price;
     }
 
-    get tags()
+    get location()
     {
-        if(this.data) return this.data.tags;
+        if(this.data) return this.data.location;
+    }
+
+    get type()
+    {
+        if(this.data) return this.data.type;
     }
 }
 

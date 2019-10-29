@@ -13,18 +13,31 @@ class Seminar
     {
         return new Promise((resolve, reject) =>
         {
-            util.fetch200(`/seminar/all`).then(async response =>
+            util.fetch200(`/seminars/all`).then(async response =>
             {
                 resolve(await util.responseToObjArray(response, Seminar));
             }).catch(cause => reject(cause));
         });
     }
 
+    static getNextSeminars(limit)
+    {
+        return new Promise((resolve, reject) =>
+        {
+            if(!(/\d+|all/.test(limit)))return reject(new Error("limit format error!"));
+
+            util.fetch200(`/seminars/next_seminars/${limit}`).then(async response =>
+            {
+                resolve(await util.responseToObjArray(response, Seminar));
+            }).catch(cause => reject(cause));
+        })
+    }
+
     static getSeminarOnDate(date)
     {
         return new Promise((resolve, reject) =>
         {
-            util.fetch200(`/seminar/on_date?date=${date}`).then(async response =>
+            util.fetch200(`/seminars/on_date?date=${date}`).then(async response =>
             {
                 resolve(await util.responseToObjArray(response, Seminar));
             }).catch(cause => reject(cause));
@@ -38,7 +51,7 @@ class Seminar
             if(this.data)resolve(this.data);
             else
             {
-                util.fetch200(`/seminar/by_id?seminar_id=${this._seminarId}`).then(async response =>
+                util.fetch200(`/seminars/${this._seminarId}/data`).then(async response =>
                 {
                     this.data = await response.json();
                     resolve(this.data);
@@ -49,12 +62,24 @@ class Seminar
         }));
     }
 
+    getImages(range)
+    {
+        return new Promise((resolve, reject) =>
+        {
+            if(!/\d+-\d+|all/.test(range))return reject(new Error("range format error!"));
+
+            util.fetch200(`/seminars/${this._seminarId}/images/${range}`).then(async response =>
+            {
+                resolve(await response.json());
+            }).catch(cause => reject(cause));
+        });
+    }
 
     getSeminarsOnSameDate()
     {
         return new Promise(((resolve, reject) =>
         {
-            util.fetch200(`/seminar/on_same_date?seminar_id=${this._seminarId}`).then(async response =>
+            util.fetch200(`/seminars/${this._seminarId}/on_same_date`).then(async response =>
             {
                 resolve(await util.responseToObjArray(response, Seminar));
             }).catch(cause => reject(cause));
@@ -65,7 +90,7 @@ class Seminar
     {
         return new Promise(((resolve, reject) =>
         {
-            util.fetch200(`/event/of_seminar?seminar_id=${this._seminarId}`).then(async response =>
+            util.fetch200(`/events/of_seminar?seminar_id=${this._seminarId}`).then(async response =>
             {
                 resolve(await util.responseToObjArray(response, Event));
             }).catch(cause => reject(cause));
@@ -76,7 +101,7 @@ class Seminar
     {
         return new Promise(((resolve, reject) =>
         {
-            util.fetch200(`/performer/of_seminar?seminar_id=${this._seminarId}`).then(async response =>
+            util.fetch200(`/performers/of_seminar?seminar_id=${this._seminarId}`).then(async response =>
             {
                 resolve(await util.responseToObj(response, Performer));
             }).catch(cause => reject(cause));
@@ -108,9 +133,9 @@ class Seminar
         if(this.data) return new Date(this.data.date);
     }
 
-    get hasCoverImage()
+    get coverImage()
     {
-        if(this.data) return this.data.has_cover_image;
+        if(this.data) return this.data.cover_image;
     }
 
     get imagesNumber()
@@ -118,9 +143,9 @@ class Seminar
         if(this.data) return this.data.images_number;
     }
 
-    get eventIds()
+    get location()
     {
-        if(this.data) return this.data.event_ids;
+        if(this.data) return this.data.location;
     }
 }
 

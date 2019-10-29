@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Page not found</title>
+
+    <style>
+
+        @font-face {
+            font-family: 'gilroy-medium';
+            src: url('/assets/font/gilroy-medium.woff2') format('woff2'),
+            url('/assets/font/gilroy-medium.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        .container{
+            display: flex;
+            padding-top: 5rem;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .status-container{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 25vw;
+            width: 25vw;
+        }
+        .animated-bg{
+            position: absolute;
+            height: 19vw;
+            width: 19vw;
+            border-radius: 25vw;
+            border: 0.5vw solid rgba(0, 123, 255, 0.4);
+            animation: bg-anim 1s infinite cubic-bezier(.42,0,.58,1);
+        }
+        .status{
+            position: absolute;
+            height: 20vw;
+            line-height: 20vw;
+            width: 20vw;
+            background-color: #007bff;
+            border-radius: 20vw;
+            text-align: center;
+            vertical-align: middle;
+            color: #FFFFFF;
+            font-family: 'gilroy-medium', serif;
+            font-size: 9vw;
+        }
+        .text{
+            padding-top: 3rem;
+            font-family: 'gilroy-medium', serif;
+            letter-spacing: 1px;
+            font-size: 2.5vw;
+        }
+        .link{
+            padding-top: 1rem;
+            font-family: 'menlo', serif;
+            font-size: 2.5vw;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .link:hover{
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        @keyframes bg-anim {
+            100%{
+                width: 23vw;
+                height: 23vw;
+                opacity: 0;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <div class="status-container">
+            <span class="animated-bg"></span>
+            <span class="status">404</span>
+        </div>
+        <span class="text">Oh no! We could not find the page you are looking for :(</span>
+        <a class="link" href="/"><&#x2f;Take me back></a>
+    </div>
+</body>
+</html>

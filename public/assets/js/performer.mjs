@@ -13,7 +13,7 @@ class Performer
     {
         return new Promise((resolve, reject) =>
         {
-            util.fetch200(`/performer/all`).then(async response =>
+            util.fetch200(`/performers/all`).then(async response =>
             {
                 resolve(await util.responseToObjArray(response, Performer));
             }).catch(cause => reject(cause));
@@ -27,7 +27,7 @@ class Performer
             if(this.data)resolve(this.data);
             else
             {
-                util.fetch200(`/performer/by_id?performer_id=${this._performerId}`).then(async response =>
+                util.fetch200(`/performers/${this._performerId}/data`).then(async response =>
                 {
                     this.data = await response.json();
                     resolve(this.data);
@@ -42,7 +42,7 @@ class Performer
     {
         return new Promise(((resolve, reject) =>
         {
-            util.fetch200(`/event/of_performer?performer_id=${this._performerId}`).then(async response =>
+            util.fetch200(`/events/of_performer?performer_id=${this._performerId}`).then(async response =>
             {
                 resolve(await util.responseToObjArray(response, Event));
             }).catch(cause => reject(cause));
@@ -53,7 +53,7 @@ class Performer
     {
         return new Promise(((resolve, reject) =>
         {
-            util.fetch200(`/seminar/of_performer?performer_id=${this._performerId}`).then(async response =>
+            util.fetch200(`/seminars/of_performer?performer_id=${this._performerId}`).then(async response =>
             {
                 resolve(await util.responseToObjArray(response, Seminar));
             }).catch(cause => reject(cause));
@@ -80,14 +80,9 @@ class Performer
         if(this.data)return this.data.biography;
     }
 
-    get eventIds()
+    get photo()
     {
-        if(this.data)return this.data.event_ids;
-    }
-
-    get seminarIds()
-    {
-        if(this.data)return this.data.seminar_ids;
+        if(this.data)return this.data.photo;
     }
 }
 
