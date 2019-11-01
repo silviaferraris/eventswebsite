@@ -1,10 +1,12 @@
 $(document).ready(() =>
 {
     let mobileMenu = $(".mobile-nav");
+    let mobileView = $(window).width() <= 890;
 
     $(window).resize(function ()
     {
-        if($(this).width() > 890)
+        mobileView = ($(this).width() <= 890);
+        if(!mobileView)
         {
             if(mobileMenu.hasClass("show"))
             {
@@ -40,7 +42,7 @@ $(document).ready(() =>
     });
 
 
-    $(".navbarDropdownMenuLink").hide();
+    $(".user-menu").hide();
     $("#nav-dashboard-btn").hide();
     $(".login-btn").hide();
 
@@ -55,7 +57,7 @@ $(document).ready(() =>
         let body = await response.json();
 
         $(".login-btn").hide();
-        $(".navbarDropdownMenuLink").show();
+        $(".user-menu").show();
 
         $(".navbarDropdownMenuLink img").attr('src', `/assets/images/default-avatars/avatar${body.avatar}.png`);
         $(".drop-down-avatar").attr('src', `/assets/images/default-avatars/avatar${body.avatar}.png`);

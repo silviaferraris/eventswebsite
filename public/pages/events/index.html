@@ -57,7 +57,34 @@
 
                 event.preventDefault();
             });
+
+            $('.card-buy').on('click', function ()
+            {
+                let priceElement = $(this).parent().find($('.card-price'));
+                let price = priceElement.text();
+                let btnY = priceElement.offset().top - $(window).scrollTop();
+                let btnX = priceElement.offset().left - $(window).scrollLeft();
+
+                let bubble = $(`<div class="bubble"><span>${price}</span></div>`);
+                bubble.css('top', btnY);
+                bubble.css('left', btnX);
+
+                $('body').append(bubble);
+
+                moveBubbleToCart(bubble);
+            })
         });
+
+        async function moveBubbleToCart(bubble)
+        {
+            let toX = bubble.offset().left -  $('.sf-navbar .navbar-cart-icon').offset().left;
+            let toY = bubble.offset().top - $('.sf-navbar .navbar-cart-icon').offset().top;
+
+            bubble.animate({left: `-=${toX}`, top: `-=${toY}`}, 1000, () =>
+            {
+                bubble.animate({opacity: 0}, 300, () => bubble.remove());
+            });
+        }
 
         function loadMoreEvents()
         {
@@ -95,6 +122,29 @@
         }
     </script>
 
+    <style>
+
+        .bubble{
+            position: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 35px;
+            height: 35px;
+            border-radius: 30px;
+            background-color: #2ECC40;
+            z-index: 1030;
+        }
+        .bubble span{
+            display: table-cell;
+            color: white;
+            text-align: center;
+            vertical-align: middle;
+            font-family: 'gilroy-medium', serif;
+            font-size: 16px;
+        }
+
+    </style>
 
 </head>
 <body>
@@ -107,7 +157,6 @@
         <span style="color: #FFF8E1">EVENTS</span>
     </div>
 </div>
-
 
 
 <div class="page-container">
@@ -144,7 +193,24 @@
     <!-- Banner content end -->
 
     <div class="card-list">
-        <div class="event-card"></div>
+        <div class="event-card">
+            <img class="cover-image" src="https://source.unsplash.com/random/?milano">
+            <div class="card-bottom">
+                <h1 class="card-title">Event Title</h1>
+                <h4 class="card-performer">Francesco Ghianda</h4>
+                <a class="card-open">More info</a>
+                <div class="card-price-buy">
+                    <span class="card-price">12$</span>
+                    <a class="card-buy">Buy</a>
+                </div>
+            </div>
+            <div class="card-description-container">
+                <span>i</span>
+                <p class="card-description">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+            </div>
+        </div>
         <div class="event-card"></div>
         <div class="event-card"></div>
         <div class="event-card"></div>
