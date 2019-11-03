@@ -65,7 +65,7 @@ header{
 }
 
 .sf-navbar-item a:hover{
-    color: rgba(255, 156, 222, 0.84);
+    color: rgba(255, 82, 0, 1);
     cursor: pointer;
     text-decoration: none;
 }
