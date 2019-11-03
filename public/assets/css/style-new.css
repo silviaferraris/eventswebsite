@@ -65,7 +65,7 @@ header{
 }
 
 .sf-navbar-item a:hover{
-    color: rgba(255, 82, 0, 0.84);
+    color: rgba(255, 156, 222, 0.84);
     cursor: pointer;
     text-decoration: none;
 }
@@ -1411,4 +1411,79 @@ h2{
 .countdown.bg-style div > .text{
     font-size: 20px;
     text-transform: capitalize;
+}
+
+/* performers */
+
+.perf-container
+{
+    width: 1200px;
+    height: 400px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.perf-container .box
+{
+    position: relative;
+    width: 280px;
+    height: 400px;
+    background: #fff;
+    transition: 0.5s;
+    overflow: hidden;
+}
+
+.perf-container .box img
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.perf-container .box:before
+{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: #FFF;
+    z-index:1;
+    transition: 0.5s;
+
+}
+
+.perf-container:hover .box:before
+{
+    top:0;
+}
+
+.perf-container .box:after
+{
+    content: '';
+    position: absolute;
+    bottom: -100%;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background: #FFF;
+    z-index:1;
+    transition: 0.5s;
+}
+.perf-container:hover .box:after
+{
+    bottom:0;
+}
+
+.perf-container .box:hover:before
+{
+    top:-100%;
+}
+
+.perf-container .box:hover:after
+{
+    bottom:-100%;
 }
