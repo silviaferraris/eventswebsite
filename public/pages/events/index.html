@@ -6,161 +6,33 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800,300" rel='stylesheet' type='text/css'>
-
     <link rel="stylesheet" href="/assets/css/style-new.css">
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
     <script src="/assets/js/navbar_and_footer_loader.js"></script>
     <script src="/assets/js/typewriter.js"></script>
 
     <script src="/assets/js/countdown.js"></script>
-
-    <script>
-
-
-        $(document).ready(() =>
-        {
-            let lastScroll;
-            let goUpBtn = $(".go-up-button");
-            goUpBtn.hide();
-
-            $(document).scroll(function ()
-            {
-                if($(window).width() < 990)
-                {
-                    console.log("mob");
-                    if(lastScroll > $(this).scrollTop() && $(this).scrollTop() > 1000) goUpBtn.fadeIn(400);
-                    else if(lastScroll < $(this).scrollTop() || $(this).scrollTop() <= 1000) goUpBtn.fadeOut(400);
-                }
-                else
-                {
-                    console.log("desk");
-                    if($(this).scrollTop() > 1000) goUpBtn.fadeIn(400);
-                    else goUpBtn.fadeOut(400);
-                }
-
-                lastScroll = $(this).scrollTop();
-            });
-
-            goUpBtn.on('click', function (event)
-            {
-                $("html,body").animate({
-                    scrollTop: $('html,body').offset().top
-                }, 'slow');
-
-                event.preventDefault();
-            });
-
-            $('.card-buy').on('click', function ()
-            {
-                let priceElement = $(this).parent().find($('.card-price'));
-                let price = priceElement.text();
-                let btnY = priceElement.offset().top - $(window).scrollTop();
-                let btnX = priceElement.offset().left - $(window).scrollLeft();
-
-                let bubble = $(`<div class="bubble"><span>${price}</span></div>`);
-                bubble.css('top', btnY);
-                bubble.css('left', btnX);
-
-                $('body').append(bubble);
-
-                moveBubbleToCart(bubble);
-            })
-        });
-
-        async function moveBubbleToCart(bubble)
-        {
-            let toX = bubble.offset().left -  $('.sf-navbar .navbar-cart-icon').offset().left;
-            let toY = bubble.offset().top - $('.sf-navbar .navbar-cart-icon').offset().top;
-
-            bubble.animate({left: `-=${toX}`, top: `-=${toY}`}, 1000, () =>
-            {
-                bubble.animate({opacity: 0}, 300, () => bubble.remove());
-            });
-        }
-
-        function loadMoreEvents()
-        {
-            let eventCards = [];
-            for(let i = 0; i < 6; i++)
-            {
-                let card = $('<div class="event-card"></div>').hide();
-                eventCards.push(card);
-                $(".card-list").append(card);
-            }
-
-            const iterator = eventCards[Symbol.iterator]();
-
-            fadeInArray(iterator);
-        }
-
-        async function fadeInArray(iterator)
-        {
-            let value = iterator.next().value;
-            if(value === undefined)return;
-            return fadeIn(value).then(() => fadeInArray(iterator));
-        }
-
-        function fadeIn(element)
-        {
-            return new Promise((resolve, reject) =>
-            {
-                element.fadeIn(400);
-                setTimeout(() =>
-                {
-                    resolve();
-                }, 100);
-            });
-
-        }
-    </script>
-
-    <style>
-
-        .bubble{
-            position: fixed;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 35px;
-            height: 35px;
-            border-radius: 30px;
-            background-color: #2ECC40;
-            z-index: 1030;
-        }
-        .bubble span{
-            display: table-cell;
-            color: white;
-            text-align: center;
-            vertical-align: middle;
-            font-family: 'gilroy-medium', serif;
-            font-size: 16px;
-        }
-
-    </style>
+    <script src="/assets/js/utils.js"></script>
+    <script type="module" src="/assets/js/events.js"></script>
 
 </head>
 <body>
 
 <header></header>
 
-
 <div class="banner" style="background-color: #FFF8E1">
-    <div class="headline" style="background-color: #FFD54F">
-        <span style="color: #FFF8E1">EVENTS</span>
+    <div class="banner-bg" style="background-image: url('/assets/images/backgrounds/events-bg.jpg')"></div>
+    <div class="headline" style="background-color: transparent">
+        <span style="color: #FFFFFF">EVENTS</span>
     </div>
+
 </div>
 
 
 <div class="page-container">
-    <div class="banner-content text-center">
+    <div class="banner-content text-center" style="display: none">
         <div class="banner-content-wrap">
             <div id="countdown" class="countdown bg-style" data-date_api="/events/next_date">
                 <div class="counter-day">
@@ -192,6 +64,31 @@
     </div>
     <!-- Banner content end -->
 
+    <div class="filter-form-container">
+        <span class="filter-form-title">Filter events</span>
+        <hr>
+        <div class="filter-form-sections">
+            <div class="filter-form-section">
+                <span class="filter-form-subtitle">Type</span>
+                <div class="filter-inputs-container">
+                    <div class="filter-form-input-container">
+                        <input class="filter-form-checkbox" type="checkbox" id="music-type-checkbox" value="music" checked>
+                        <label for="music-type-checkbox">Music</label>
+                    </div>
+                    <div class="filter-form-input-container">
+                        <input class="filter-form-checkbox" type="checkbox" id="artistic-type-checkbox" value="artistic" checked>
+                        <label for="artistic-type-checkbox">Artistic</label>
+                    </div>
+                    <div class="filter-form-input-container">
+                        <input class="filter-form-checkbox" type="checkbox" id="sport-type-checkbox" value="sport" checked>
+                        <label for="sport-type-checkbox">Sport</label>
+                    </div>
+                </div>
+            </div>
+            <hr class="filter-form-section-end">
+        </div>
+    </div>
+
     <div class="card-list">
         <div class="event-card">
             <img class="cover-image" src="https://source.unsplash.com/random/?milano">
@@ -211,14 +108,10 @@
                 </p>
             </div>
         </div>
-        <div class="event-card"></div>
-        <div class="event-card"></div>
-        <div class="event-card"></div>
-        <div class="event-card"></div>
-        <div class="event-card"></div>
+
     </div>
     <div class="end-of-card-list">
-        <hr style="width: 100%"><a class="load-more-btn" onclick="loadMoreEvents()"><img src="/assets/images/icons/load-more-btn-icon.svg"></a>
+        <hr style="width: 100%"><a class="load-more-btn"><img src="/assets/images/icons/load-more-btn-icon.svg"></a>
     </div>
 
 </div>

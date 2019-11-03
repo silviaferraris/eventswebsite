@@ -223,13 +223,110 @@ app.get('/user/data', (req, res) =>
     else res.status(401).end();
 });
 
+app.get('/user/cart', async (req, res) =>
+{
+    if(!req.user)return res.status(401).end();
+
+    db(USERS_EVENTS_TABLE).select('event_id', 'quantity').where({user_id: req.user.id}).then(result => res.send(JSON.stringify(result))).catch(cause => send500Page(res, cause));
+});
+
+app.get('/user/cart/tot_items', (req, res) =>
+{
+    if(!req.user)return res.status(401).end();
+
+    db(USERS_EVENTS_TABLE).select('quantity').where({user_id: req.user.id}).then(result =>
+    {
+        let tot = 0;
+        for(let item of result)tot += item.quantity;
+        res.send({tot: tot});
+    }).catch(cause => send500Page(res, cause));
+});
+
+app.get('/user/cart/save_temp_cart', async (req, res) =>
+{
+    if(!req.user)return res.status(401).end();
+    let tempCart = req.query.temp_cart;
+    if(!/(\d+-\w+)(,\d+-\w+)*/.test(tempCart))return res.status(400).end();
+
+    db(USERS_EVENTS_TABLE).where({user_id: req.user.id}).count().then(result =>
+    {
+        if(result[0].count > 0)return res.status(409).send('User cart is not empty!');
+        let data = [];
+        let items = tempCart.split(',');
+        for(let item of items)
+        {
+            let itemSplit = item.split('-');
+            data.push({
+                user_id: req.user.id,
+                event_id: itemSplit[1],
+                quantity: itemSplit[0]
+            });
+        }
+        db(USERS_EVENTS_TABLE).insert(data).then(res.status(204).end());
+    }).catch(cause => send500Page(res, cause));
+});
+
+app.get('/user/cart/remove_event', (req, res) =>
+{
+    if(!req.user)return res.status(401).end();
+
+    let quantity;
+    try
+    {
+        if(req.query.quantity !== 'all') quantity = Number.parseInt(req.query.quantity);
+        else quantity = -1;
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(400).end();
+    }
+
+    db(USERS_EVENTS_TABLE).select('quantity').where({user_id: req.user.id, event_id: req.query.event_id}).then(result =>
+    {
+        if(result.length <= 0)return res.end();
+
+        let tot =  result[0].quantity - quantity;
+        if(tot > 0 && req.query.quantity !== 'all')
+        {
+            db(USERS_EVENTS_TABLE).update('quantity', tot).where({user_id: req.user.id, event_id: req.query.event_id}).then(() => res.status(204).end());
+        }
+        else
+        {
+            db(USERS_EVENTS_TABLE).where({user_id: req.user.id, event_id: req.query.event_id}).del().then(() => res.status(204).end());
+        }
+
+    }).catch(cause => send500Page(res, cause));
+});
+
 app.get('/user/cart/add_event', async (req, res) =>
 {
     if(!req.user)return res.status(401).end();
 
+    let quantity;
+    try
+    {
+        quantity = Number.parseInt(req.query.quantity);
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(400).end();
+    }
+
     if(!(await isEventIdExisting(req.query.event_id)))return res.status(400).end();
 
-    db(USERS_EVENTS_TABLE).insert({user_id: req.user.id, event_id: req.query.event_id}).then(result => res.status(204).end()).catch(cause => send500Page(res, cause));
+    db(USERS_EVENTS_TABLE).select('quantity').where({user_id: req.user.id, event_id: req.query.event_id}).then(result =>
+    {
+        if(result.length > 0)
+        {
+            let tot = quantity + result[0].quantity;
+            db(USERS_EVENTS_TABLE).update('quantity', tot).where({user_id: req.user.id, event_id: req.query.event_id}).then(() => res.status(204).end());
+        }
+        else
+        {
+           db(USERS_EVENTS_TABLE).insert({user_id: req.user.id, event_id: req.query.event_id, quantity: quantity}).then(() => res.status(204).end());
+        }
+    }).catch(cause => send500Page(res, cause));
+
 });
 
 app.get('/user/cart/remove_event', (req, res) =>
@@ -316,10 +413,12 @@ app.get('/events/:event_id', (req, res) =>
     sendPage(res, 'public/pages/events/event.html', 200);
 });
 
-app.get('/events/next_events/:limit(\\d+|all)', (req, res) =>
+app.get('/events/next_events/:range(\\d+-\\d+|all)', (req, res) =>
 {
-    let limit = req.params.limit  === 'all' ? Number.MAX_SAFE_INTEGER : Number.parseInt(req.params.limit);
-    db(EVENTS_TABLE).select('*').where('date', '>=', parseDateForDB(new Date())).orderBy('date').limit(limit).then(result => res.send(JSON.stringify(result))).catch(cause => send500Page(res, cause));
+    let offset = req.params.range === 'all' ? 0 : Number.parseInt(req.params.range.split('-')[0]);
+    let limit = req.params.range === 'all' ? Number.MAX_SAFE_INTEGER : Number.parseInt(req.params.range.split('-')[1])+1;
+
+    db(EVENTS_TABLE).select('*').where('date', '>=', parseDateForDB(new Date())).orderBy('date').offset(offset).limit(limit).then(result => res.send(JSON.stringify(result))).catch(cause => send500Page(res, cause));
 });
 
 app.get('/events/:event_id/data', (req, res) =>

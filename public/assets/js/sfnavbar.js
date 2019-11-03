@@ -1,5 +1,7 @@
 $(document).ready(() =>
 {
+    updateCartIcon();
+
     let mobileMenu = $(".mobile-nav");
     let mobileView = $(window).width() <= 890;
 
