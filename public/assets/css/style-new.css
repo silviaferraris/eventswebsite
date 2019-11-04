@@ -168,7 +168,9 @@ header{
 .mobile-nav-logo{
     width: 40px;
     height: 40px;
-    background-color: #dc3545;
+    background-image: url("/assets/images/logo/logo.svg");
+    background-size: 40px 40px;
+    background-repeat: no-repeat;
 }
 
 .mobile-nav-exit-btn{
@@ -462,13 +464,16 @@ header{
 
 
 body{
+    position: relative;
     margin: 0;
     line-height: 1.5;
     background-color: #FFFFFF;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
     z-index: -1;
     font-family: 'gilroy-regular', serif;
     font-size: 16px;
+    min-height: 100vh;
 }
 
 *, ::after, ::before {
@@ -822,6 +827,9 @@ body{
 
 .end-of-card-list hr{
     border-top: 2px solid #000000;
+    border-bottom: none;
+    border-left: 1px solid #000000;
+    border-right: 1px solid #000000;
     border-radius: 2px;
 }
 
@@ -866,6 +874,9 @@ body{
 .filter-form-container hr{
     margin-top: 0;
     border-top: 2px solid black;
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
     width: 100%;
 }
 
@@ -992,6 +1003,13 @@ body{
 }
 
 /**************FOOTER*******************/
+
+footer{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
 
 .footer-container{
     position: relative;
