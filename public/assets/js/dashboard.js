@@ -17,7 +17,7 @@ $(document).ready(() =>
 {
     $("#container").css('display', 'flex').hide();
 
-    fetch('/event/types').then(async types => eventTypes = await types.json()).catch(e => console.error(e));
+    fetch('/events/types').then(async types => eventTypes = await types.json()).catch(e => console.error(e));
 
     initJS();
 });
