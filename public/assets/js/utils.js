@@ -31,7 +31,7 @@ function getCookieValue(cookieName)
     let cookies = decodeURIComponent(document.cookie).split(";");
     for(let cookie of cookies)
     {
-        if(cookie.startsWith(cookieName))
+        if(cookie.trim().startsWith(cookieName))
         {
             let split = cookie.split("=");
             if(split.length > 0)return split[1];

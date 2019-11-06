@@ -36,5 +36,15 @@ $(document).ready(function()
         });
     });
 
-    $("footer").load("/footer.html");
+    $("footer").load("/footer.html", () =>
+    {
+        adjustBodyPadding()
+        $(window).resize(() => adjustBodyPadding());
+    });
+
+    function adjustBodyPadding()
+    {
+        let footerHeight = $('footer').height();
+        $('body').css('padding-bottom', `${footerHeight}px`);
+    }
 });

@@ -102,11 +102,13 @@ header{
     background-color: #FFFFFF;
     z-index: 1002;
     clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-    transition: clip-path .4s;
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    transition: all .4s;
 }
 
 .mobile-nav.show{
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
 }
 
 .mobile-nav-container{
@@ -191,6 +193,7 @@ header{
 
 .sf-dropdown-toggle{
     width: fit-content;
+    width: -moz-fit-content;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -335,6 +338,7 @@ header{
 .cart-number{
     position: absolute;
     width: fit-content;
+    width: -moz-fit-content;
     max-width: 26px;
     padding-left: 3px;
     left: 0;
@@ -485,6 +489,7 @@ body{
     justify-content: center;
     align-items: center;
     width: fit-content;
+    width: -moz-fit-content;
     height: 40px;
     padding-left: 10px;
     padding-right: 10px;
@@ -530,6 +535,7 @@ body{
     font-family: gilroy-medium, sans-serif;
     font-size: 5vw;
     width: fit-content;
+    width: -moz-fit-content;
     color: #FFFFFF;
     padding-right: 2%;
     padding-left: 2%;
@@ -549,10 +555,23 @@ body{
     max-width: 1200px;
     padding-left: 15px;
     padding-right: 15px;
+    padding-bottom: 20px;
+}
+
+.page-container > .page-over-banner{
+    position: relative;
+    left: 0;
+    right: 0;
+    margin-top: -50px;
+    width: 100%;
+    height: 1600px;
+    background-color: white;
+    box-shadow: 0 0 8px 0 #222222;
 }
 
 .card-list{
     width: fit-content;
+    width: -moz-fit-content;
     margin: auto;
     padding-top: 10px;
     padding-left: 40px;
@@ -571,7 +590,8 @@ body{
     max-width: 98vw;
     background-color: #505050;
     clip-path: inset(0 0 0 0 round 0 15% 0 15%);
-    transition: clip-path 0.4s;
+    -webkit-clip-path: inset(0 0 0 0 round 0 15% 0 15%);
+    transition: all 0.4s;
     overflow: hidden;
     transform: translateZ(0);
 }
@@ -606,12 +626,14 @@ body{
 }
 .event-card:hover{
     clip-path: inset(0 0 0 0 round 0 0 0 0);
+    -webkit-clip-path: inset(0 0 0 0 round 0 0 0 0);
 }
 
 .card-open{
     display: flex;
     width: fit-content;
     height: fit-content;
+    width: -moz-fit-content;
     color: white !important;
     font-family: gilroy-medium, sans-serif;
     font-size: 15px;
@@ -655,6 +677,7 @@ body{
     justify-content: center;
     align-items: center;
     width: fit-content;
+    width: -moz-fit-content;
     padding-left: 4px;
     padding-right: 4px;
     min-width: 35px;
@@ -715,6 +738,7 @@ body{
     width: 100%;
     height: 75%;
     clip-path: circle(12% at 50% 0);
+    -webkit-clip-path: circle(12% at 50% 0);
     background-color: #ffffff;
     transition: all 0.5s;
 }
@@ -735,6 +759,7 @@ body{
 .card-description-container:hover{
     background-color: rgba(255, 255, 255, 0.7);
     clip-path: circle(150% at 50% 0);
+    -webkit-clip-path: circle(150% at 50% 0);
 }
 
 .card-description-container:hover span{
@@ -923,12 +948,14 @@ body{
 
 .filter-form-sections{
     clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
     height: 0;
     transition: all 0.4s;
 }
 
 .filter-form-container:hover .filter-form-sections{
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
     height: 50px;
 }
 
@@ -1084,11 +1111,13 @@ footer{
     height: 100%;
     color: #FF4136;
     clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+    -webkit-clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
     transition: all 0.4s;
 }
 
 .footer-nav-item:hover .footer-nav-link-bg {
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
 }
 
 .footer-content hr{
