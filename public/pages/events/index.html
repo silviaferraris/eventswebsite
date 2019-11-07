@@ -16,7 +16,7 @@
     <script type="module" src="/assets/js/events.js"></script>
 
 </head>
-<body>
+<body style="overflow-y: scroll">
 
 <header></header>
 
@@ -65,49 +65,57 @@
     <div class="filter-form-container">
         <span class="filter-form-title">Filter events</span>
         <hr>
-        <div class="filter-form-sections">
-            <div class="filter-form-section">
-                <span class="filter-form-subtitle">Type</span>
-                <div class="filter-inputs-container">
-                    <div class="filter-form-input-container">
-                        <input class="filter-form-checkbox" type="checkbox" id="music-type-checkbox" value="music" checked>
-                        <label for="music-type-checkbox">Music</label>
-                    </div>
-                    <div class="filter-form-input-container">
-                        <input class="filter-form-checkbox" type="checkbox" id="artistic-type-checkbox" value="artistic" checked>
-                        <label for="artistic-type-checkbox">Artistic</label>
-                    </div>
-                    <div class="filter-form-input-container">
-                        <input class="filter-form-checkbox" type="checkbox" id="sport-type-checkbox" value="sport" checked>
-                        <label for="sport-type-checkbox">Sport</label>
+        <div class="filter-form-sections-container">
+            <div class="filter-form-sections">
+                <div class="filter-form-section">
+                    <span class="filter-form-subtitle">Type</span>
+                    <div class="filter-inputs-container">
+                        <div class="filter-form-input-container">
+                            <input class="filter-form-checkbox" type="checkbox" id="music-type-checkbox" value="music" checked>
+                            <label for="music-type-checkbox">Music</label>
+                        </div>
+                        <div class="filter-form-input-container">
+                            <input class="filter-form-checkbox" type="checkbox" id="artistic-type-checkbox" value="artistic" checked>
+                            <label for="artistic-type-checkbox">Artistic</label>
+                        </div>
+                        <div class="filter-form-input-container">
+                            <input class="filter-form-checkbox" type="checkbox" id="sport-type-checkbox" value="sport" checked>
+                            <label for="sport-type-checkbox">Sport</label>
+                        </div>
                     </div>
                 </div>
+                <hr class="filter-form-section-end">
+                <div class="filter-form-section">
+                    <input id="filter-form-apply-btn" class="sf-btn" type="button" value="Apply" style="margin-left: auto; padding-left: 20px; padding-right: 20px">
+                </div>
             </div>
-            <hr class="filter-form-section-end">
         </div>
     </div>
 
-    <div class="card-list">
-        <div class="event-card">
-            <img class="cover-image" src="https://source.unsplash.com/random/?milano">
-            <div class="card-bottom">
-                <h1 class="card-title">Event Title</h1>
-                <h4 class="card-performer">Francesco Ghianda</h4>
-                <a class="card-open">More info</a>
-                <div class="card-price-buy">
-                    <span class="card-price">12$</span>
-                    <a class="card-buy">Buy</a>
+    <div class="card-list-container">
+        <span class="empty-list-message">No events to show.</span>
+        <div class="card-list">
+            <div class="event-card">
+                <img class="cover-image" src="https://source.unsplash.com/random/?milano">
+                <div class="card-bottom">
+                    <h1 class="card-title">Event Title</h1>
+                    <h4 class="card-performer">Francesco Ghianda</h4>
+                    <a class="card-open">More info</a>
+                    <div class="card-price-buy">
+                        <span class="card-price">12$</span>
+                        <a class="card-buy">Buy</a>
+                    </div>
+                </div>
+                <div class="card-description-container">
+                    <span>i</span>
+                    <p class="card-description">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    </p>
                 </div>
             </div>
-            <div class="card-description-container">
-                <span>i</span>
-                <p class="card-description">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-            </div>
         </div>
-
     </div>
+
     <div class="end-of-card-list">
         <hr style="width: 100%"><a class="load-more-btn"><img src="/assets/images/icons/load-more-btn-icon.svg"></a>
     </div>

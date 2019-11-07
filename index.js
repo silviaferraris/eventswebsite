@@ -418,7 +418,34 @@ app.get('/events/next_events/:range(\\d+-\\d+|all)', (req, res) =>
     let offset = req.params.range === 'all' ? 0 : Number.parseInt(req.params.range.split('-')[0]);
     let limit = req.params.range === 'all' ? Number.MAX_SAFE_INTEGER : Number.parseInt(req.params.range.split('-')[1])+1;
 
-    db(EVENTS_TABLE).select('*').where('date', '>=', parseDateForDB(new Date())).orderBy('date').offset(offset).limit(limit).then(result => res.send(JSON.stringify(result))).catch(cause => send500Page(res, cause));
+    let types;
+    if(req.query.types)
+    {
+        if(req.query.types === 'none')types = [];
+        else types = req.query.types.split(',').map(type => type.trim()).filter(type => EVENT_TYPES.includes(type));
+    }
+    else types = EVENT_TYPES;
+
+    db(EVENTS_TABLE).select('*').where('date', '>=', parseDateForDB(new Date())).whereIn('type', types).orderBy('date').offset(offset).limit(limit).then(result =>
+    {
+        let promises = [];
+        for(let event of result) promises.push(db(PERFORMERS_TABLE).select('first_name', 'last_name').where({id: event.performer_id}).then(result =>
+        {
+            return new Promise(resolve => {
+
+                if(result && result.length > 0)
+                {
+                    event.performer_first_name = result[0].first_name;
+                    event.performer_last_name = result[0].last_name;
+                }
+
+                resolve(event);
+            });
+        }).catch(cause => new Promise(resolve => resolve(event))));
+
+        Promise.all(promises).then((events) => res.send(JSON.stringify(events)));
+
+    }).catch(cause => send500Page(res, cause));
 });
 
 app.get('/events/:event_id/data', (req, res) =>

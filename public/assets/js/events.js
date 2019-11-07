@@ -1,8 +1,9 @@
 import Event from "../../assets/js/modules/event.mjs";
 
+let loadedEvents = 0;
+
 $(document).ready(() =>
 {
-    let loadedEvents = 0;
     let lastScroll;
     let goUpBtn = $(".go-up-button");
     goUpBtn.hide();
@@ -54,39 +55,80 @@ $(document).ready(() =>
         event.preventDefault();
     });
 
-    Event.getNextEvents(6).then(events =>
-    {
-        let cardList = $(".card-list");
-        loadedEvents += events.length;
-        createCards(events, cardList);
-    });
+    loadEvents(6);
 
     $(document).on('click', '.load-more-btn', function ()
     {
-        Event.getNextEvents(loadedEvents+6, loadedEvents).then(events =>
-        {
-            let cardList = $(".card-list");
-            loadedEvents += events.length;
-            createCards(events, cardList);
-        });
+        loadEvents(loadedEvents+6, loadedEvents, getCheckedTypes());
+    });
+
+    $(document).on('click', '#filter-form-apply-btn', function () {
+        clearList().then(() => loadEvents(6, 0, getCheckedTypes()));
+    });
+
+    $(document).on('click', '.filter-form-title', function () {
+
+        let container = $('.filter-form-sections-container');
+        container.toggleClass('show');
+        $('.filter-form-container').toggleClass("toggled");
+
+        let newHeight = 0;
+        if(container.hasClass("show")) newHeight = $('.filter-form-sections').height();
+
+        container.animate({
+            height: newHeight
+        }, 400);
     });
 });
 
+function loadEvents(limit, offset, types) {
+    Event.getNextEvents(limit, offset, types).then(events =>
+    {
+        let cardList = $(".card-list");
+        createCards(events, cardList);
+    });
+}
+
+function clearList()
+{
+    return new Promise(resolve => {
+        $(".card-list-container").animate({height: 0}, () =>
+        {
+            $(".card-list").empty();
+            loadedEvents = 0;
+            resolve();
+        });
+    })
+}
+
 function createCards(events, cardList)
 {
-    //let cards = [];
-    events.forEach(async event =>
-    {
-        let price = event.price.split('.');
-        if(price.length > 0 && price[1] === '00')price = price[0];
-        else price = event.price;
+    events.forEach(event => createCard(event, cardList));
 
-        let performer = await event.getPerformer();
-        let card = $(`<div class="event-card">
+    loadedEvents += events.length;
+
+    let emptyMessage = $('.empty-list-message');
+    if(loadedEvents === 0)emptyMessage.addClass('show');
+    else emptyMessage.removeClass('show');
+
+    let height = $(".card-list").outerHeight();
+    if(height < 20)height = 20;
+    $(".card-list-container").animate({height: `${height}px`});
+
+    //fadeInArray(cards[Symbol.iterator]()).then(() => console.log("a"));
+}
+
+function createCard(event, cardList)
+{
+    let price = event.price.split('.');
+    if(price.length > 0 && price[1] === '00')price = price[0];
+    else price = event.price;
+
+    let card = $(`<div class="event-card">
                                     <img class="cover-image" src="${event.coverImage}">
                                     <div class="card-bottom">
                                         <h1 class="card-title">${event.title}</h1>
-                                        <h4 class="card-performer">${performer.firstName} ${performer.lastName}</h4>
+                                        <h4 class="card-performer">${event.performerFirstName} ${event.performerLastName}</h4>
                                         <a class="card-open" href="/events/${event.eventId}">More info</a>
                                         <div class="card-price-buy">
                                             <span class="card-price">${price}</span>
@@ -97,12 +139,9 @@ function createCards(events, cardList)
                                         <span>i</span>
                                         <p class="card-description">${event.description}</p>
                                     </div>
-                                </div>`).hide();
-        cardList.append(card);
-        //cards.push(card);
-        fadeIn(card);
-    });
-    //fadeInArray(cards[Symbol.iterator]()).then(() => console.log("a"));
+                                </div>`);//.css('visibility', 'hidden');
+    cardList.append(card);
+    return card;
 }
 
 async function addToCart(eventId)
@@ -185,10 +224,23 @@ function fadeIn(element)
 {
     return new Promise((resolve, reject) =>
     {
-        element.fadeIn(400);
+        console.log(element);
+
+        element.css('visibility', 'visible').hide().fadeIn(400);
+
         setTimeout(() =>
         {
             resolve();
         }, 100);
     });
 }
+
+function getCheckedTypes()
+{
+    let checked = $('.filter-form-checkbox:checked');
+    let types = [];
+    for(let i = 0; i < checked.length; i++) types.push(checked[i].value);
+    return types;
+}
+
+window.getCheckedTypes = getCheckedTypes;

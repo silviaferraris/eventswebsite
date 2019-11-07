@@ -20,7 +20,7 @@ class Event
         });
     }
 
-    static getNextEvents(limit, offset)
+    static getNextEvents(limit, offset, typesArray)
     {
         return new Promise((resolve, reject) =>
         {
@@ -34,8 +34,18 @@ class Event
                 range = `${offset}-${limit}`
             }
 
+            let types = '';
+            if(typeof typesArray != 'undefined')
+            {
+                if(typesArray.length === 0)types = 'none';
+                else
+                {
+                    typesArray.forEach(type => types += `${type},`);
+                    types = types.substring(0, types.length-1);
+                }
+            }
 
-            util.fetch200(`/events/next_events/${range}`).then(async response =>
+            util.fetch200(`/events/next_events/${range}?types=${types}`).then(async response =>
             {
                 resolve(await util.responseToObjArray(response, Event));
             }).catch(cause => reject(cause));
@@ -140,6 +150,16 @@ class Event
     get performerId()
     {
         if(this.data)return this.data.performer_id;
+    }
+
+    get performerFirstName()
+    {
+        if(this.data)return this.data.performer_first_name;
+    }
+
+    get performerLastName()
+    {
+        if(this.data)return this.data.performer_last_name;
     }
 
     get date()
