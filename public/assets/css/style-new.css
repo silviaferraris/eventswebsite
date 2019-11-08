@@ -559,7 +559,7 @@ body{
     margin: 0;
     padding: 0;
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .page-container{
@@ -1335,6 +1335,13 @@ h2{
     align-items: flex-start;
     margin-top: 20px;
     margin-bottom: 20px;
+    width: 100%;
+}
+
+.form-section.horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
 }
 
 .form-control{
@@ -1375,6 +1382,13 @@ h2{
     visibility: hidden;
 }
 
+.signup-form{
+    position: relative;
+    max-width: 750px;
+    padding: 15px;
+    height: fit-content;
+}
+
 .login-container{
     height: 100vh;
     width: 100%;
@@ -1387,25 +1401,37 @@ h2{
     max-width: 100%;
     height: fit-content;
 }
-.login-form h3{
+.sf-form h3{
     text-align: center;
 }
-.login-form label{
+.sf-form label{
     padding-left: 10px;
 }
 .invalid-feedback {
     padding-left: 10px;
 }
-.login-form .form-control{
+.sf-form .form-control{
     font-size: 15px;
     min-height: 48px;
+    min-width: 330px;
     font-weight: 500;
 }
-.login-form a{
+
+.form-section.horizontal{
+    margin: 0;
+}
+
+.form-section.horizontal > .form-section{
+    width: 40%;
+    min-width: 330px;
+    margin: 16px 5px;
+}
+
+.sf-form a{
     text-decoration: none;
     color:#666;
 }
-.login-form a:hover{
+.sf-form a:hover{
     color: #CD9999;
 }
 .forgot-link{

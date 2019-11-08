@@ -5,8 +5,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-          crossorigin="anonymous">
     <link rel="stylesheet" href="/assets/css/style-new.css">
     <title>Silvia's website | sign up</title>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -20,60 +18,65 @@
 
 <body>
 
-<header></header>
+<!--<header></header>-->
 
-<div>
-    <form class="login-form needs-validation" id="signup-form" action="/user/add_new" method="post" novalidate>
-        <h3 class="mb-5 font-weight-light text-uppercase">Sign Up</h3>
+<div class="page-container-large">
+    <form class="sf-form signup-form text-center needs-validation" id="signup-form" action="/user/add_new" method="post" novalidate>
+        <span class="form-title">Sign&nbsp;<span style="color: #B10DC9">Up</span></span>
 
-        <div class="mb-3">
-            <label for="firstname-up">First name*</label>
-            <input type="text" name="first_name" class="form-control rounded-pill form-control-lg" id="firstname-up" placeholder="First name" required>
-            <div class="invalid-feedback">Please insert a first name.</div>
+
+        <div class="form-section horizontal">
+            <div class="form-section">
+                <label for="firstname-up">First name*</label>
+                <input type="text" name="first_name" class="form-control" id="firstname-up" placeholder="First name" required>
+                <div class="sf-invalid-feedback">Please insert a first name.</div>
+            </div>
+
+            <div class="form-section">
+                <label for="lastname-up">Last name*</label>
+                <input type="text" name="last_name" class="form-control" id="lastname-up" placeholder="Last name" required>
+                <div class="sf-invalid-feedback">Please insert a last name.</div>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label for="lastname-up">Last name*</label>
-            <input type="text" name="last_name" class="form-control rounded-pill form-control-lg" id="lastname-up" placeholder="Last name" required>
-            <div class="invalid-feedback">Please insert a last name.</div>
+        <div class="form-section horizontal">
+            <div class="form-section">
+                <label for="email-up">E-Mail*</label>
+                <input type="email" name="email" class="form-control" id="email-up" placeholder="E-Mail" required>
+                <div class="sf-invalid-feedback">Please insert an e-mail.</div>
+            </div>
+
+            <div class="form-section">
+                <label for="username-up">Username*</label>
+                <input type="text" name="username" class="form-control" id="username-up" placeholder="Username" required>
+                <div class="sf-invalid-feedback" id="username-feedback">Please choose a username.</div>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label for="username-up">Username*</label>
-            <input type="text" name="username" class="form-control rounded-pill form-control-lg" id="username-up" placeholder="Username" required>
-            <div class="invalid-feedback" id="username-feedback">Please choose a username.</div>
+        <div class="form-section horizontal">
+            <div class="form-section">
+                <label for="psw-up">Password*</label>
+                <input type="password" name="password" class="form-control" id="psw-up" placeholder="Password" required>
+                <div class="sf-invalid-feedback">Please insert a password.</div>
+            </div>
+
+            <div class="form-section">
+                <label for="birthday-up">Birthday*</label>
+                <input type="date" name="birthday" class="form-control" id="birthday-up">
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label for="email-up">E-Mail*</label>
-            <input type="email" name="email" class="form-control rounded-pill form-control-lg" id="email-up" placeholder="E-Mail" required>
-            <div class="invalid-feedback">Please insert an e-mail.</div>
+        <div class="form-section" style="align-items: center">
+            <input type="button" id="submit-btn" class="sf-btn" value="Sign up">
+            <p class="mt-3 font-weight-normal">Have&nbsp;already&nbsp;an&nbsp;account? <wbr><a href="/login"><strong>Login</strong></a></p>
         </div>
 
-        <div class="mb-3">
-            <label for="psw-up">Password*</label>
-            <input type="password" name="password" class="form-control rounded-pill form-control-lg" id="psw-up" placeholder="Password" required>
-            <div class="invalid-feedback">Please insert a password.</div>
-        </div>
-
-        <div class="mb-3">
-            <label for="birthday-up">Birthday*</label>
-            <input type="date" name="birthday" class="form-control rounded-pill form-control-lg" id="birthday-up">
-        </div>
-
-        <input type="button" id="submit-btn" class="btn mt-5 rounded-pill btn-lg btn-custom btn-block text-uppercase" value="Sign up">
-        <p class="mt-3 font-weight-normal">Have already an account?<a href="/login"><strong> Login </strong></a></p>
     </form>
 </div>
 
-<footer></footer>
+<!--<footer></footer>-->
 <div class="mobile-nav"></div>
 
 </body>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-        crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
 
 </html>
