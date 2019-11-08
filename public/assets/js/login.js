@@ -22,8 +22,8 @@ async function login(noanim)
 
 	if(response.status === 401)
 	{
-		if(!noanim)$("form").slideDown(500);
-		$("#wrong-credential-alert").slideDown(200).delay(1000).slideUp(400);
+		//if(!noanim)$("form").slideDown(500);
+		showWrongCredentialAlert();
 	}
 }
 
@@ -35,6 +35,7 @@ $(document).ready(function()
 
 	$("#send_btn").click(async () =>
 	{
+		window.scrollTo(0, 0);
 		let footerPos = $('footer').css('position');
 		let noanim = footerPos === 'static'; /*In mobile view the scroll up and scroll down animation will not be executed*/
 
@@ -45,9 +46,14 @@ $(document).ready(function()
 		if(!valid) return;
 
 		if(noanim)await login(noanim);
-		else $("form").slideUp(500, () => login(noanim));
+		else await login(noanim)//$('.login-form').css('border-top', '2px solid #000000').slideUp(500, () => login(noanim));
 	});
 });
+
+function showWrongCredentialAlert()
+{
+	$("#wrong-credential-alert").slideDown(200).delay(1000).slideUp(400);
+}
 
 function getURLVariable(variableName)
 {

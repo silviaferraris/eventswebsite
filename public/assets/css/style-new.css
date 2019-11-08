@@ -33,7 +33,7 @@ header{
     justify-content: space-between;
     padding: 36px 75px;
     background-color: rgba(255, 255, 255, 0);
-    transition: all .8s;
+    transition: background-color .5s, box-shadow .5s;
 }
 
 .sf-navbar.white{
@@ -551,11 +551,11 @@ body{
 }
 
 .page-container-large{
-    position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    position: relative;
     margin: 0;
     padding: 0;
     width: 100vw;
@@ -1379,11 +1379,13 @@ h2{
     height: 100vh;
     width: 100%;
 }
+
 .login-form{
-    margin: auto;
+    position: relative;
     width: 370px;
     padding: 15px;
     max-width: 100%;
+    height: fit-content;
 }
 .login-form h3{
     text-align: center;
@@ -1415,10 +1417,12 @@ h2{
     align-items: center;
     justify-content: center;
     position: absolute;
+    z-index: 1030;
     top: 0;
     left: 0;
     width: 100vw;
-    min-height: 60px;
+    padding-top: 20px;
+    padding-bottom: 20px;
     background-color: #f55154;
     border: 2px solid #dc3545;
     color: #000000;
