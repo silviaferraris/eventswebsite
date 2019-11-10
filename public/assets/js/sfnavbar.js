@@ -100,4 +100,14 @@ $(document).ready(() =>
         $(this).toggleClass("toggled");
         event.preventDefault();
     });
+
+    $(document).click((e) =>
+    {
+        if(!$(e.target).hasClass("sf-dropdown-toggle") && !$(e.target).parents().hasClass('sf-dropdown-toggle'))
+        {
+            $(".sf-dropdown-toggle").each(function () {
+                if($(this).hasClass("toggled"))$(this).click();
+            });
+        }
+    });
 });
