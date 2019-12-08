@@ -2,36 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Silvia's website | CONTACT <ME></ME> </title>
+    <title>Silvia's website | EVENTS </title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800,300" rel='stylesheet' type='text/css'>
 
     <link rel="stylesheet" href="/assets/css/style-new.css">
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-
     <script src="/assets/js/navbar_and_footer_loader.js"></script>
     <script src="/assets/js/typewriter.js"></script>
+    <script src="/assets/js/countdown.js"></script>
+    <script src="/assets/js/utils.js"></script>
+    <script type="module" src="/assets/js/events.js"></script>
 
 </head>
-<body>
-
+<body style="overflow-y: scroll">
 <header></header>
 
-<h3 class="headline">
-    CONTACT ME
-</h3>
+<div class="banner" style="background-color: #FFF8E1">
+    <div class="banner-bg" style="background-image: url('/assets/images/backgrounds/contactme-bg.jpg'); backdrop-filter: none"></div>
+    <div class="headline" style="background-color: transparent">
+        <span style="color: #FFFFFF">CONTACT ME</span>
+    </div>
 
-<div id="footer"></div>
+</div>
+<div class="contactme-container">
+    <form action="">
+
+        <label for="email">Email</label>
+        <input type="text" id="email" name="email" placeholder="Your email">
+        <label for="firstname">Last Name</label>
+        <input type="text" id="firstname" name="firstname" placeholder="Your name">
+        <label for="lastname">Last Name</label>
+        <input type="text" id="lastname" name="lastname" placeholder="Your last name">
+
+        <label for="subject">Subject</label>
+        <textarea id="subject" name="subject" placeholder="Write me something! " style="height:200px"></textarea>
+        <input type="submit" value="Submit">
+
+    </form>
+</div>
+</div>
+
+<footer></footer>
+
+<a class="go-up-button" href="#">Go up</a>
 
 <div class="mobile-nav"></div>
 
 </body>
-
 </html>
