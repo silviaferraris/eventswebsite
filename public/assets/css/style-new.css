@@ -1,6 +1,6 @@
 
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700,800,300');
-
+@import "compass/css3";
 /****************************NAV-BAR***************************************/
 header{
     height: 112px;
@@ -500,7 +500,7 @@ body{
     font-size: 16px;
     font-family: 'Gilroy-Regular', serif;
     letter-spacing: 1px;
-    background-color: #0074D9;
+    background-color: #CD9999;
     border: none;
     border-radius: 5px;
     transition: background-color 0.4s;
@@ -510,7 +510,7 @@ body{
 .sf-btn:hover{
     color: #FFFFFF !important;
     text-decoration: none;
-    background-color: rgb(122, 207, 255);
+    background-color: #3C2B3B;
 }
 
 .banner {
@@ -1431,7 +1431,7 @@ h2{
     color:#666;
 }
 .sf-form a:hover{
-    color: #0074D9;
+    color: #3C2B3B;
 }
 
 .form-input-title{
@@ -1473,16 +1473,6 @@ h2{
     font-weight: 400;
 }
 
-.cart-item-card {
-    padding: 20px 30px;
-    height: 120px;
-    display: flex;
-}
-
-.item:nth-child(3) {
-    border-top:  1px solid #E1E8EE;
-    border-bottom:  1px solid #E1E8EE;
-}
 
 
 
@@ -1503,6 +1493,10 @@ h2{
     font-family: 'gilroy-regular', serif;
     font-size: 18px;
     letter-spacing: 1px;
+}
+
+.btn-custom:focus{
+    box-shadow: 0 0 0 0.2rem rgba(114,61,190,.25);
 }
 
 
@@ -1747,16 +1741,18 @@ h2{
     padding: 5px;
 }
 
-/*contact me */
+/* {
+    box-sizing: border-box;
+}*/
+
+
 input[type=text], select, textarea {
     width: 100%;
     padding: 12px;
     border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
     margin-top: 6px;
     margin-bottom: 16px;
-    resize: inherit;
+    resize: vertical;
 }
 
 input[type=submit] {
@@ -1764,17 +1760,59 @@ input[type=submit] {
     color: white;
     padding: 12px 20px;
     border: none;
-    border-radius: 4px;
     cursor: pointer;
 }
 
 input[type=submit]:hover {
     background-color: #3C2B3B;
 }
+
 .contactme-container {
-        padding: 15px;
-        max-width:400px;
-        width:100%;
-        margin:0 auto;
-        position: relative;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 10px;
 }
+
+.contactme-column {
+    float: right;
+    width: 50%;
+    margin-top: 6px;
+    padding: 20px;
+}
+
+.contactme-row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+@media screen and (max-width: 600px) {
+    .contactme-column, input[type=submit] {
+        width: 100%;
+        margin-top: 0;
+    }
+}
+
+.submit-btn {
+    background: #CD9999;
+    border-color: #3C2B3B;
+    color:#fff;
+    font-size: 15px;
+    font-weight: 600;
+    min-height: 48px;
+}
+.submit-btn:focus,
+.submit-btn:hover,
+.submit-btn:active,
+.submit-btn:active:focus{
+    background: #CD9999;
+    border-color: #3C2B3B;
+    color:#fff;
+}
+
+.special-button{
+border-color: rgb(252, 252, 252);
+border-width: 1px;
+}
+.btn-sf{
+border: 1px solid;
+background: transparent;}

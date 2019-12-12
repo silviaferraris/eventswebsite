@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Performers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="/assets/css/style-new.css">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/navbar_and_footer_loader.js"></script>
+    <script src="/assets/js/utils.js"></script>
+
+    <script type="module">
+        import Event from "../../assets/js/modules/performer.mjs";
+
+
+        let performerId = getCookieValue('perfId');
+
+        let event = new Event(eventId);
+        event.fetchData().then(data =>
+        {
+            $('#event-title').text(event.title);
+        });
+
+    </script>
+
+
+</head>
+<body>
+
+<header></header>
+
+<div class="banner" style="background-color: #FFF8E1">
+    <div class="banner-bg" style="background-image: url('/assets/images/backgrounds/wallpaper.jpg')"></div>
+    <div class="headline" style="background-color: transparent">
+        <span style="color: #FFFFFF" id="event-title"></span>
+    </div>
+</div>
+
+<div class="page-container">
+    <div class="page-over-banner">
+
+    </div>
+</div>
+
+<footer></footer>
+<div class="mobile-nav"></div>
+
+</body>
