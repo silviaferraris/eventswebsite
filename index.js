@@ -450,10 +450,25 @@ app.get('/events/next_events/:range(\\d+-\\d+|all)', (req, res) =>
 
 app.get('/events/:event_id/data', (req, res) =>
 {
-    db(EVENTS_TABLE).select('*').where({id: req.event_id}).then(result =>
+    db(EVENTS_TABLE).select('*').where({id: req.event_id}).then(event =>
     {
-        if(result.length === 0)return res.status(404).end();
-        res.send(JSON.stringify(result[0]))
+        if(event.length === 0)return res.status(404).end();
+
+        db(PERFORMERS_TABLE).select('first_name', 'last_name').where({id: event[0].performer_id}).then(result =>
+        {
+            if(result && result.length > 0)
+            {
+                event[0].performer_first_name = result[0].first_name;
+                event[0].performer_last_name = result[0].last_name;
+            }
+        }).then(() =>
+        {
+            res.send(JSON.stringify(event[0]));
+        }).catch(() =>
+        {
+            res.send(JSON.stringify(event[0]));
+        });
+
     }).catch(cause => send500Page(res, cause));
 });
 
@@ -615,7 +630,7 @@ app.get('/performers/of_event', (req, res) =>
     });
 });
 
-app.get('/performers/:performer_id', (res, req) =>
+app.get('/performers/:performer_id', (req, res) =>
 {
     res.cookie('perid', req.performer_id);
     sendPage(res, 'public/pages/performers/performer.html', 200);

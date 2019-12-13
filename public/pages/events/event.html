@@ -14,15 +14,87 @@
 
     <script type="module">
         import Event from "../../assets/js/modules/event.mjs";
-
-
         let eventId = getCookieValue('eveid');
-
         let event = new Event(eventId);
+        let slide_num=2;
+        let currSlide=0;
         event.fetchData().then(data =>
         {
             $('#event-title').text(event.title);
+            $('.banner-bg').css('background-image', `url("${event.coverImage}")`);
+            $('#performer-title').text(`${event.performerFirstName} ${event.performerLastName}`);
+            $('#performer-link').attr('href', `/performers/${event.performerId}`);
+            $('#description').text(event.description);
+            $('#eventprice').text(event.price);
+            event.getImages('all').then(imgs=>
+            {
+                console.log(imgs[0]);
+
+                slide_num=imgs.length;
+                for(let i=0; i<imgs.length;i++)
+                {
+                    let img=imgs[i];
+                    let slide= $(`<li class="slide" id="slide_${i}">
+                                   <img class="image-slide" src="${img.image}">
+                                  </li>`);
+
+                    if(i === 0)slide.addClass('show').css('top', 0);
+                    else slide.css('top', '100%');
+                    $('.slider ul').append(slide);
+                }
+            })
         });
+
+
+        $(document).ready(()=>
+        {
+            $('#slide-next').click(()=>slide(1));
+            $('#slide-prev').click(()=>slide(-1));
+        });
+
+
+        function slide(x) {
+            currSlide+=x;
+            if (currSlide>slide_num-1){
+                currSlide=0;
+            }
+            if(currSlide<0){
+                currSlide=slide_num-1;
+            }
+
+            let current = $('.slide.show');
+            let next = $(`#slide_${currSlide}`);
+
+            /*current.slideUp(400, () =>
+            {
+                current.removeClass('show');
+            });
+            next.slideUp(400, () =>
+            {
+                next.addClass("show");
+            });*/
+
+            let currentHeight = current.height();
+            current.animate({
+                height: 0
+            }, 400, () =>
+            {
+                current.removeClass('show');
+                current.css('height', currentHeight);
+            });
+
+            next.addClass('show').animate({
+                top: 0
+            }, 400, () =>
+            {
+                next.css('top', '100%');
+            });
+        }
+
+    </script>
+
+    <script>
+
 
     </script>
 
@@ -33,36 +105,64 @@
 <header></header>
 
 <div class="banner" style="background-color: #FFF8E1">
-    <div class="banner-bg" style="background-image: url('/assets/images/imgdashboard/indifferenza2.jpg')"></div>
+    <div class="banner-bg"></div>
     <div class="headline" style="background-color: transparent">
-        <span style="color: #FFFFFF" id="event-title"></span>
     </div>
 </div>
+<div class="container-event">
+    <main class="event-container">
+    <div class="event-left-column">
+        <div class="slider">
+            <ul>
 
-<main class="event-container">
-    <div class="event-left-column" style="background-image: url('/assets/images/imgdashboard/indifferenza3.jpg');">
-</div>
+            </ul>
+            <a class="prev" id="slide-prev">&#10094;</a>
+            <a class="next" id="slide-next">&#10095;</a>
+        </div>
 
-
-
+    </div>
 <div class="event-right-column">
-    <div class="event-description"><a href="/performers"> <!--rimanda alla pagina del performer specifico-->
-        <span>Generazione Disagio</span></a>
-        <h1>L'INDIFFERENZA</h1>
-        <p>L'indifferenza is a thriller that forces the viewer to constantly take a position on what is true and what is false, about what is good and what is bad; in a metaphorical struggle between the progress of western civilization and its bestial and bloody nature.</p>
+    <div class="event-description">
+        <a id="performer-link"><span id="performer-title"></span></a>
+        <span style="color: black" id="event-title"></span>
+        <p id="description"></p>
     </div>
-
     <div class="event-price">
-        <span>30€</span>
+        <span id="eventprice"></span>
         <a href="#" class="cart-btn">BUY</a>
     </div>
-
-    <div class="event-description"><a href=".#">
-        <span>Seminars from NomePerformer</span></a>
-    </div>
-
 </div>
-
+    </main>
+    <div class="correlated">
+        <div class="seminar">
+            <span>CORRELATED SEMINARS</span>
+            <ul>
+                <li class="seminar-card">
+                    <div class="seminar-img">
+                        <img src="/assets/images/backgrounds/wallpaper.jpg">
+                    </div>
+                    <div class="seminar-description">
+                        <h2>Seminar Title</h2>
+                        <span>
+                            sjcfvfjnvfjnvjfv
+                        </span>
+                    </div>
+                </li>
+                <li class="seminar-card">
+                    <div class="seminar-img">
+                        <img src="/assets/images/backgrounds/shoppingcart-bg.jpg">
+                    </div>
+                    <div class="seminar-description">
+                        <h2>Seminar Title</h2>
+                        <span>
+                            sjcfvfjnvfjnvjfv
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 <footer></footer>
 <div class="mobile-nav"></div>
 
