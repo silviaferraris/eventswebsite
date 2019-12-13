@@ -1933,26 +1933,13 @@ background: transparent;}
     margin-top: 60px;
 }
 
-.event-left-column img {
-    width: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    opacity: 0;
-    transition: all 0.3s ease;
-}
-
-.event-left-column img.active {
-    opacity: 1;
-}
-
 .event-description {
     border-bottom: 1px solid #E1E8EE;
     margin-bottom: 20px;
 }
 .event-description span {
     font-size: 12px;
-    color: #358ED7;
+    color: #dc3545;
     letter-spacing: 1px;
     text-transform: uppercase;
     text-decoration: none;
