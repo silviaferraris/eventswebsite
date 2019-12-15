@@ -16,8 +16,9 @@
         import Event from "../../assets/js/modules/event.mjs";
         let eventId = getCookieValue('eveid');
         let event = new Event(eventId);
-        let slide_num=2;
-        let currSlide=0;
+        let slideCount;
+        let currentSlide = 0;
+
         event.fetchData().then(data =>
         {
             $('#event-title').text(event.title);
@@ -28,67 +29,61 @@
             $('#eventprice').text(event.price);
             event.getImages('all').then(imgs=>
             {
-                console.log(imgs[0]);
-
-                slide_num=imgs.length;
+                slideCount = imgs.length;
                 for(let i=0; i<imgs.length;i++)
                 {
                     let img=imgs[i];
-                    let slide= $(`<li class="slide" id="slide_${i}">
-                                   <img class="image-slide" src="${img.image}">
+                    let slide= $(`<li class="slide" id="slide${i}">
+                                   <img src="${img.image}">
                                   </li>`);
 
-                    if(i === 0)slide.addClass('show').css('top', 0);
-                    else slide.css('top', '100%');
-                    $('.slider ul').append(slide);
+                    $('.slideshow .slide-list').append(slide);
+                    $(`#slide${0}`).css('left', '0');
                 }
+
+                $(document).on('click', '.slideshow .next-slide', () => slide(1));
+                $(document).on('click', '.slideshow .prev-slide', () => slide(-1));
+
             })
         });
 
-
-        $(document).ready(()=>
-        {
-            $('#slide-next').click(()=>slide(1));
-            $('#slide-prev').click(()=>slide(-1));
-        });
-
-
         function slide(x) {
-            currSlide+=x;
-            if (currSlide>slide_num-1){
-                currSlide=0;
-            }
-            if(currSlide<0){
-                currSlide=slide_num-1;
-            }
 
-            let current = $('.slide.show');
-            let next = $(`#slide_${currSlide}`);
+            if(slide.lock1 || slide.lock2)return;
 
-            /*current.slideUp(400, () =>
-            {
-                current.removeClass('show');
-            });
-            next.slideUp(400, () =>
-            {
-                next.addClass("show");
-            });*/
+            slide.lock1 = true;
+            slide.lock2 = true;
 
-            let currentHeight = current.height();
+            let current = $(`#slide${currentSlide}`);
+
+            currentSlide += x;
+            if(currentSlide >= slideCount)currentSlide = 0;
+            if(currentSlide < 0)currentSlide = slideCount-1;
+
+            let next = $(`#slide${currentSlide}`);
+
+            let width = current.outerWidth();
+
             current.animate({
-                height: 0
+                left: -width*x
             }, 400, () =>
             {
-                current.removeClass('show');
-                current.css('height', currentHeight);
+                current.css('left', '100%');
+                slide.lock1 = false
             });
 
-            next.addClass('show').animate({
-                top: 0
-            }, 400, () =>
+            if(x > 0)
             {
-                next.css('top', '100%');
-            });
+                next.animate({
+                    left: 0
+                }, 400, () => slide.lock2 = false);
+            }
+            else
+            {
+                next.css('left', 'auto').css('right', '100%').animate({
+                    right: 0
+                }, 400, () => slide.lock2 = false);
+            }
         }
 
     </script>
@@ -112,12 +107,13 @@
 <div class="container-event">
     <main class="event-container">
     <div class="event-left-column">
-        <div class="slider">
-            <ul>
+
+        <div class="slideshow">
+            <ul class="slide-list">
 
             </ul>
-            <a class="prev" id="slide-prev">&#10094;</a>
-            <a class="next" id="slide-next">&#10095;</a>
+            <a class="next-slide">&gt;</a>
+            <a class="prev-slide">&lt;</a>
         </div>
 
     </div>
