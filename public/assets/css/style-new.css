@@ -1777,20 +1777,20 @@ input[type=submit]:hover {
     background-color: #f2f2f2;
     padding: 10px;
 }
-
 .contactme-column-right {
     float: right;
     width: 50%;
     margin-top: 6px;
     padding: 20px;
+    color: #4b4b4b;
 }
-.contactme-column-left {
+.contactme-column-left, .contactme-column-left p, .contactme-column-left h2{
     float: left;
     width: 50%;
     margin-top: 6px;
-    padding: 20px;
+    color: whitesmoke;
+    padding-left: 50px;
 }
-
 .contactme-row:after {
     content: "";
     display: table;
@@ -2167,4 +2167,47 @@ background: transparent;}
 
 .cart-btn:hover {
     background-color: #3C2B3B;
+}
+
+
+.error-container{
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 10px;
+}
+.error-container body{
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    min-width: 100vw;
+    background-position: top;
+}
+.error-container h1{
+    left: 0;
+    line-height: 200px;
+    margin-top: -100px;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    width: 100%;
+}
+.error-container h2 {
+    color: #CD9999;
+    left: 0;
+    line-height: 200px;
+    margin-top: -100px;
+    position: absolute;
+    text-align: center;
+    top: 70%;
+    width: 100%;
+}
+.error-container p {
+    color: #050505;
+    left: 0;
+    line-height: 200px;
+    margin-top: -100px;
+    position: absolute;
+    text-align: center;
+    top: 80%;
+    width: 100%;
 }
