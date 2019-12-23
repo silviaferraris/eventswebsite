@@ -28,6 +28,54 @@
     FAQ
 </h1>
 
+
+<div class="faq-header">Frequently Asked Questions</div>
+<div class="faq-container">
+    <div class="faq-question">
+        <div class="question-item">
+            <a>Why are you doing these events in Varazze?</a>
+            <div class="content">
+                <p>Varazze is hit by a serious flooding disaster. A lot of people is suffering because of this. Some of them lost everything. It's a brutal destiny, but with just some few money you can help people go back to their normal life.</p>
+            </div>
+        </div>
+        <div class="question-item">
+            <a>How can I apply an event?</a>
+            <div class="content">
+                <p>You can add an event to your cart and pay it whenever you want. But first, you need to register for apply using our online application service</p></div>
+        </div>
+        <div class="question-item">
+            <a>question 3</a>
+            <div class="content">
+                <p>answer 3</p>
+            </div>
+        </div>
+        <div class="question-item">
+            <a>question 4</a>
+            <div class="content">
+                <p>answer 4</p>
+            </div>
+        </div>
+        <div class="question-item">
+            <a>question 5</a>
+            <div class="content">
+                <p>answer 5</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const items = document.querySelectorAll(".faq-question a");
+
+    function toggleQuestion(){
+        this.classList.toggle('active');
+        this.nextElementSibling.classList.toggle('active');
+    }
+
+    items.forEach(item => item.addEventListener('click', toggleQuestion));
+</script>
+
+
 <script>
     ScrollReveal().reveal('.headline')
     ScrollReveal().reveal('.tagline', { delay: 500 })

@@ -351,7 +351,7 @@ app.get('/events/all', (req, res) =>
 
 app.get('/events/next_date', (req, res) =>
 {
-    db(EVENTS_TABLE).first('date').orderBy('date').where('date', '>=', parseDateForDB(new Date())).then(result =>
+    db(EVENTS_TABLE).first('date','id','title','description').orderBy('date').where('date', '>=', parseDateForDB(new Date())).then(result =>
     {
         let found = false;
         if(result && result.date)found = true;
