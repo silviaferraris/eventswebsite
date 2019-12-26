@@ -66,3 +66,5 @@ function checkTempCartString(tempCart)
 {
     return /(\d+-\w+)(,\d+-\w+)*/.test(tempCart);
 }
+
+

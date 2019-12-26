@@ -1565,7 +1565,7 @@ h2{
     color: mediumspringgreen;
 }
 .countdown > div.counter-hour {
-    color: lavenderblush;
+    color: coral;
 }
 .countdown > div.counter-minute {
     color: skyblue;
@@ -1580,7 +1580,7 @@ h2{
     color: mediumspringgreen;
 }
 .countdown.bg-style > div.counter-hour .hours {
-    background: lavenderblush;
+    background: coral;
 }
 .countdown.bg-style > div.counter-hour .text {
     color: lavenderblush;
@@ -2250,7 +2250,7 @@ background: transparent;}
 
 .faq-question a.active {
     color: #CD9999;
-    border-bottom: 1px solid #3C2B3B;
+    border-bottom: 1pcox solid #3C2B3B;
 }
 
 .question-item .content {
