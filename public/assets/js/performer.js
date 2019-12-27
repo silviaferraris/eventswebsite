@@ -74,28 +74,28 @@ $(document).ready(() =>
 });
 
 function loadPerformers(limit, offset, types) {
-    Event.getNextPerformer(limit, offset, types).then(events =>
+    Event.getNextPerformer(limit, offset, types).then(performers =>
     {
-        let cardList = $(".card-list");
-        createCards(events, cardList);
+        let perfList = $(".perf-list");
+        createCards(performers, perfList);
     });
 }
 
 function clearList()
 {
     return new Promise(resolve => {
-        $(".card-list-container").animate({height: 0}, () =>
+        $(".perf-container").animate({height: 0}, () =>
         {
-            $(".card-list").empty();
+            $(".perf-list").empty();
             loadedPerformer = 0;
             resolve();
         });
     })
 }
 
-function createCards(events, cardList)
+function createCards(performers, perfList)
 {
-    events.forEach(performers => createCard(performers, cardList));
+    performers.forEach(performers => createCard(performers, perfList));
 
     loadedPerformer += performers.length;
 
@@ -103,9 +103,9 @@ function createCards(events, cardList)
     if(loadedPerformer === 0)emptyMessage.addClass('show');
     else emptyMessage.removeClass('show');
 
-    let height = $(".card-list").outerHeight();
+    let height = $(".perf-list").outerHeight();
     if(height < 20)height = 20;
-    $(".card-list-container").animate({height: `${height}px`});
+    $(".perf-container").animate({height: `${height}px`});
 
     //fadeInArray(cards[Symbol.iterator]()).then(() => console.log("a"));
 }

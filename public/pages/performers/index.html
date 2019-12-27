@@ -21,7 +21,9 @@
 
     <script src="/assets/js/navbar_and_footer_loader.js"></script>
     <script src="/assets/js/typewriter.js"></script>
+    <script type="module" src="/assets/js/events.js"></script>
     <script type="module" src="/assets/js/performer.js"></script>
+
 
 </head>
 <body>
@@ -35,21 +37,14 @@
     </div>
 
 </div>
-
 <div class="perf-container">
-    <div class="box">
-        <img src="/assets/images/imgdashboard/generazionedisagio.jpg">
+    <span class="empty-list-message">No events to show.</span>
+    <div class="perf-list">
     </div>
-    <div class="box">
-        <img src="/assets/images/imgdashboard/geeli.jpg">
+</div>
 
-    </div>
-    <div class="box">
-        <img src="https://source.unsplash.com/random/?milano">
-    </div>
-    <div class="box">
-        <img src="https://source.unsplash.com/random/?milano">
-    </div>
+<div class="end-of-card-list">
+    <hr style="width: 100%"><a class="load-more-btn"><img src="/assets/images/icons/load-more-btn-icon.svg"></a>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

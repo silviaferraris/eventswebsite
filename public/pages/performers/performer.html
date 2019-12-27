@@ -15,13 +15,13 @@
 
     <script type="module">
         import Performer from "../../assets/js/modules/performer.mjs";
-        let _performerId = getCookieValue('perid');
-        let performer = new Performer(_performerId);
+        let performer_id = getCookieValue('perid');
+        let performer = new Performer(performer_id);
         let slideCount;
         let currentSlide = 0;
         performer.fetchData().then(data =>
         {
-            $('#performer-title').text(`${performer.performerFirstName} ${performer.performerLastName}`);
+            $('#perf-title').text(`${performer.firstName} ${performer.lastName}`);
             $('.banner-bg').css('background-image', `url("${performer.photo}")`);
             $('#performerbiography').text(performer.biography);
             performer.getImages('all').then(imgs=>
@@ -91,9 +91,7 @@
 
 <div class="banner" style="background-color: #FFF8E1">
     <div class="banner-bg" style="background-image: url('/assets/images/backgrounds/wallpaper.jpg')"></div>
-    <div class="headline" style="background-color: transparent">
-        <span style="color: #FFFFFF" id="performer-title"></span>
-    </div>
+    <div class="headline" style="background-color: transparent"></div>
 </div>
 <div class="container-event">
     <main class="event-container">
@@ -110,7 +108,7 @@
         </div>
         <div class="event-right-column">
             <div class="performer-biography">
-                <span style="color: black" id="performer-title"></span>
+                <span style="color: black" id="perf-title"></span>
                 <p id="performerbiography"></p>
             </div>
         </div>
