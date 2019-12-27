@@ -14,10 +14,18 @@
 
     <script type="module">
         import Event from "../../assets/js/modules/event.mjs";
+        import cart from "../../assets/js/modules/cart.mjs"
+
         let eventId = getCookieValue('eveid');
         let event = new Event(eventId);
         let slideCount;
         let currentSlide = 0;
+
+        $(document).ready(() =>
+        {
+            $("#correlated-seminars").hide();
+            $("#correlated-events").hide();
+        });
 
         event.fetchData().then(data =>
         {
@@ -27,6 +35,22 @@
             $('#performer-link').attr('href', `/performers/${event.performerId}`);
             $('#description').text(event.description);
             $('#eventprice').text(event.price);
+
+            $(".cart-btn").attr('href', event.eventId);
+            $(".cart-btn").click(function (e)
+            {
+                $(".cart-btn").hide();
+                $(".loading").show();
+
+
+                cart.addToCart($(this).attr('href')).then(() =>
+                {
+                    $(".loading").hide();
+                    $(".cart-btn").show();
+                });
+                e.preventDefault();
+            });
+
             event.getImages('all').then(imgs=>
             {
                 slideCount = imgs.length;
@@ -44,8 +68,38 @@
                 $(document).on('click', '.slideshow .next-slide', () => slide(1));
                 $(document).on('click', '.slideshow .prev-slide', () => slide(-1));
 
+            });
+
+            event.getSeminars().then(seminars =>
+            {
+                if(seminars.length > 0)$("#correlated-seminars").show();
+                else return;
+                let seminarsList = $("#correlated-seminars ul");
+                for(let seminar of seminars) createCorrelatedCard(seminarsList, seminars.coverImage, seminar.title, seminar.description);
+            });
+
+            event.getEventsOnSameDate().then(events =>
+            {
+                if(events.length > 0)$("#correlated-events").show();
+                else return;
+                let eventsList = $("#correlated-events ul");
+                for(let event of events) createCorrelatedCard(eventsList, event.coverImage, event.title, event.description);
             })
         });
+
+        function createCorrelatedCard(list, img, title, description)
+        {
+            let card = $(`<li class="correlated-card">
+                                       <div class="card-img">
+                                            <img src="${img}">
+                                        </div>
+                                        <div class="card-description">
+                                            <h2>${title}</h2>
+                                            <span>${description}</span>
+                                        </div>
+                                  </li>`);
+            list.append(card);
+        }
 
         function slide(x) {
 
@@ -87,6 +141,7 @@
         }
 
     </script>
+
 </head>
 <body>
 
@@ -97,57 +152,48 @@
     <div class="headline" style="background-color: transparent">
     </div>
 </div>
+
 <div class="container-event">
     <main class="event-container">
-    <div class="event-left-column">
 
-        <div class="slideshow">
-            <ul class="slide-list">
-
-            </ul>
-            <a class="next-slide">&gt;</a>
-            <a class="prev-slide">&lt;</a>
+        <div class="event-right-column">
+            <div class="event-description">
+                <a id="performer-link"><span id="performer-title"></span></a>
+                <span style="color: black" id="event-title"></span>
+                <p id="description"></p>
+            </div>
+            <div class="event-price">
+                <span id="eventprice"></span>
+                <div style="width: 90px; height: 48px; display:flex; justify-content: center">
+                    <a href="#" class="cart-btn">BUY</a>
+                    <img class="loading" style="display: none" src="/assets/images/icons/arch.svg">
+                </div>
+            </div>
         </div>
+        <div class="event-left-column">
 
-    </div>
-<div class="event-right-column">
-    <div class="event-description">
-        <a id="performer-link"><span id="performer-title"></span></a>
-        <span style="color: black" id="event-title"></span>
-        <p id="description"></p>
-    </div>
-    <div class="event-price">
-        <span id="eventprice"></span>
-        <a href="#" class="cart-btn">BUY</a>
-    </div>
-</div>
+            <div class="slideshow">
+                <ul class="slide-list">
+
+                </ul>
+                <a class="next-slide">&gt;</a>
+                <a class="prev-slide">&lt;</a>
+            </div>
+
+        </div>
     </main>
+
     <div class="correlated">
-        <div class="seminar">
+        <div id="correlated-seminars">
             <span>CORRELATED SEMINARS</span>
             <ul>
-                <li class="seminar-card">
-                    <div class="seminar-img">
-                        <img src="/assets/images/backgrounds/wallpaper.jpg">
-                    </div>
-                    <div class="seminar-description">
-                        <h2>Seminar Title</h2>
-                        <span>
-                            sjcfvfjnvfjnvjfv
-                        </span>
-                    </div>
-                </li>
-                <li class="seminar-card">
-                    <div class="seminar-img">
-                        <img src="/assets/images/backgrounds/shoppingcart-bg.jpg">
-                    </div>
-                    <div class="seminar-description">
-                        <h2>Seminar Title</h2>
-                        <span>
-                            sjcfvfjnvfjnvjfv
-                        </span>
-                    </div>
-                </li>
+
+            </ul>
+        </div>
+        <div id="correlated-events">
+            <span>EVENTS ON SAME DAY</span>
+            <ul>
+
             </ul>
         </div>
     </div>

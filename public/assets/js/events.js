@@ -1,4 +1,5 @@
 import Event from "../../assets/js/modules/event.mjs";
+import cart from "../../assets/js/modules/cart.mjs";
 
 let loadedEvents = 0;
 
@@ -37,7 +38,7 @@ $(document).ready(() =>
 
     $(document).on('click', '.card-buy', function (event)
     {
-        addToCart($(this).attr('href'));
+        cart.addToCart($(this).attr('href'));
 
         let priceElement = $(this).parent().find($('.card-price'));
         let price = priceElement.text();
@@ -142,49 +143,6 @@ function createCard(event, cardList)
                                 </div>`);//.css('visibility', 'hidden');
     cardList.append(card);
     return card;
-}
-
-async function addToCart(eventId)
-{
-    if(!eventId)return;
-
-    if(typeof addToCart.userLogged == 'undefined')
-    {
-        addToCart.userLogged = (await (await fetch('/user/imlogged')).json()).logged;
-    }
-
-    if(addToCart.userLogged)
-    {
-        fetch(`/user/cart/add_event?event_id=${eventId}&quantity=1`).then(updateCartIcon)
-    }
-    else
-    {
-        let tempCart = getCookieValue('tempCart');
-        tempCart = addToCartString(tempCart, eventId);
-        setCookie('tempCart', tempCart);
-        await updateCartIcon();
-    }
-}
-
-function addToCartString(cartString, eventId)
-{
-    if(!checkTempCartString(cartString))cartString = '';
-    if(!cartString || cartString === '')return `1-${eventId}`;
-    let list = cartString.split(',');
-    let newCartString = '';
-    let found = false;
-    for(let item of list)
-    {
-        let itemSplit = item.split('-');
-        if(itemSplit[1] === eventId)
-        {
-            newCartString += `${Number.parseInt(itemSplit[0])+1}-${itemSplit[1]},`;
-            found = true;
-        }
-        else newCartString += `${item},`;
-    }
-    if(!found)newCartString += `1-${eventId},`;
-    return  newCartString.substring(0, newCartString.length-1);
 }
 
 async function moveBubbleToCart(bubble)
