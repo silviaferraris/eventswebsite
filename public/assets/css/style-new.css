@@ -2192,7 +2192,7 @@ background: transparent;}
     width: 100%;
 }
 .error-container h2 {
-    color: #CD9999;
+    color: #050505;
     left: 0;
     line-height: 200px;
     margin-top: -100px;
@@ -2201,7 +2201,7 @@ background: transparent;}
     top: 70%;
     width: 100%;
 }
-.error-container p {
+.error-container .error-message {
     color: #050505;
     left: 0;
     line-height: 200px;
