@@ -2047,10 +2047,13 @@ background: transparent;}
     padding: 0;
 }
 
-
-
-
 .event-description {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #E1E8EE;
+    margin-bottom: 20px;
+}
+.performer-biography {
     display: flex;
     flex-direction: column;
     border-bottom: 1px solid #E1E8EE;
@@ -2060,6 +2063,11 @@ background: transparent;}
     font-size: 40px;
     letter-spacing: 2px;
 }
+.performer-biography #performer-title{
+    font-size: 40px;
+    letter-spacing: 2px;
+}
+
 
 .event-description span {
     font-size: 20px;
