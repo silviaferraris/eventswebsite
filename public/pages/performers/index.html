@@ -21,9 +21,104 @@
 
     <script src="/assets/js/navbar_and_footer_loader.js"></script>
     <script src="/assets/js/typewriter.js"></script>
-    <script type="module" src="/assets/js/events.js"></script>
     <script type="module" src="/assets/js/performer.js"></script>
 
+    <style>
+
+        .performer-container{
+            width: 70%;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .performer-container ul{
+            padding: 0;
+            margin: 0;
+            list-style-type: none;
+            display: grid;
+            grid-template-columns: auto auto auto;
+            grid-row-gap: 30px;
+        }
+
+        .performer-card{
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 300px;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        .performer-card:hover{
+            border: none;
+        }
+
+        .performer-card span{
+            position: absolute;
+            width: 100%;
+            font-family: 'Gilroy-Medium', serif;
+            font-size: 24px;
+            line-height: 24px;
+            letter-spacing: 2px;
+            top: calc(50% - 12px);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .performer-card:hover span{
+            color: white;
+            text-shadow: 2px 2px 2px black;
+            animation-name: nameFadeIn;
+            animation-duration: 1000ms;
+            animation-direction: normal;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes nameFadeIn {
+            0%{
+                top: 100%;
+                opacity: 0;
+            }
+            100%{
+                top: calc(50% - 12px);
+                opacity: 100%;
+            }
+        }
+
+
+        .performer-card:after{
+            content: '';
+            position: absolute;
+            height: 100%;
+            width: 50%;
+            background-color: white;
+            top: 0;
+            right: 0;
+            transition: top 400ms;
+        }
+
+        .performer-card:before{
+            content: '';
+            position: absolute;
+            height: 100%;
+            width: 50%;
+            background-color: white;
+            bottom: 0;
+            left: 0;
+            transition: bottom 400ms;
+        }
+
+        .performer-card:hover:after{
+            top: 100%
+        }
+
+        .performer-card:hover:before{
+            bottom: 100%;
+        }
+
+    </style>
 
 </head>
 <body>
@@ -35,17 +130,26 @@
     <div class="headline" style="background-color: transparent">
         <span style="color: #FFFFFF">PERFORMERS</span>
     </div>
-
-</div>
-<div class="perf-container">
-    <span class="empty-list-message">No events to show.</span>
-    <div class="perf-list">
-    </div>
 </div>
 
-<div class="end-of-card-list">
-    <hr style="width: 100%"><a class="load-more-btn"><img src="/assets/images/icons/load-more-btn-icon.svg"></a>
+
+<div class="performer-container">
+    <ul>
+        <li class="performer-card">
+            <img src="/assets/images/backgrounds/perf-test.png">
+            <span>Generazione Disagio</span>
+        </li>
+        <li class="performer-card">
+            <img src="/assets/images/backgrounds/perf-test.png">
+            <span>Anonymous Surfers</span>
+        </li>
+        <li class="performer-card">
+            <img src="/assets/images/backgrounds/perf-test.png">
+            <span>Geeti Gangal</span>
+        </li>
+    </ul>
 </div>
+
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
