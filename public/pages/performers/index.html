@@ -23,22 +23,101 @@
     <script src="/assets/js/typewriter.js"></script>
     <script type="module" src="/assets/js/performer.js"></script>
 
+    <script>
+
+        let container;
+
+        $(document).on('mouseover', '.performer-card', function () {
+            let img = $(this).find('img').attr('src');
+            $('.performer-bg').css('background-image', `url("${img}")`);
+            $('.banner-bg').css('opacity', 0);
+        });
+
+        $(document).on('mouseout', '.performer-card', function () {
+            $('.banner-bg').css('opacity', 1);
+        });
+
+        $(document).ready(() =>
+        {
+            container = $(".performer-container")[0];
+            window.addEventListener('wheel', wheelEvent, {passive: false});
+            container.addEventListener('wheel', (e) =>
+            {
+                if(e.deltaX !== 0)e.preventDefault();
+            }, {passive: false})
+        });
+
+        function wheelEvent(event)
+        {
+            let containerMaxScroll = Math.trunc(Math.abs((container.scrollWidth - container.clientWidth) - container.scrollLeft)) === 0;
+
+            if(window.scrollY === 0 && (!containerMaxScroll && event.deltaY > 0 || event.deltaY < 0))
+            {
+                container.scrollBy(event.deltaY, 0);
+                window.scrollTo(0, 0);
+                event.preventDefault();
+            }
+        }
+
+    </script>
+
     <style>
+
+        body::-webkit-scrollbar {
+            width: 0;
+            background: transparent;
+        }
 
         .performer-container{
             width: 70%;
             margin: auto;
             padding: 20px;
+            overflow-x: scroll;
+        }
+
+        .performer-container::-webkit-scrollbar {
+            width: 0;
+            background: transparent;
         }
 
         .performer-container ul{
+            width: fit-content;
             padding: 0;
             margin: 0;
             list-style-type: none;
-            display: grid;
-            grid-template-columns: auto auto auto;
-            grid-row-gap: 30px;
+            display: flex;
+            flex-direction: row;
+            /*grid-template-columns: auto auto auto;
+            grid-row-gap: 30px;*/
         }
+
+        @media (max-width: 940px) {
+            .performer-container{
+                width: 100%;
+            }
+        }
+
+        /*@media (max-width: 1375px) {
+            .performer-container ul{
+                grid-template-columns: auto auto;
+            }
+        }
+
+        @media (max-width: 940px) {
+            .performer-container{
+                width: 100%;
+            }
+            .performer-container ul{
+                grid-template-columns: auto;
+            }
+        }
+
+        @media (max-width: 355px) {
+            .performer-container{
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+        }*/
 
         .performer-card{
             position: relative;
@@ -48,6 +127,8 @@
             width: 300px;
             height: 300px;
             overflow: hidden;
+            justify-self: center;
+            margin: 20px;
         }
 
         .performer-card div{
@@ -84,6 +165,15 @@
 
         .performer-card:hover{
             border: none;
+        }
+
+        .performer-card a{
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 20;
         }
 
         .performer-card span{
@@ -149,6 +239,27 @@
             bottom: 100%;
         }
 
+        .performer-bg{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: calc(100% + 20px);
+            height: calc(100% + 20px);
+            padding: 200px 100px;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 0 55%;
+            filter: blur(1px);
+            margin: -10px -10px -10px -10px;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .banner{
+            min-height: 50vh;
+            height: 50vh;
+        }
+
     </style>
 
 </head>
@@ -156,8 +267,9 @@
 
 <header></header>
 
-<div class="banner" style="background-color: #FFF8E1">
-    <div class="banner-bg" style="background-image: url('/assets/images/backgrounds/events-bg.jpg')"></div>
+<div class="banner" style="background-color: transparent">
+    <div class="banner-bg" style="background-color: #FF4136"></div>
+    <div class="performer-bg" style="background-image: none"></div>
     <div class="headline" style="background-color: transparent">
         <span style="color: #FFFFFF">PERFORMERS</span>
     </div>
@@ -170,29 +282,57 @@
             <div></div>
             <img src="/assets/images/backgrounds/perf-test.png">
             <span>Generazione Disagio</span>
+            <a href="#"></a>
         </li>
         <li class="performer-card">
             <div></div>
             <img src="/assets/images/backgrounds/perf-test.png">
             <span>Anonymous Surfers</span>
+            <a href="#"></a>
         </li>
         <li class="performer-card">
             <div></div>
             <img src="/assets/images/backgrounds/perf-test.png">
             <span>Geeti Gangal</span>
+            <a href="#"></a>
         </li>
 
         <li class="performer-card">
+            <div></div>
             <img src="/assets/images/backgrounds/perf-test.png">
             <span>Generazione Disagio</span>
+            <a href="#"></a>
         </li>
         <li class="performer-card">
+            <div></div>
             <img src="/assets/images/backgrounds/perf-test.png">
             <span>Anonymous Surfers</span>
+            <a href="#"></a>
         </li>
         <li class="performer-card">
+            <div></div>
             <img src="/assets/images/backgrounds/perf-test.png">
             <span>Geeti Gangal</span>
+            <a href="#"></a>
+        </li>
+
+        <li class="performer-card">
+            <div></div>
+            <img src="/assets/images/backgrounds/perf-test.png">
+            <span>Generazione Disagio</span>
+            <a href="#"></a>
+        </li>
+        <li class="performer-card">
+            <div></div>
+            <img src="/assets/images/backgrounds/perf-test.png">
+            <span>Anonymous Surfers</span>
+            <a href="#"></a>
+        </li>
+        <li class="performer-card">
+            <div></div>
+            <img src="/assets/images/backgrounds/perf-test.png">
+            <span>Geeti Gangal</span>
+            <a href="#"></a>
         </li>
     </ul>
 </div>

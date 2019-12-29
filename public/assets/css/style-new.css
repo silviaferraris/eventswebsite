@@ -558,6 +558,7 @@ body{
     filter: blur(1px);
     margin: -10px -10px -10px -10px;
     overflow: hidden;
+    transition: opacity .8s;
 }
 
 .headline{
