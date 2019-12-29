@@ -26,6 +26,8 @@
     <script>
 
         let container;
+        let cardWidth = 340;
+        let scrollTimer;
 
         $(document).on('mouseover', '.performer-card', function () {
             let img = $(this).find('img').attr('src');
@@ -37,9 +39,14 @@
             $('.banner-bg').css('opacity', 1);
         });
 
-        $(document).ready(() =>
+        $(window).resize(adjustContainerSize);
+
+        $(() =>
         {
             container = $(".performer-container")[0];
+
+            adjustContainerSize();
+
             window.addEventListener('wheel', wheelEvent, {passive: false});
             container.addEventListener('wheel', (e) =>
             {
@@ -51,12 +58,27 @@
         {
             let containerMaxScroll = Math.trunc(Math.abs((container.scrollWidth - container.clientWidth) - container.scrollLeft)) === 0;
 
+            if(scrollTimer !== null) clearTimeout(scrollTimer);
+
             if(window.scrollY === 0 && (!containerMaxScroll && event.deltaY > 0 || event.deltaY < 0))
             {
                 container.scrollBy(event.deltaY, 0);
                 window.scrollTo(0, 0);
                 event.preventDefault();
             }
+
+            scrollTimer = window.setTimeout(() =>
+            {
+                $(".performer-container").animate({scrollLeft: Math.round($(".performer-container").scrollLeft()/340)*340}, 200);
+            }, 250);
+        }
+
+        function adjustContainerSize()
+        {
+            let maxWidth = $(window).width()*0.7;
+            let cardNumber = Math.trunc(maxWidth/cardWidth);
+            if(cardNumber < 1)cardNumber = 1;
+            container.style.width = `${cardNumber*cardWidth}px`;
         }
 
     </script>
@@ -71,7 +93,7 @@
         .performer-container{
             width: 70%;
             margin: auto;
-            padding: 20px;
+            padding: 20px 0;
             overflow-x: scroll;
         }
 
