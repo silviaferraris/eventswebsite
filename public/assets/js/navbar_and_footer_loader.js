@@ -38,7 +38,7 @@ $(document).ready(function()
 
     $("footer").load("/footer.html", () =>
     {
-        adjustBodyPadding()
+        adjustBodyPadding();
         $(window).resize(() => adjustBodyPadding());
     });
 

@@ -66,12 +66,14 @@ header{
     cursor: pointer;
     display: flex;
     align-items: center;
+    text-shadow: 1px 1px white;
 }
 
 .sf-navbar-item a:hover{
     color: whitesmoke;
     cursor: pointer;
     text-decoration: none;
+    text-shadow: 1px 1px #555555;
 }
 
 
@@ -121,18 +123,20 @@ header{
     position: fixed;
     top: 0;
     left: 0;
-    height: 100vh;
+    height: 0;
     width: 100vw;
     background-color: #4b4b4b;
     z-index: 1002;
-    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-    -webkit-clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    overflow: hidden;
+    /*clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);*/
     transition: all .4s;
 }
 
 .mobile-nav.show{
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-    -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    /*clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);*/
+    height: 100vh;
 }
 
 .mobile-nav-container{
@@ -371,6 +375,7 @@ header{
     color: #CD9999;
     font-family: 'Gilroy-Medium', serif;
     font-size: 14px;
+    text-shadow: none;
 }
 
 @keyframes dropdown-open {
