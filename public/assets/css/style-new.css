@@ -2004,6 +2004,7 @@ background: transparent;}
 .slideshow{
     position: relative;
     height: 500px;
+    min-width: 300px;
 
     background-color: transparent;
     overflow: hidden;

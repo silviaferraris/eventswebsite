@@ -85,6 +85,7 @@
             cardWidth += 40; //margin
 
             let maxWidth = $(window).width()*0.8;
+            if(maxWidth > 1540)maxWidth = 1540;
             let cardNumber = Math.trunc(maxWidth/cardWidth);
             if(cardNumber < 1)cardNumber = 1;
             container.style.width = `${cardNumber*cardWidth}px`;
@@ -101,6 +102,7 @@
 
         .performer-container{
             width: 80%;
+            max-width: 1540px;
             margin: auto;
             padding: 0;
             overflow-x: scroll;

@@ -40,19 +40,25 @@
             $(".cart-btn").click(function (e)
             {
                 $(".cart-btn").hide();
-                $(".loading").show();
+                $("#buy-loading").show();
 
 
                 cart.addToCart($(this).attr('href')).then(() =>
                 {
-                    $(".loading").hide();
-                    $(".cart-btn").show();
+                    $("#buy-loading").hide();
+                    $("#buy-check").show().attr('src', '/assets/images/icons/check.gif');
+                    setTimeout(() =>
+                    {
+                        $(".cart-btn").show();
+                        $("#buy-check").hide();
+                    }, 1200);
                 });
                 e.preventDefault();
             });
 
             event.getImages('all').then(imgs=>
             {
+                $("#slide-loading").hide();
                 slideCount = imgs.length;
                 for(let i=0; i<imgs.length;i++)
                 {
@@ -166,13 +172,15 @@
                 <span id="eventprice"></span>
                 <div style="width: 90px; height: 48px; display:flex; justify-content: center">
                     <a href="#" class="cart-btn">BUY</a>
-                    <img class="loading" style="display: none" src="/assets/images/icons/arch.svg">
+                    <img id="buy-loading" style="display: none" src="/assets/images/icons/loading.gif">
+                    <img id="buy-check" style="display: none" src="/assets/images/icons/check.gif">
                 </div>
             </div>
         </div>
         <div class="event-left-column">
 
             <div class="slideshow">
+                <img id="slide-loading" src="/assets/images/icons/loading.gif" style="display: block; width: 44px; height: 44px; position: absolute; top: calc(50% - 22px); left: calc(50% - 22px);">
                 <ul class="slide-list">
 
                 </ul>

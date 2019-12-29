@@ -85,6 +85,8 @@ $(document).ready(() =>
 function loadEvents(limit, offset, types) {
     Event.getNextEvents(limit, offset, types).then(events =>
     {
+        $("#loading-gif").hide();
+
         let cardList = $(".card-list");
         createCards(events, cardList);
     });
