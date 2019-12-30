@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Silvia's website | PERFORMERS </title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1">
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
@@ -48,6 +48,7 @@
         $(() =>
         {
             container = $(".performer-container")[0];
+            let scrollTimer;
 
             adjustContainerSize();
 
@@ -55,23 +56,43 @@
             container.addEventListener('wheel', (e) =>
             {
                 if(e.deltaX !== 0)e.preventDefault();
-            }, {passive: false})
+            }, {passive: false});
+
+            container.addEventListener('scroll', (e) =>
+            {
+                if(scrollTimer != null)clearTimeout(scrollTimer);
+                scrollTimer = setTimeout(alignCards, 200);
+            });
         });
 
         function wheelEvent(event)
         {
+            if(wheelEvent.lock)
+            {
+                event.preventDefault();
+                return;
+            }
+            wheelEvent.lock = true;
+
             let containerMaxScroll = Math.trunc(Math.abs((container.scrollWidth - container.clientWidth) - container.scrollLeft)) === 0;
 
             if(scrollTimer !== null) clearTimeout(scrollTimer);
 
-            if(window.scrollY === 0 && (!containerMaxScroll && event.deltaY > 0 || event.deltaY < 0))
+            if(window.scrollY <= 2 && (!containerMaxScroll && event.deltaY > 0 || event.deltaY < 0))
             {
-                container.scrollBy(event.deltaY, 0);
+                //container.scrollBy(event.deltaY, 0);
+                let scrollLeft = container.scrollLeft + (event.deltaY < 0 ? -cardWidth : cardWidth);
+
+                $(".performer-container").animate({
+                    scrollLeft: scrollLeft
+                }, 350, () => wheelEvent.lock = false);
+
                 window.scrollTo(0, 0);
                 event.preventDefault();
             }
+            else wheelEvent.lock = false;
 
-            scrollTimer = window.setTimeout(alignCards, 250);
+            //scrollTimer = window.setTimeout(alignCards, 250);
         }
 
         function alignCards() {
@@ -80,15 +101,17 @@
 
         function adjustContainerSize()
         {
-            cardWidth = $(window).height()*0.45;
+            cardWidth = $(window).width()*0.85;
             if(cardWidth > 300)cardWidth = 300;
             cardWidth += 40; //margin
+
+            console.log(`${$(window).height()*0.45} ${cardWidth}`);
 
             let maxWidth = $(window).width()*0.8;
             if(maxWidth > 1540)maxWidth = 1540;
             let cardNumber = Math.trunc(maxWidth/cardWidth);
             if(cardNumber < 1)cardNumber = 1;
-            container.style.width = `${cardNumber*cardWidth}px`;
+            container.style.width = `${(cardNumber*cardWidth)}px`;
         }
 
     </script>
@@ -134,8 +157,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 45vh;
-            height: 45vh;
+            width: 85vw;
+            height: 85vw;
             max-width: 300px;
             max-height: 300px;
             overflow: hidden;
