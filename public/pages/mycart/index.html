@@ -88,11 +88,7 @@
             font-size: 20px;
             color: white;
             background-color: #dc3545;
-            transition: all .4s;
-        }
-
-        .cart-total-container > div > a:hover{
-            background-color: #c33444;
+            transition: all .2s;
         }
 
         #paypal-checkout{
@@ -102,8 +98,21 @@
             background-color: #ffc439;
         }
 
-        #paypal-checkout:hover{
+        .cart-total-container > div > a:hover{
             filter: brightness(0.95);
+        }
+
+        @media (max-width: 1250px) {
+            .cart-total-container{
+                position: relative;
+                width: 100%;
+                height: fit-content;
+                left: 0;
+                padding: 0;
+            }
+            .cart-card-container{
+                width: 100%;
+            }
         }
 
     </style>
