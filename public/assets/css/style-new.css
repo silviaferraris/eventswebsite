@@ -1875,16 +1875,15 @@ background: transparent;}
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     font-family: 'Poppins', sans-serif;
 }
 
 .calendar {
     position: relative;
-    width: 300px;
+    width: 90%;
     background-color: #fff;
     box-sizing: border-box;
-    box-shadow: 0 5px 50px rgba(#000, 0.5);
+    /*box-shadow: 0 5px 50px rgba(#000, 0.5);*/
     border-radius: 8px;
     overflow: hidden;
 }
@@ -1918,9 +1917,10 @@ background: transparent;}
 
 
 .calendardate {
+    position: relative;
     padding: 20px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(25px, 1fr));
+    grid-template-columns: repeat(7, auto);
     grid-gap: 10px;
     box-sizing: border-box;
 }
@@ -1929,7 +1929,7 @@ background: transparent;}
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 25px;
+    height: 50px;
     font-weight: 600;
     color: #262626;
 }
@@ -1939,12 +1939,23 @@ background: transparent;}
 
 
 .calendarnumber {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 25px;
+    border-radius: 6px;
+    height: 50px;
     color: #262626;
 }
+
+.calendarnumber:not(.empty):hover{
+    background-color: rgba(220, 53, 69, 0.26);
+}
+
+.calendarnumber.current-day{
+    font-size: 24px;
+}
+
 .calendarnumber:nth-child(7n) {
      color: #ff685d;
      font-weight: 700;
