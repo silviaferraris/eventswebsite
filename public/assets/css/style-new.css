@@ -581,6 +581,18 @@ body{
     text-shadow: 1px 1px 1px black;
 }
 
+@media (max-width: 730px) {
+    .headline{
+        font-size: 10vw;
+        letter-spacing: 8px;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    .banner {
+        min-height: 20vh;
+    }
+}
+
 .page-container-large{
     display: flex;
     flex-direction: column;
