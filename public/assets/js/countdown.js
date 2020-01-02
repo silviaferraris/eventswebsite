@@ -10,7 +10,9 @@ $(document).ready(() =>
             if(jsonRes.found)
             {
                 let date = new Date(jsonRes.date);
-
+                $(".banner-title").text(jsonRes.title);
+                $(".banner-subtitle").html(`${getMothName(date.getMonth())}, ${(date.getDate())} <sup>th</sup> ${date.getFullYear()}`);
+                $(".btn-discover").attr(`href`, `/events/${jsonRes.id}`);
                 if(date < new Date())setTime(thisCountdown, {days: 0, hours: 0, minutes: 0, seconds: 0});
                 else
                 {
