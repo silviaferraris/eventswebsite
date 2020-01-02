@@ -1888,7 +1888,7 @@ background: transparent;}
     overflow: hidden;
 }
 
-.calendarpicture {
+.calendarpicture{
     position: relative;
     height: 200px;
     padding: 20px;
@@ -1915,6 +1915,27 @@ background: transparent;}
     font-weight: 500;
 }
 
+.calendarpicture .calendar-left-arrow{
+    position: absolute;
+    font-family: 'Gilroy-Medium', serif;
+    font-size: 44px;
+    line-height: 44px;
+    top: calc(50%);
+    left: 0;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.calendarpicture .calendar-right-arrow{
+    position: absolute;
+    font-family: 'Gilroy-Medium', serif;
+    font-size: 44px;
+    line-height: 44px;
+    top: calc(50%);
+    right: 0;
+    margin-right: 10px;
+    cursor: pointer;
+}
 
 .calendardate {
     position: relative;

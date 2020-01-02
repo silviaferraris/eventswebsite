@@ -1,31 +1,54 @@
 let monthsName = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 let daysName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-function initCalendar(monthDiff)
+let currentMonthDiff = 0;
+
+function drawMonth(monthDiff)
 {
     let now = new Date();
 
     $('.calendarpicture .day').text(`${now.getDate()}, ${getDayName(now.getDay())}`);
-    $('.calendarpicture .month').text(`${getMothName(now.getMonth())}`);
 
     let days = $('.calendarnumber');
 
     days.addClass(`empty`);
     days.removeClass('current-day');
-
+    days.text("");
 
     let deltaY = 0;
     let deltaM = 0;
+    let month;
 
-    if(monthDiff >= 12)deltaY += Math.trunc(monthDiff/12);
+    if(monthDiff !== 0)
+    {
+        if(Math.abs(monthDiff) >= 12)deltaY += Math.trunc(monthDiff/12);
+        deltaM += monthDiff-deltaY*12;
 
+        if(now.getMonth()+1+monthDiff-deltaY*12 > 12)
+        {
+            deltaY++;
+            monthDiff--;
+        }
 
+        if(now.getMonth()+1+monthDiff-deltaY*12 <= 0)
+        {
+            deltaY--;
+            monthDiff++;
+        }
+    }
+
+    month = now.getMonth()+deltaM;
+    if(month < 0)month = 12+month;
+
+    $('.calendarpicture .month').text(`${getMothName(month)}, ${now.getFullYear()+deltaY}`);
 
     let week = 0;
+    let prevDay;
     for(let i = 0; i < 31; i++)
     {
-        let date = new Date(`${now.getFullYear()}-${now.getMonth()+1}-${i+1}`);
-        if(date.getMonth() > now.getMonth())break;
+        let date = new Date(`${now.getFullYear()+deltaY}-${month+1}-${i+1}`);
+
+        if(prevDay != null && prevDay > date.getDate())break;
 
         let dayPosition = date.getDay() === 0 ? 6 : date.getDay() - 1;
         let currentPosition = days[week*7 + dayPosition];
@@ -34,6 +57,7 @@ function initCalendar(monthDiff)
         if(date.getTime() === new Date(`${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}`).getTime())currentPosition.classList.add('current-day');
 
         if(date.getDay() === 0) week++;
+        prevDay = date.getDate();
     }
 
 }
@@ -50,7 +74,19 @@ function getMothName(monthNumber)
     return monthsName[monthNumber];
 }
 
-$(initCalendar());
+$(drawMonth(0));
+
+$(".calendarpicture .calendar-left-arrow").click(() =>
+{
+    currentMonthDiff--;
+    drawMonth(currentMonthDiff);
+});
+
+$(".calendarpicture .calendar-right-arrow").click(() =>
+{
+    currentMonthDiff++;
+    drawMonth(currentMonthDiff);
+});
 
 
 /*window.onload = function () {
