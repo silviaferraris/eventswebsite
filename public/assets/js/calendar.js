@@ -1,7 +1,7 @@
 let monthsName = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 let daysName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-function initCalendar()
+function initCalendar(monthDiff)
 {
     let now = new Date();
 
@@ -9,6 +9,17 @@ function initCalendar()
     $('.calendarpicture .month').text(`${getMothName(now.getMonth())}`);
 
     let days = $('.calendarnumber');
+
+    days.addClass(`empty`);
+    days.removeClass('current-day');
+
+
+    let deltaY = 0;
+    let deltaM = 0;
+
+    if(monthDiff >= 12)deltaY += Math.trunc(monthDiff/12);
+
+
 
     let week = 0;
     for(let i = 0; i < 31; i++)
