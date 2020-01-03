@@ -76,11 +76,12 @@
 
     <div class="calendar">
         <div class="calendarpicture">
-            <h2 class="day"></h2>
+            <!--<h2 class="day"></h2>-->
             <h3 class="month"></h3>
             <h3 class="year"></h3>
-            <a class="calendar-left-arrow">&#60;</a>
-            <a class="calendar-right-arrow">&#62;</a>
+            <h1 class="date-info"></h1>
+            <a class="calendar-left-arrow visible">&#60;</a>
+            <a class="calendar-right-arrow visible">&#62;</a>
         </div>
         <div class="calendardate">
             <div class="calendarday">M</div>
@@ -127,6 +128,15 @@
             <div class="calendarnumber empty"></div>
             <div class="calendarnumber empty"></div>
             <div class="calendarnumber empty"></div>
+        </div>
+        <div class="calendar-information-container">
+            <img id="close-calendar-menu-btn" src="/assets/images/menu-icons/cross-icon.svg">
+            <section class="calendar-info-section">
+                <h3>Events of the day:</h3>
+            </section>
+            <section class="calendar-info-section">
+                <h3>Seminars of the day:</h3>
+            </section>
         </div>
     </div>
 </div>

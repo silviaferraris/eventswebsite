@@ -20,7 +20,7 @@ class Event
         });
     }
 
-    static getNextEvents(limit, offset, typesArray)
+    static getNextEvents(limit, offset, typesArray, noimages)
     {
         return new Promise((resolve, reject) =>
         {
@@ -45,7 +45,9 @@ class Event
                 }
             }
 
-            util.fetch200(`/events/next_events/${range}?types=${types}`).then(async response =>
+            if(!noimages)noimages = 'false';
+
+            util.fetch200(`/events/next_events/${range}?types=${types}&noimages=${noimages}`).then(async response =>
             {
                 resolve(await util.responseToObjArray(response, Event));
             }).catch(cause => reject(cause));
@@ -63,14 +65,15 @@ class Event
         });
     }
 
-    fetchData()
+    fetchData(noimages)
     {
         return new Promise(((resolve, reject) =>
         {
             if(this.data)resolve(this.data);
             else
             {
-                util.fetch200(`/events/${this._eventId}/data`).then(async response =>
+                if(!noimages)noimages = 'false';
+                util.fetch200(`/events/${this._eventId}/data?noimages=${noimages}`).then(async response =>
                 {
                     this.data = await response.json();
                     resolve(this.data);
@@ -91,6 +94,20 @@ class Event
             {
                 resolve(await response.json());
             }).catch(cause => reject(cause));
+        });
+    }
+
+    retrieveCoverImage()
+    {
+        return new Promise((resolve, reject) =>
+        {
+            if(this.data && this.data.cover_image)resolve(this.data.cover_image);
+            else
+            {
+                util.fetch200(`/events/${this._eventId}/cover_image`).then(async response => {
+                    resolve((await response.json()).cover_image);
+                }).catch(cause => reject(cause));
+            }
         });
     }
 

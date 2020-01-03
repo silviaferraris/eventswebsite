@@ -83,7 +83,7 @@ $(document).ready(() =>
 });
 
 function loadEvents(limit, offset, types) {
-    Event.getNextEvents(limit, offset, types).then(events =>
+    Event.getNextEvents(limit, offset, types, true).then(events =>
     {
         $("#loading-gif").hide();
 
@@ -128,7 +128,7 @@ function createCard(event, cardList)
     else price = event.price;
 
     let card = $(`<div class="event-card">
-                                    <img class="cover-image" src="${event.coverImage}">
+                                    <img class="cover-image loading-cover" src="/assets/images/icons/loading.svg">
                                     <div class="card-bottom">
                                         <h1 class="card-title">${event.title}</h1>
                                         <h4 class="card-performer">${event.performerFirstName} ${event.performerLastName}</h4>
@@ -144,6 +144,12 @@ function createCard(event, cardList)
                                     </div>
                                 </div>`);//.css('visibility', 'hidden');
     cardList.append(card);
+
+    event.retrieveCoverImage().then((image) =>
+    {
+        card.find('.cover-image').removeClass('loading-cover').attr('src', image);
+    });
+
     return card;
 }
 

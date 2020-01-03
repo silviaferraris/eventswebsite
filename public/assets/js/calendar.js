@@ -1,19 +1,27 @@
-let monthsName = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-let daysName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const monthsName = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const daysName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const animationTime = 250;
 
 let currentMonthDiff = 0;
+let events = new Map();
+let seminars = new Map();
+
+let infoContainer = $('.calendar-information-container');
+let leftArrow = $('.calendar-left-arrow');
+let rightArrow = $('.calendar-right-arrow');
 
 function drawMonth(monthDiff)
 {
     let now = new Date();
 
-    $('.calendarpicture .day').text(`${now.getDate()}, ${getDayName(now.getDay())}`);
+    //$('.calendarpicture .day').text(`${now.getDate()}, ${getDayName(now.getDay())}`);
 
     let days = $('.calendarnumber');
 
     days.addClass(`empty`);
     days.removeClass('current-day');
     days.text("");
+    days.attr('data-date', '');
 
     let deltaY = 0;
     let deltaM = 0;
@@ -56,10 +64,53 @@ function drawMonth(monthDiff)
         currentPosition.classList.remove('empty');
         if(date.getTime() === new Date(`${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}`).getTime())currentPosition.classList.add('current-day');
 
+        currentPosition.setAttribute('data-date', `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`);
+
+        let top = 0;
+        if(events.has(`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`))
+        {
+            currentPosition.innerHTML += '<a class="calendar-event"></a>';
+            top = 15;
+        }
+        if(seminars.has(`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`))currentPosition.innerHTML += `<a class="calendar-seminar" style="top: ${top}px;"></a>`;
+
+
         if(date.getDay() === 0) week++;
         prevDay = date.getDate();
     }
 
+}
+
+function init()
+{
+    return new Promise((resolve, reject) =>
+    {
+        let f1 = fetch('/events/all?noimages=true');
+        let f2 = fetch('/seminars/all?noimages=true');
+
+        Promise.all([f1, f2]).then(async (responses) =>
+        {
+            let eventsArray = await responses[0].json();
+            for(let event of eventsArray) mapData(event.date, events, event);
+
+            let seminarArray = await responses[1].json();
+            for(let seminar of seminarArray) mapData(seminar.date, seminars, seminar);
+
+            resolve();
+        });
+    });
+}
+
+function mapData(data, map, obj)
+{
+    let date = new Date(data);
+    let dateString = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    if(map.has(dateString)){
+        let newValue = map.get(dateString);
+        newValue.push(obj);
+        map.set(dateString, newValue);
+    }
+    else map.set(dateString, [obj]);
 }
 
 function getDayName(dayNumber)
@@ -74,82 +125,50 @@ function getMothName(monthNumber)
     return monthsName[monthNumber];
 }
 
-$(drawMonth(0));
-
-$(".calendarpicture .calendar-left-arrow").click(() =>
+$(() =>
 {
+    init().then(() => drawMonth(0));
+});
+
+$(".calendarpicture .calendar-left-arrow").click(function ()
+{
+    if(!$(this).hasClass('visible'))return;
     currentMonthDiff--;
     drawMonth(currentMonthDiff);
 });
 
-$(".calendarpicture .calendar-right-arrow").click(() =>
+$(".calendarpicture .calendar-right-arrow").click(function ()
 {
+    if(!$(this).hasClass('visible'))return;
     currentMonthDiff++;
     drawMonth(currentMonthDiff);
 });
 
+$('.calendarnumber').click(function ()
+{
+    if($(this).hasClass('empty'))return;
 
-/*window.onload = function () {
-    let date= new Date();
-    let month_name = [' January', 'February', 'March', 'April', 'May', 'June'
-    ,'July', 'August', 'September', 'October', 'November', 'December'];
-    let month =date.getMonth();
-    let year = date.getFullYear();
-    let first_date = month_name[month] + " " + 1 + " " + year;
-    let temp = new Date(first_date).toDateString();
-    let first_day = temp.substring(0,3);
-    let day_name = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    let day_num = day_name.indexOf(first_day);
-    let days = new Date(year, month+1, 0).getDate();
-    let calendar= getCalendar(day_num,days);
-    document.getElementById("calendar-month-year").innerHTML = month_name[month]+" "+ year;
-    document.getElementById("calendar-dates").appendChild(calendar);
-};*/
+    let dateAttr = $(this).attr('data-date');
 
-/*function getCalendar(day_num, days) {
-    let table = document.createElement('table');
-    let tr = document.createElement('tr');
-    //row for the day letters
-    for (let a = 0; a <= 6; a++) {
-        let td = document.createElement('td');
-        td.innerHTML = "MTWTFSS"[a];
-        tr.appendChild(td);
-    }
-    table.appendChild(tr);
+    let spitDate = dateAttr.split('-');
 
-    tr = document.createElement('tr');
-    let a;
-    for (a=0; a<=6; a++){
-        if(a===day_num)
-        {
-        break;
-        }
-        let td = document.createElement('td');
-        tr.innerHTML = "";
-        tr.appendChild(td);
-        }
-    let count = 1;
-    for (; a<=6; a++){
-        let td = document.createElement('td');
-        td.innerHTML = String(count);
-        count++;
-        tr.appendChild(td);
-    }
-    table.appendChild(tr);
+    let day = spitDate[2];
+    let month = spitDate[1];
+    let year = spitDate[0];
 
-    for (let r=3; r<=7; r++){
-        tr = document.createElement('tr');
-        for (let c=0; c<=6; c++){
-            if (count > days){
-                table.appendChild(tr);
-                return table;
-            }
-            let td = document.createElement('td');
-            td.innerHTML = String(count);
-            count++;
-            tr.appendChild(td);
-        }
-        table.appendChild(tr);
-    }
-    return table;
-}*/
+    let dayEvents = events.get(dateAttr);
+    let daySeminars = seminars.get(dateAttr);
+
+    $('.calendarpicture .date-info').text(`${getMothName(month)} ${day}`).addClass('visible');
+    leftArrow.removeClass('visible');
+    rightArrow.removeClass('visible');
+    infoContainer.addClass('visible');
+});
+
+$('#close-calendar-menu-btn').click(() =>
+{
+    $('.calendarpicture .date-info').removeClass('visible');
+    leftArrow.css('display', 'block').addClass('visible');
+    rightArrow.css('display', 'block').addClass('visible');
+    infoContainer.removeClass('visible');
+});

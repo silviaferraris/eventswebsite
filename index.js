@@ -346,7 +346,10 @@ app.get('/user/cart/clear', (req, res) =>
 
 app.get('/events/all', (req, res) =>
 {
-    db(EVENTS_TABLE).select('*').then(result => res.send(JSON.stringify(result))).catch(cause => send500Page(res, cause));
+    let selector = '*';
+    if(req.query.noimages === 'true')selector = ['id', 'title', 'description', 'date', 'performer_id', 'type', 'price', 'uuid', 'location', 'images_number'];
+
+    db(EVENTS_TABLE).select(selector).then(result => res.send(JSON.stringify(result))).catch(cause => send500Page(res, cause));
 });
 
 app.get('/events/next_date', (req, res) =>
@@ -426,7 +429,10 @@ app.get('/events/next_events/:range(\\d+-\\d+|all)', (req, res) =>
     }
     else types = EVENT_TYPES;
 
-    db(EVENTS_TABLE).select('*').where('date', '>=', parseDateForDB(new Date())).whereIn('type', types).orderBy('date').offset(offset).limit(limit).then(result =>
+    let selector = '*';
+    if(req.query.noimages === 'true')selector = ['id', 'title', 'description', 'date', 'performer_id', 'type', 'price', 'uuid', 'location', 'images_number'];
+
+    db(EVENTS_TABLE).select(selector).where('date', '>=', parseDateForDB(new Date())).whereIn('type', types).orderBy('date').offset(offset).limit(limit).then(result =>
     {
         let promises = [];
         for(let event of result) promises.push(db(PERFORMERS_TABLE).select('first_name', 'last_name').where({id: event.performer_id}).then(result =>
@@ -450,7 +456,10 @@ app.get('/events/next_events/:range(\\d+-\\d+|all)', (req, res) =>
 
 app.get('/events/:event_id/data', (req, res) =>
 {
-    db(EVENTS_TABLE).select('*').where({id: req.event_id}).then(event =>
+    let selector = '*';
+    if(req.query.noimages === 'true')selector = ['id', 'title', 'description', 'date', 'performer_id', 'type', 'price', 'uuid', 'location', 'images_number'];
+
+    db(EVENTS_TABLE).select(selector).where({id: req.event_id}).then(event =>
     {
         if(event.length === 0)return res.status(404).end();
 
@@ -480,6 +489,15 @@ app.get('/events/:event_id/images/:range(\\d+-\\d+|all)', async (req, res) =>
     db(EVENTS_IMAGES_TABLE).select('image').where({event_id: req.event_id}).orderBy('id').offset(offset).limit(limit).then(result => res.send(JSON.stringify(result))).catch(cause => send500Page(res, cause));
 });
 
+app.get('/events/:event_id/cover_image', async (req, res) =>
+{
+    db(EVENTS_TABLE).select('cover_image').where({id: req.event_id}).then(result =>
+    {
+        if(result.length > 0)res.send(JSON.stringify(result[0]));
+        else res.status(404).end();
+    }).catch(cause => send500Page(res, cause));
+});
+
 app.get('/events/:event_id/on_same_date', (req, res) =>
 {
     db(EVENTS_TABLE).select('date').where({id: `${req.event_id}`}).then(result =>
@@ -496,7 +514,10 @@ app.get('/events/:event_id/on_same_date', (req, res) =>
 
 app.get('/seminars/all', (req, res) =>
 {
-    db(SEMINARS_TABLE).select('*').then(result => res.send(JSON.stringify(result))).catch(cause => send500Page(res, cause));
+    let selector = '*';
+    if(req.query.noimages === 'true')selector = ['id', 'title', 'description', 'date', 'performer_id', 'uuid', 'location', 'images_number'];
+
+    db(SEMINARS_TABLE).select(selector).then(result => res.send(JSON.stringify(result))).catch(cause => send500Page(res, cause));
 });
 
 app.get('/seminars/next_date', (req, res) =>

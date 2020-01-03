@@ -27,10 +27,9 @@
             $("#correlated-events").hide();
         });
 
-        event.fetchData().then(data =>
+        event.fetchData(true).then(data =>
         {
             $('#event-title').text(event.title);
-            $('.banner-bg').css('background-image', `url("${event.coverImage}")`);
             $('#performer-title').text(`${event.performerFirstName} ${event.performerLastName}`);
             $('#performer-link').attr('href', `/performers/${event.performerId}`);
             $('#description').text(event.description);
@@ -54,6 +53,11 @@
                     }, 1200);
                 });
                 e.preventDefault();
+            });
+
+            event.retrieveCoverImage().then(image =>
+            {
+                $('.banner-bg').css('background-image', `url("${image}")`);
             });
 
             event.getImages('all').then(imgs=>
