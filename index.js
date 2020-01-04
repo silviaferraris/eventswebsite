@@ -456,7 +456,7 @@ app.get('/events/next_events/:range(\\d+-\\d+|all)', (req, res) =>
 
         Promise.all(promises).then((events) => res.send(JSON.stringify(events)));*/
 
-        res.send(JSON.stringify(events));
+        res.send(JSON.stringify(result));
 
     }).catch(cause => send500Page(res, cause));
 });
