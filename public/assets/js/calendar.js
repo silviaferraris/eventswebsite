@@ -7,6 +7,8 @@ let events = new Map();
 let seminars = new Map();
 
 let infoContainer = $('.calendar-information-container');
+let eventsInfoList = $('.calendar-event-list');
+let seminarInfoList = $('.calendar-seminar-list');
 let leftArrow = $('.calendar-left-arrow');
 let rightArrow = $('.calendar-right-arrow');
 
@@ -67,13 +69,13 @@ function drawMonth(monthDiff)
         currentPosition.setAttribute('data-date', `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`);
 
         let top = 0;
-        if(events.has(`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`))
+        let key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+        if(events.has(key))
         {
             currentPosition.innerHTML += '<a class="calendar-event"></a>';
             top = 15;
         }
-        if(seminars.has(`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`))currentPosition.innerHTML += `<a class="calendar-seminar" style="top: ${top}px;"></a>`;
-
+        if(seminars.has(key)) currentPosition.innerHTML += `<a class="calendar-seminar" style="top: ${top}px;"></a>`;
 
         if(date.getDay() === 0) week++;
         prevDay = date.getDate();
@@ -150,6 +152,37 @@ $('.calendarnumber').click(function ()
 
     let dateAttr = $(this).attr('data-date');
 
+    eventsInfoList.html('');
+    seminarInfoList.html('');
+
+    let promises = [];
+
+    let eventsValue = events.get(dateAttr);
+
+    if(eventsValue)
+    {
+        for(let event of eventsValue)
+        {
+            let eventCard = $(`<li class="calendar-event-card">
+                                    <a href="/events/${event.id}"><h4>${event.title}</h4><span>${event.performer_first_name} ${event.performer_last_name}</span></a>
+                               </li>`);
+            eventsInfoList.append(eventCard);
+        }
+    }
+
+    let seminarsValue = seminars.get(dateAttr);
+
+    if(seminarsValue)
+    {
+        for(let seminar of seminarsValue)
+        {
+            let seminarCard = $(`<li class="calendar-seminar-card">
+                                    <a href="/seminars/${seminar.seminarId}"><h4>${seminar.title}</h4><span>${seminar.performer_first_name} ${seminar.performer_last_name}</span></a>
+                                 </li>`);
+            seminarInfoList.append(seminarCard);
+        }
+    }
+
     let spitDate = dateAttr.split('-');
 
     let day = spitDate[2];
@@ -159,10 +192,13 @@ $('.calendarnumber').click(function ()
     let dayEvents = events.get(dateAttr);
     let daySeminars = seminars.get(dateAttr);
 
-    $('.calendarpicture .date-info').text(`${getMothName(month)} ${day}`).addClass('visible');
-    leftArrow.removeClass('visible');
-    rightArrow.removeClass('visible');
-    infoContainer.addClass('visible');
+    Promise.all(promises).then(() =>
+    {
+        $('.calendarpicture .date-info').text(`${getMothName(month)} ${day}`).addClass('visible');
+        leftArrow.removeClass('visible');
+        rightArrow.removeClass('visible');
+        infoContainer.addClass('visible');
+    });
 });
 
 $('#close-calendar-menu-btn').click(() =>
