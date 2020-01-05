@@ -19,7 +19,7 @@ function addToCart(eventId, quantity)
     {
         if(!eventId)return reject();
 
-        if(!quantity)quantity = '1';
+        if(!quantity)quantity = 1;
         else
         {
             try {Number.parseInt(quantity);}
@@ -50,14 +50,16 @@ function addToCart(eventId, quantity)
 }
 function getCartItems() {
 
-    return new Promise(async(resolve,reject)=>{
+    return new Promise(async(resolve, reject) =>
+    {
         if(typeof getCartItems.userLogged == 'undefined')
         {
-            getCartItems.userLogged= (await (await fetch('/user/imlogged')).json()).logged;
+            getCartItems.userLogged = (await (await fetch('/user/imlogged')).json()).logged;
         }
+
         let eventArray = [];
         if (getCartItems.userLogged) {
-            let response= await fetch200("/user/cart");
+            let response = await fetch200("/user/cart");
             let response_json = await response.json();
             for(let item of response_json){
                 let event = new Event(item.event_id);
@@ -77,16 +79,17 @@ function getCartItems() {
             }
             resolve(eventArray);
         }
-    })
+    });
 
 }
+
 function removeFromCart(eventId, quantity)
 {
     return new Promise(async (resolve, reject) =>
     {
         if(!eventId)return reject();
 
-        if(!quantity)quantity = '1';
+        if(!quantity)quantity = 1;
         else if(quantity !== 'all')
         {
             try {Number.parseInt(quantity);}
@@ -98,7 +101,7 @@ function removeFromCart(eventId, quantity)
             removeFromCart.userLogged = (await (await fetch('/user/imlogged')).json()).logged;
         }
 
-        if(addToCart.userLogged)
+        if(removeFromCart.userLogged)
         {
             await fetch(`/user/cart/remove_event?event_id=${eventId}&quantity=${quantity}`);
             await updateCartIcon();
