@@ -13,6 +13,7 @@
     <script src="/assets/js/typewriter.js"></script>
     <script src="/assets/js/countdown.js"></script>
     <script src="/assets/js/utils.js"></script>
+    <script type="module" src="/assets/js/mycart.js"></script>
     <script type="module" src="/assets/js/events.js"></script>
 
     <style>
@@ -46,6 +47,9 @@
         .item-image{
             height: 100%;
             width: 30%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .item-image img{
             width: 100%;
@@ -61,10 +65,9 @@
             margin: 0;
         }
         .item-location{
-            position: absolute;
+            position: relative;
             top: 0;
             right: 0;
-            margin: 25px;
         }
         .quantity{
             width: 10%;
@@ -242,6 +245,7 @@
                     <h4 class="item-date">date</h4>
                     <p class="item-location">event location</p>
                     <span class="item-price">$5</span>
+                    <div style="display: flex"><span>Remove all from cart</span><a class="removeall">Remove</a></div>
                 </div>
             <div class="quantity">
                 <a class="increase">+</a>

@@ -1,3 +1,18 @@
+import Event from "/assets/js/modules/event.mjs"
+
+class CartItem {
+    constructor (event,quantity){
+        this._event = event;
+        this._quantity = quantity;
+    }
+    get event(){
+        return this._event;
+    }
+    get quantity(){
+        return this._quantity;
+    }
+}
+
 function addToCart(eventId, quantity)
 {
     return new Promise(async (resolve, reject) =>
@@ -33,7 +48,38 @@ function addToCart(eventId, quantity)
     });
 
 }
+function getCartItems() {
 
+    return new Promise(async(resolve,reject)=>{
+        if(typeof getCartItems.userLogged == 'undefined')
+        {
+            getCartItems.userLogged= (await (await fetch('/user/imlogged')).json()).logged;
+        }
+        let eventArray = [];
+        if (getCartItems.userLogged) {
+            let response= await fetch200("/user/cart");
+            let response_json = await response.json();
+            for(let item of response_json){
+                let event = new Event(item.event_id);
+                await event.fetchData(true);
+                eventArray.push(new CartItem(event, item.quantity));
+            }
+            resolve(eventArray);
+        }
+        else {
+            let tempCart = getCookieValue('tempCart');
+            let stringSplit = tempCart.split(",");
+            for (let item of stringSplit){
+                let itemSplit = item.split("-");
+                let event = new Event(itemSplit[1]);
+                await event.fetchData(true);
+                eventArray.push(new CartItem(event, itemSplit[0]));
+            }
+            resolve(eventArray);
+        }
+    })
+
+}
 function removeFromCart(eventId, quantity)
 {
     return new Promise(async (resolve, reject) =>
@@ -119,4 +165,5 @@ async function updateCartIcon()
     });
 }
 
-export default {addToCart, removeFromCart}
+export default {addToCart, removeFromCart, getCartItems}
+
