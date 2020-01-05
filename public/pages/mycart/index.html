@@ -21,6 +21,8 @@
             width: 65%;
             margin: 0;
             padding: 0;
+            position: relative;
+            min-height: 400px;
         }
 
         .cart-card-container ul{
@@ -314,7 +316,22 @@
                 width: 100%;
             }
         }
+        .emptycart{
+            position: absolute;
+            font-size: 16px;
+            line-height: 16px;
+            top: calc(50% - 8px);
+            margin: auto;
+            display: none;
+        }
+        .loading-cart{
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            top:calc(50% - 18px);
+            left: calc(50% - 18px);
 
+        }
     </style>
 
 </head>
@@ -337,15 +354,15 @@
             <h1>Summary</h1>
             <section id="subtotal-section">
                 <span>Subtotal</span>
-                <span>12$</span>
+                <span class="subtotal-price">12$</span>
             </section>
             <section id="promo-section">
                 <span>Promo</span>
-                <span>-10$</span>
+                <span>0$</span>
             </section>
             <section id="total-section">
                 <span>Total</span>
-                <span>2$</span>
+                <span class="total-price">2$</span>
             </section>
             <a href="">CHECKOUT</a>
             <a href="" id="paypal-checkout"><img src="/assets/images/icons/pay-methods/checkout/paypal-1.svg"><img src="/assets/images/icons/pay-methods/checkout/paypal-2.svg"></a>
@@ -353,51 +370,9 @@
     </div>
 
     <div class="cart-card-container">
-        <ul>
-            <li class="card-cart">
-                <div class="item-image">
-                    <img src="">
-                </div>
-                <div class="description-cart">
-                    <h2 class="item-name">item name</h2>
-                    <h4 class="item-date">date</h4>
-                    <p class="item-location">event location</p>
-                    <span class="item-price">$5</span>
-                    <div style="display: flex"><span>Remove all from cart</span><a class="removeall">Remove</a></div>
-                </div>
-            <div class="quantity">
-                <a class="increase">+</a>
-                <span class="quantity-item">1</span>
-                <a class="decrease">-</a>
-            </div>
-            </li>
-
-            <li class="card-cart">
-
-            </li>
-
-            <li class="card-cart">
-
-            </li>
-            <li class="card-cart">
-
-            </li>
-            <li class="card-cart">
-
-            </li>
-            <li class="card-cart">
-
-            </li>
-            <li class="card-cart">
-
-            </li>
-            <li class="card-cart">
-
-            </li>
-            <li class="card-cart">
-
-            </li>
-        </ul>
+        <ul></ul>
+        <span class="emptycart">OOOPS! Your cart is empty!</span>
+        <img class ="loading-cart" src="/assets/images/icons/loading.svg">
     </div>
 
 </div>

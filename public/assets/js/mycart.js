@@ -4,6 +4,7 @@ let imageLoaded = false;
 let itemsMap = new Map();
 
 $(()=>{
+    $(".emptycart").css("left",`calc(50% - ${$(".emptycart").width()/2}px)`);
     let cardList = $(".cart-card-container ul");
     cart.getCartItems().then(items=>{
 
@@ -11,11 +12,16 @@ $(()=>{
         if(window.innerWidth > 610)downloadImage = true;
 
         cardList.html("");
+        $(".loading-cart").remove();
+
+        if(items.length<=0) $(".emptycart").css("display","block");
+        let total = 0;
         for (let item of items){
             let date = new Date(item.event.date);
             let dateString = `${date.getDate() < 10 ? '0' : ''}${date.getDate()}.${date.getMonth()+1 < 10 ? '0' : ''}${date.getMonth()+1}.${date.getFullYear()}`;
 
             let totalPrice = Number.parseFloat(item.event.price.substring(1, item.event.price.length-1))*item.quantity;
+            total += totalPrice;
 
             let card = $(` <li class="card-cart">
                                 <div class="item-image">
@@ -45,6 +51,7 @@ $(()=>{
 
             cardList.append(card);
 
+
             if(downloadImage)
             {
                 item.event.retrieveCoverImage().then(image => {
@@ -54,6 +61,8 @@ $(()=>{
             }
             else itemsMap.set(item, card);
         }
+        $(".subtotal-price").text(`${total}$`);
+        $(".total-price").text(`${total}$`);
     });
 });
 
