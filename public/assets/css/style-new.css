@@ -2564,3 +2564,17 @@ background: transparent;}
     height: 50px;
 
  }
+.banner-content {
+    position: relative;
+    width: 80%;
+    padding: 30px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+    transition: opacity .8s;
+    background-color: rgba(0, 0, 0, 0.48);
+    color: #e5e5e5;
+    justify-content: center;
+    align-items: center;
+    margin: 50px;
+    display: inline-block;}
