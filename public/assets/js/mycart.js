@@ -2,11 +2,13 @@ import cart from "/assets/js/modules/cart.mjs";
 
 let imageLoaded = false;
 let itemsMap = new Map();
+let cartTotal = 0;
 
-$(()=>{
+$(() => {
     $(".emptycart").css("left",`calc(50% - ${$(".emptycart").width()/2}px)`);
     let cardList = $(".cart-card-container ul");
-    cart.getCartItems().then(items=>{
+
+    cart.getCartItems().then(items => {
 
         let downloadImage = false;
         if(window.innerWidth > 610)downloadImage = true;
@@ -20,7 +22,7 @@ $(()=>{
             let date = new Date(item.event.date);
             let dateString = `${date.getDate() < 10 ? '0' : ''}${date.getDate()}.${date.getMonth()+1 < 10 ? '0' : ''}${date.getMonth()+1}.${date.getFullYear()}`;
 
-            let totalPrice = Number.parseFloat(item.event.price.substring(1, item.event.price.length-1))*item.quantity;
+            let totalPrice = Number.parseFloat(item.event.price.substring(1, item.event.price.length))*item.quantity;
             total += totalPrice;
 
             let card = $(` <li class="card-cart">
@@ -51,6 +53,7 @@ $(()=>{
 
             cardList.append(card);
 
+            itemsMap.set(item, card);
 
             if(downloadImage)
             {
@@ -59,8 +62,8 @@ $(()=>{
                 });
                 imageLoaded = true;
             }
-            else itemsMap.set(item, card);
         }
+        cartTotal = total;
         $(".subtotal-price").text(`${total}$`);
         $(".total-price").text(`${total}$`);
     });
@@ -74,10 +77,10 @@ $(document).on("click", ".increase", function ()
     lockQuantityBtn = true;
     let quantityContainer =  $(this).closest(".quantity");
     let eventId = quantityContainer.attr("data-eventId");
-    cart.addToCart(eventId,1).then(()=>
+    cart.addToCart(eventId,1).then(newQuantity =>
     {
-        let quantityItem = Number.parseInt(quantityContainer.find(".quantity-item").text())+1;
-        quantityContainer.find(".quantity-item").text(quantityItem);
+        quantityContainer.find(".quantity-item").text(newQuantity);
+        updateCart(eventId, newQuantity);
         lockQuantityBtn = false;
     }).catch(() => lockQuantityBtn = false);
 });
@@ -89,11 +92,11 @@ $(document).on("click", ".decrease", function ()
     lockQuantityBtn = true;
     let quantityContainer =  $(this).closest(".quantity");
     let eventId = quantityContainer.attr("data-eventId");
-    cart.removeFromCart(eventId,1).then(()=>
+    cart.removeFromCart(eventId,1).then(newQuantity =>
     {
-        let quantityItem = Number.parseInt(quantityContainer.find(".quantity-item").text())-1;
-        if (quantityItem <= 0) deleteCard(quantityContainer.parents(".card-cart"));
-        else quantityContainer.find(".quantity-item").text(quantityItem);
+        if (newQuantity <= 0) deleteCard(quantityContainer.parents(".card-cart"));
+        else quantityContainer.find(".quantity-item").text(newQuantity);
+        updateCart(eventId, newQuantity);
         lockQuantityBtn = false;
     }).catch(() => lockQuantityBtn = false);
 });
@@ -102,8 +105,8 @@ $(document).on("click", ".removeall", function () {
     let eventId = $(this).attr("data-eventId");
     cart.removeFromCart(eventId,"all").then(()=>
     {
-        //$(this).parents(".card-cart").remove();
         deleteCard($(this).parents(".card-cart"));
+        updateCart(eventId, 0);
     });
 });
 
@@ -111,23 +114,41 @@ $(window).resize(() =>
 {
     if(window.innerWidth > 610 && !imageLoaded){
 
-        console.log('download...');
-
         for(let entry of itemsMap.entries())
         {
-            console.log(entry)
-
             if(entry[1])
             {
-                entry[0].event.retrieveCoverImage().then(image=>{
+                entry[0].event.retrieveCoverImage().then(image => {
                     entry[1].find(".item-image img").removeClass("loadingImage").attr("src",image);
-                    console.log('conver donwload');
                 });
             }
             imageLoaded = true;
         }
     }
 });
+
+function updateCart(eventId, newQuantity)
+{
+    for(let entry of itemsMap.entries())
+    {
+        if(entry[0].event.eventId === eventId)
+        {
+            let itemPrice = Number.parseFloat(entry[0].event.price.substring(1, entry[0].event.price.length));
+            let newItemTotal = itemPrice*newQuantity;
+            let deltaItemTot = newItemTotal - itemPrice*entry[0].quantity;
+            entry[1].find('.item-total-price').text(`$${newItemTotal}`);
+            cartTotal += deltaItemTot;
+            $(".subtotal-price").text(`${cartTotal}$`);
+            $(".total-price").text(`${cartTotal}$`);
+
+            entry[0].quantity = newQuantity;
+
+            itemsMap.set(entry[0], entry[1]);
+
+            break;
+        }
+    }
+}
 
 function deleteCard(card)
 {

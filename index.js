@@ -35,6 +35,7 @@ const EVENTS_IMAGES_TABLE = 'EventsImages';
 const EVENTS_SEMINAR_TABLE = 'EventsSeminars';
 const SEMINARS_IMAGES_TABLE = 'SeminarsImages';
 
+const CART_VIEW = 'CartView';
 const EVENTS_PERFORMERS_VIEW = 'eventsPerformerView';
 const SEMINARS_PERFORMERS_VIEW = 'seminarsPerformerView';
 
@@ -239,10 +240,10 @@ app.get('/user/cart/tot_items', (req, res) =>
 {
     if(!req.user)return res.status(401).end();
 
-    db(USERS_EVENTS_TABLE).select('quantity').where({user_id: req.user.id}).then(result =>
+    db(USERS_EVENTS_TABLE).sum('quantity as tot_items').where({user_id: req.user.id}).groupBy('user_id').then(result =>
     {
         let tot = 0;
-        for(let item of result)tot += item.quantity;
+        if(result.length > 0)tot = result[0].tot_items;
         res.send({tot: tot});
     }).catch(cause => send500Page(res, cause));
 });
@@ -293,11 +294,11 @@ app.get('/user/cart/remove_event', (req, res) =>
         let tot =  result[0].quantity - quantity;
         if(tot > 0 && req.query.quantity !== 'all')
         {
-            db(USERS_EVENTS_TABLE).update('quantity', tot).where({user_id: req.user.id, event_id: req.query.event_id}).then(() => res.status(204).end());
+            db(USERS_EVENTS_TABLE).update('quantity', tot).where({user_id: req.user.id, event_id: req.query.event_id}).then(() => res.status(200).send(JSON.stringify({quantity: tot})));
         }
         else
         {
-            db(USERS_EVENTS_TABLE).where({user_id: req.user.id, event_id: req.query.event_id}).del().then(() => res.status(204).end());
+            db(USERS_EVENTS_TABLE).where({user_id: req.user.id, event_id: req.query.event_id}).del().then(() => res.status(200).send(JSON.stringify({quantity: 0})));
         }
 
     }).catch(cause => send500Page(res, cause));
@@ -324,11 +325,11 @@ app.get('/user/cart/add_event', async (req, res) =>
         if(result.length > 0)
         {
             let tot = quantity + result[0].quantity;
-            db(USERS_EVENTS_TABLE).update('quantity', tot).where({user_id: req.user.id, event_id: req.query.event_id}).then(() => res.status(204).end());
+            db(USERS_EVENTS_TABLE).update('quantity', tot).where({user_id: req.user.id, event_id: req.query.event_id}).then(() => res.status(200).send(JSON.stringify({quantity: tot})));
         }
         else
         {
-           db(USERS_EVENTS_TABLE).insert({user_id: req.user.id, event_id: req.query.event_id, quantity: quantity}).then(() => res.status(204).end());
+           db(USERS_EVENTS_TABLE).insert({user_id: req.user.id, event_id: req.query.event_id, quantity: quantity}).then(() => res.status(200).send(JSON.stringify({quantity: quantity})));
         }
     }).catch(cause => send500Page(res, cause));
 

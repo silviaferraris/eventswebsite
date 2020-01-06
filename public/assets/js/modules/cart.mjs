@@ -11,6 +11,9 @@ class CartItem {
     get quantity(){
         return this._quantity;
     }
+    set quantity(quantity) {
+        this._quantity = quantity;
+    }
 }
 
 function addToCart(eventId, quantity)
@@ -33,17 +36,18 @@ function addToCart(eventId, quantity)
 
         if(addToCart.userLogged)
         {
-            await fetch(`/user/cart/add_event?event_id=${eventId}&quantity=${quantity}`);
-            await updateCartIcon();
-            return resolve();
+            fetch(`/user/cart/add_event?event_id=${eventId}&quantity=${quantity}`).then(async response =>
+            {
+                let newQuantity = (await response.json()).quantity;
+                await updateCartIcon();
+                return resolve(newQuantity);
+            });
         }
         else
         {
-            let tempCart = getCookieValue('tempCart');
-            tempCart = addToCartString(tempCart, eventId, quantity);
-            setCookie('tempCart', tempCart);
+            let newQuantity = addToCartString(eventId, quantity);
             await updateCartIcon();
-            resolve();
+            resolve(newQuantity);
         }
     });
 
@@ -103,27 +107,30 @@ function removeFromCart(eventId, quantity)
 
         if(removeFromCart.userLogged)
         {
-            await fetch(`/user/cart/remove_event?event_id=${eventId}&quantity=${quantity}`);
-            await updateCartIcon();
-            return resolve();
+            fetch(`/user/cart/remove_event?event_id=${eventId}&quantity=${quantity}`).then(async response =>
+            {
+                let newQuantity = (await response.json()).quantity;
+                await updateCartIcon();
+                return resolve(newQuantity);
+            });
         }
         else
         {
-            let tempCart = getCookieValue('tempCart');
-            tempCart = removeFromCartString(tempCart, eventId, quantity);
-            setCookie('tempCart', tempCart);
+            let newQuantity = removeFromCartString(eventId, quantity);
             await updateCartIcon();
-            resolve();
+            resolve(newQuantity);
         }
     });
 }
 
-function removeFromCartString(cartString, eventId, quantity)
+function removeFromCartString(eventId, quantity)
 {
+    let cartString = getCookieValue('tempCart');
     if(!checkTempCartString(cartString))cartString = '';
     if(!cartString || cartString === '')return '';
     let list = cartString.split(',');
     let newCartString = '';
+    let newQuantity = 0;
     for(let item of list)
     {
         let itemSplit = item.split('-');
@@ -131,32 +138,47 @@ function removeFromCartString(cartString, eventId, quantity)
         {
             if(quantity === 'all')continue;
             let remain = Number.parseInt(itemSplit[0])-quantity;
-            if(remain > 0)newCartString += `${remain}-${itemSplit[1]},`;
+            if(remain > 0)
+            {
+                newCartString += `${remain}-${itemSplit[1]},`;
+                newQuantity = remain;
+            }
         }
         else newCartString += `${item},`;
     }
-    return  newCartString.substring(0, newCartString.length-1);
+    setCookie('tempCart', newCartString.substring(0, newCartString.length-1));
+    return  newQuantity;
 }
 
-function addToCartString(cartString, eventId, quantity)
+function addToCartString(eventId, quantity)
 {
+    let cartString = getCookieValue('tempCart');
     if(!checkTempCartString(cartString))cartString = '';
     if(!cartString || cartString === '')return `${quantity}-${eventId}`;
     let list = cartString.split(',');
     let newCartString = '';
     let found = false;
+    let newQuantity = 0;
     for(let item of list)
     {
         let itemSplit = item.split('-');
         if(itemSplit[1] === eventId)
         {
-            newCartString += `${Number.parseInt(itemSplit[0])+quantity}-${itemSplit[1]},`;
+            let tot = Number.parseInt(itemSplit[0])+quantity;
+            newCartString += `${tot}-${itemSplit[1]},`;
+            newQuantity = tot;
             found = true;
         }
         else newCartString += `${item},`;
     }
-    if(!found)newCartString += `${quantity}-${eventId},`;
-    return  newCartString.substring(0, newCartString.length-1);
+    if(!found)
+    {
+        newCartString += `${quantity}-${eventId},`;
+        newQuantity = quantity;
+    }
+
+    setCookie('tempCart', newCartString.substring(0, newCartString.length-1));
+    return newQuantity;
 }
 
 async function updateCartIcon()
