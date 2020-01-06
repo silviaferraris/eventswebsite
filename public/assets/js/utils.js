@@ -22,8 +22,15 @@ function getTotalItemInCart()
 
 function setCookie(cookieName, value, expiresDate)
 {
-    let expires = expiresDate ? `;expires=${expiresDate.toUTCString()}` : "";
-    document.cookie = `${cookieName}=${value};path=/${expires}`;
+    try{
+        let expires = expiresDate ? `;expires=${expiresDate.toUTCString()}` : "";
+        console.log(`${cookieName}=${value};path=/${expires}`);
+        document.cookie = `${cookieName}=${value};path=/${expires}`;
+    }
+    catch (e) {
+        console.log(e);
+    }
+
 }
 
 function getCookieValue(cookieName)

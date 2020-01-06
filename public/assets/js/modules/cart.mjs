@@ -1,5 +1,7 @@
 import Event from "/assets/js/modules/event.mjs"
 
+const cartCookieName = 'tempCart';
+
 class CartItem {
     constructor (event,quantity){
         this._event = event;
@@ -74,6 +76,7 @@ function getCartItems() {
         }
         else {
             let tempCart = getCookieValue('tempCart');
+            if(!tempCart || tempCart === '')return resolve(eventArray);
             let stringSplit = tempCart.split(",");
             for (let item of stringSplit){
                 let itemSplit = item.split("-");
@@ -127,7 +130,12 @@ function removeFromCartString(eventId, quantity)
 {
     let cartString = getCookieValue('tempCart');
     if(!checkTempCartString(cartString))cartString = '';
-    if(!cartString || cartString === '')return '';
+    if(!cartString || cartString === '')
+    {
+        setCookie(cartCookieName, ``);
+        return 0;
+    }
+
     let list = cartString.split(',');
     let newCartString = '';
     let newQuantity = 0;
@@ -146,7 +154,7 @@ function removeFromCartString(eventId, quantity)
         }
         else newCartString += `${item},`;
     }
-    setCookie('tempCart', newCartString.substring(0, newCartString.length-1));
+    setCookie(cartCookieName, newCartString.substring(0, newCartString.length-1));
     return  newQuantity;
 }
 
@@ -154,7 +162,11 @@ function addToCartString(eventId, quantity)
 {
     let cartString = getCookieValue('tempCart');
     if(!checkTempCartString(cartString))cartString = '';
-    if(!cartString || cartString === '')return `${quantity}-${eventId}`;
+    if(!cartString || cartString === '')
+    {
+        setCookie(cartCookieName, `${quantity}-${eventId}`);
+        return quantity;
+    }
     let list = cartString.split(',');
     let newCartString = '';
     let found = false;
@@ -177,7 +189,7 @@ function addToCartString(eventId, quantity)
         newQuantity = quantity;
     }
 
-    setCookie('tempCart', newCartString.substring(0, newCartString.length-1));
+    setCookie(cartCookieName, newCartString.substring(0, newCartString.length-1));
     return newQuantity;
 }
 

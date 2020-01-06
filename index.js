@@ -35,7 +35,6 @@ const EVENTS_IMAGES_TABLE = 'EventsImages';
 const EVENTS_SEMINAR_TABLE = 'EventsSeminars';
 const SEMINARS_IMAGES_TABLE = 'SeminarsImages';
 
-const CART_VIEW = 'CartView';
 const EVENTS_PERFORMERS_VIEW = 'eventsPerformerView';
 const SEMINARS_PERFORMERS_VIEW = 'seminarsPerformerView';
 
