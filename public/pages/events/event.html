@@ -34,6 +34,12 @@
             $('#performer-link').attr('href', `/performers/${event.performerId}`);
             $('#description').text(event.description);
             $('#eventprice').text(event.price);
+            $('#location').text(event.location);
+
+            let date = new Date(event.date);
+            let dateNumber = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+            let monthNumber = date.getMonth()+1 < 10 ? `0${date.getMonth()+1}` : date.getMonth()+1;
+            $('#date').text(`${dateNumber}.${monthNumber}.${date.getFullYear()}`);
 
             $(".cart-btn").attr('href', event.eventId);
             $(".cart-btn").click(function (e)
@@ -85,7 +91,8 @@
                 if(seminars.length > 0)$("#correlated-seminars").show();
                 else return;
                 let seminarsList = $("#correlated-seminars ul");
-                for(let seminar of seminars) createCorrelatedCard(seminarsList, seminars.coverImage, seminar.title, seminar.description);
+
+                for(let seminar of seminars) createCorrelatedCard(seminarsList, seminar.coverImage, seminar.title, seminar.description);
             });
 
             event.getEventsOnSameDate().then(events =>
@@ -171,6 +178,11 @@
                 <a id="performer-link"><span id="performer-title"></span></a>
                 <span style="color: black" id="event-title"></span>
                 <p id="description"></p>
+                <div style="display: flex; flex-direction: column">
+                    <span id="location-title">Location:</span>
+                    <span id="location"></span>
+                </div>
+                <span id="date"></span>
             </div>
             <div class="event-price">
                 <span id="eventprice"></span>

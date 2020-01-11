@@ -2298,26 +2298,45 @@ background: transparent;}
 }
 
 .event-description {
+    position: relative;
     display: flex;
     flex-direction: column;
     border-bottom: 1px solid #E1E8EE;
     margin-bottom: 20px;
 }
-.performer-biography {
-    display: flex;
-    flex-direction: column;
-    border-bottom: 1px solid #E1E8EE;
-    margin-bottom: 20px;
-}
+
 .event-description #event-title{
     font-size: 40px;
     letter-spacing: 2px;
 }
-.performer-biography #performer-title{
-    font-size: 40px;
-    letter-spacing: 2px;
+
+.event-description #date{
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 12px;
+    color: #5a5a5a;
 }
 
+.event-description #performer-link{
+    margin-top: 4px;
+}
+
+.event-description #performer-title{
+    line-height: 20px;
+    font-size: 20px;
+}
+
+.event-description #location-title{
+    color: #1e1e1e;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.event-description #location{
+    color: #373737;
+    font-size: 14px;
+}
 
 .event-description span {
     font-size: 20px;
@@ -2333,8 +2352,9 @@ background: transparent;}
     letter-spacing: -2px;
 }
 .event-description p {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 300;
+    text-align: justify;
     color: #86939E;
     line-height: 24px;
 }
@@ -2957,7 +2977,6 @@ background: transparent;}
 }
 
 .performer-card img{
-    width: 100%;
     height: 100%;
 }
 
@@ -3083,5 +3102,52 @@ background: transparent;}
     margin: -10px -10px -10px -10px;
     overflow: hidden;
     z-index: -1;
+}
+
+.performer-left-column{
+    width: 40%;
+}
+
+.performer-right-column{
+    width: 60%;
+    margin-right: 20px;
+    margin-top: 0;
+}
+
+.performer-biography {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #E1E8EE;
+    margin-bottom: 20px;
+}
+
+.performer-biography #perf-title{
+    font-size: 40px;
+    letter-spacing: 2px;
+    color: #1e1e1e;
+}
+
+.performer-biography #performerbiography{
+    font-size: 18px;
+    line-height: 26px;
+    letter-spacing: 2px;
+    text-align: justify;
+    color: #2d2d2d;
+}
+
+@media (max-width: 990px) {
+    .performer-left-column{
+        width: 100%;
+    }
+
+    .performer-right-column{
+        width: 100%;
+        margin-right: 0;
+        margin-top: 20px;
+    }
+}
+
+#performer-photo{
+    width: 100%;
 }
 

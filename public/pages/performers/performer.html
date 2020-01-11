@@ -17,71 +17,14 @@
         import Performer from "../../assets/js/modules/performer.mjs";
         let performer_id = getCookieValue('perid');
         let performer = new Performer(performer_id);
-        let slideCount;
-        let currentSlide = 0;
+
         performer.fetchData().then(data =>
         {
             $('#perf-title').text(`${performer.firstName} ${performer.lastName}`);
             $('.banner-bg').css('background-image', `url("${performer.photo}")`);
             $('#performerbiography').text(performer.biography);
-            performer.getImages('all').then(imgs=>
-            {
-                slideCount = imgs.length;
-                for(let i=0; i<imgs.length;i++)
-                {
-                    let img=imgs[i];
-                    let slide= $(`<li class="slide" id="slide${i}">
-                                   <img src="${img.image}">
-                                  </li>`);
-
-                    $('.slideshow .slide-list').append(slide);
-                    $(`#slide${0}`).css('left', '0');
-                }
-
-                $(document).on('click', '.slideshow .next-slide', () => slide(1));
-                $(document).on('click', '.slideshow .prev-slide', () => slide(-1));
-
-            })
+            $('#performer-photo').attr('src', performer.photo);
         });
-
-        function slide(x) {
-
-            if(slide.lock1 || slide.lock2)return;
-
-            slide.lock1 = true;
-            slide.lock2 = true;
-
-            let current = $(`#slide${currentSlide}`);
-
-            currentSlide += x;
-            if(currentSlide >= slideCount)currentSlide = 0;
-            if(currentSlide < 0)currentSlide = slideCount-1;
-
-            let next = $(`#slide${currentSlide}`);
-
-            let width = current.outerWidth();
-
-            current.animate({
-                left: -width*x
-            }, 400, () =>
-            {
-                current.css('left', '100%');
-                slide.lock1 = false
-            });
-
-            if(x > 0)
-            {
-                next.animate({
-                    left: 0
-                }, 400, () => slide.lock2 = false);
-            }
-            else
-            {
-                next.css('left', 'auto').css('right', '100%').animate({
-                    right: 0
-                }, 400, () => slide.lock2 = false);
-            }
-        }
     </script>
 
 </head>
@@ -95,18 +38,10 @@
 </div>
 <div class="container-event">
     <main class="event-container">
-        <div class="event-left-column">
-
-            <div class="slideshow">
-                <ul class="slide-list">
-
-                </ul>
-                <a class="next-slide">&gt;</a>
-                <a class="prev-slide">&lt;</a>
-            </div>
-
+        <div class="performer-left-column">
+            <img id="performer-photo" src="">
         </div>
-        <div class="event-right-column">
+        <div class="performer-right-column">
             <div class="performer-biography">
                 <span style="color: black" id="perf-title"></span>
                 <p id="performerbiography"></p>
