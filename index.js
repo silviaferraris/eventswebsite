@@ -144,12 +144,12 @@ app.post('/user/login', (req, res, next) =>
 
 /*app.get('/login', (req, res) =>
 {
-    redirectIfLogged(req, res, '/', 'public/pages/login/index.html');
+    redirectIfLogged(req, res, '/', 'public/pages/login/index.html.html');
 });
 
 app.get('/signup', (req, res) =>
 {
-    redirectIfLogged(req, res, '/', 'public/pages/signup/index.html');
+    redirectIfLogged(req, res, '/', 'public/pages/signup/index.html.html');
 });*/
 
 app.get('/user/logout', (req, res) =>
