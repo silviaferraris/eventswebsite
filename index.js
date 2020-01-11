@@ -77,7 +77,6 @@ passport.serializeUser((user, done) =>
 passport.deserializeUser(async (id, done) =>
 {
     let user = await db(USER_TABLE).select("*").where({id: id});
-    //TODO Handle possible errors (with middleware error handling function)
     done(null, user[0]);
 });
 
@@ -141,16 +140,6 @@ app.post('/user/login', (req, res, next) =>
         });
     })(req, res, next);
 });
-
-/*app.get('/login', (req, res) =>
-{
-    redirectIfLogged(req, res, '/', 'public/pages/login/index.html.html');
-});
-
-app.get('/signup', (req, res) =>
-{
-    redirectIfLogged(req, res, '/', 'public/pages/signup/index.html.html');
-});*/
 
 app.get('/user/logout', (req, res) =>
 {
@@ -333,15 +322,6 @@ app.get('/user/cart/add_event', async (req, res) =>
     }).catch(cause => send500Page(res, cause));
 
 });
-
-/*app.get('/user/cart/remove_event', (req, res) =>
-{
-    if(!req.user)return res.status(401).end();
-
-    if(!req.query.event_id)return res.status(400).end();
-
-    db(USERS_EVENTS_TABLE).where({user_id: req.user.id, event_id: req.query.event_id}).del().then(result => res.status(204).end()).catch(cause => send500Page(res, cause));
-});*/ //TODO capire duplicato api
 
 app.get('/user/cart/clear', (req, res) =>
 {
