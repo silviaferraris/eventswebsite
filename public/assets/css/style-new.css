@@ -1423,6 +1423,18 @@ h2{
     box-shadow: 0 0 0 0.2rem rgba(114,61,190,.25);
 }
 
+.sf-form.was-validated .form-control:invalid, #username-up:invalid{
+    border: 1px solid #e10001;
+}
+
+.sf-form.was-validated .form-control:valid, #username-up:valid{
+    border: 1px solid #00b908;
+}
+
+.sf-form.was-validated .form-control:invalid+.sf-invalid-feedback{
+    visibility: visible;
+}
+
 .stay-logged-check{
     font-family: 'Gilroy-Regular', serif;
     font-size: 16px;
@@ -1815,7 +1827,7 @@ h2{
     max-width: 1200px;
     margin: auto;
 }
-input[type=text], select, textarea {
+input[type=text]:not(.form-control), select, textarea {
     width: 100%;
     padding: 12px;
     border: 1px solid #ccc;
@@ -2723,6 +2735,7 @@ background: transparent;}
 .item-image{
     height: 100%;
     width: 30%;
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;

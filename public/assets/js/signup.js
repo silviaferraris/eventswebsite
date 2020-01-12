@@ -1,18 +1,26 @@
 $(document).ready(() =>
 {
-    $("#submit-btn").click(async () =>
-    {
-        let form = document.getElementById("signup-form");
+    $('#signup-form').submit(async function (e) {
 
-        let validForm = form.checkValidity();
-        if(!form.classList.contains('was-validated'))form.classList.add('was-validated');
+        e.preventDefault();
+
+        let validForm = this.checkValidity();
+        if(!$(this).hasClass('was-validated'))$(this).addClass('was-validated');
         let goodUsername = await isUsernameGood();
 
         if(validForm && !goodUsername)document.getElementById("username-up").setCustomValidity("Invalid field.");
-        else if(validForm && goodUsername)form.submit();
+        else if(validForm && goodUsername)
+        {
+            let cartString = getCookieValue('tempCart');
+            if(cartString && cartString !== '' && checkTempCartString(cartString))
+                $(this).append(`<input type="hidden" name="temp_cart" value="${cartString}" />`);
+
+            this.submit();
+        }
+
     });
 
-    $("#username-up").change(async () =>
+    $("#username-up").on('input', async () =>
     {
         let goodUsername = await isUsernameGood();
         if(!goodUsername)

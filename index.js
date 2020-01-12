@@ -187,6 +187,28 @@ app.post('/user/add_new', async (req, res) =>
         }
     ).then(result =>
     {
+        if(body.temp_cart)
+        {
+            db(USER_TABLE).select('id').where({username: body.username}).then(async result =>
+            {
+                let user_id = result[0].id;
+                if(!/(\d+-\w+)(,\d+-\w+)*/.test(body.temp_cart))return;
+
+                let data = [];
+                let items = body.temp_cart.split(',');
+                for(let item of items)
+                {
+                    let itemSplit = item.split('-');
+                    data.push({
+                        user_id: user_id,
+                        event_id: itemSplit[1],
+                        quantity: itemSplit[0]
+                    });
+                }
+                await db(USERS_EVENTS_TABLE).insert(data);
+            });
+        }
+
         res.redirect("/login");
     }).catch(reason =>
     {
@@ -196,6 +218,12 @@ app.post('/user/add_new', async (req, res) =>
     });
 
 });
+
+function saveTempCart(tempCart, user_id)
+{
+
+
+}
 
 app.get('/user/data', (req, res) =>
 {
@@ -327,6 +355,24 @@ app.get('/user/cart/clear', (req, res) =>
 {
     if(!req.user)return res.status(401).end();
     db(USERS_EVENTS_TABLE).where({user_id: req.user.id}).del().then(result => res.status(204).end()).catch(cause => send500Page(res, cause));
+});
+
+app.get('/user/cart/checkout', (req, res) =>
+{
+    disablePageCache(res);
+    if(!req.user) return res.redirect(302, '/signup');
+
+    db(USERS_EVENTS_TABLE).sum('quantity').where({user_id: req.user.id}).then(result =>
+    {
+        if(!result[0].sum || result[0].sum <= 0)return res.status(204).end();
+        else
+        {
+            db(USERS_EVENTS_TABLE).where({user_id: req.user.id}).del().then(result =>
+            {
+                res.redirect(302, '/purchase-confirmation');
+            }).catch(cause => send500Page(res, cause));
+        }
+    });
 });
 
 app.get('/events/all', (req, res) =>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Purchase confirmation</title>
+
+    <link rel="stylesheet" href="/assets/css/style-new.css">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/navbar_and_footer_loader.js"></script>
+
+    <style>
+
+        .confirmation-title-container{
+            display: grid;
+            grid-template-columns: auto auto;
+            grid-template-rows: 45px auto;
+            grid-template-areas: "icon title"
+                                 ". subtitle";
+        }
+
+        .confirmation-title-container img{
+            width: 45px;
+            justify-self: end;
+            grid-area: icon;
+        }
+
+        .confirmation-title{
+            font-size: 40px;
+            font-family: 'gilroy-medium', serif;
+            align-self: center;
+            line-height: 45px;
+            letter-spacing: 2px;
+            color: green;
+            margin-left: 20px;
+            grid-area: title;
+        }
+        .confirmation-subtitle{
+            color: #2d2d2d;
+            font-family: 'Gilroy-Regular', serif;
+            font-size: 22px;
+            letter-spacing: 1px;
+            margin-left: 20px;
+            grid-area: subtitle;
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <header></header>
+
+    <div class="banner" style="background-color: transparent; min-height: unset"></div>
+
+    <div class="page-container">
+
+        <div class="confirmation-title-container">
+            <img src="/assets/images/icons/check-solid.svg">
+            <span class="confirmation-title">Your order is confirmed!</span>
+            <span class="confirmation-subtitle">Thanks for purchasing, now it's time for fun!</span>
+        </div>
+
+    </div>
+
+    <footer></footer>
+    <div class="mobile-nav"></div>
+
+</body>
+</html>
