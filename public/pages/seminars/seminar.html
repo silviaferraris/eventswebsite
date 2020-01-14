@@ -13,11 +13,10 @@
     <script src="/assets/js/utils.js"></script>
 
     <script type="module">
-        import Event from "../../assets/js/modules/event.mjs";
-        import cart from "../../assets/js/modules/cart.mjs"
+        import Seminar from "../../assets/js/modules/seminar.mjs";
 
-        let eventId = getCookieValue('eveid');
-        let event = new Event(eventId);
+        let seminarId = getCookieValue('semid');
+        let seminar = new Seminar(seminarId);
         let slideCount;
         let currentSlide = 0;
 
@@ -27,46 +26,26 @@
             $("#correlated-events").hide();
         });
 
-        event.fetchData(true).then(data =>
+        seminar.fetchData(true).then(data =>
         {
-            $('#event-title').text(event.title);
-            $('#performer-title').text(`${event.performerFirstName} ${event.performerLastName}`);
-            $('#performer-link').attr('href', `/performers/${event.performerId}`);
-            $('#description').text(event.description);
-            $('#eventprice').text(event.price);
-            $('#location').text(event.location);
+            $('#event-title').text(seminar.title);
+            $('#performer-title').text(`${seminar.performerFirstName} ${seminar.performerLastName}`);
+            $('#performer-link').attr('href', `/performers/${seminar.performerId}`);
+            $('#description').text(seminar.description);
+            $('#location').text(seminar.location);
 
-            let date = new Date(event.date);
+            let date = new Date(seminar.date);
             let dateNumber = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
             let monthNumber = date.getMonth()+1 < 10 ? `0${date.getMonth()+1}` : date.getMonth()+1;
             $('#date').text(`${dateNumber}.${monthNumber}.${date.getFullYear()}`);
 
-            $(".cart-btn").attr('href', event.eventId);
-            $(".cart-btn").click(function (e)
-            {
-                $(".cart-btn").hide();
-                $("#buy-loading").show();
 
-
-                cart.addToCart($(this).attr('href')).then(() =>
-                {
-                    $("#buy-loading").hide();
-                    $("#buy-check").show().attr('src', '/assets/images/icons/check.gif');
-                    setTimeout(() =>
-                    {
-                        $(".cart-btn").show();
-                        $("#buy-check").hide();
-                    }, 1200);
-                });
-                e.preventDefault();
-            });
-
-            event.retrieveCoverImage().then(image =>
+            seminar.retrieveCoverImage().then(image =>
             {
                 $('.banner-bg').css('background-image', `url("${image}")`);
             });
 
-            event.getImages('all').then(imgs=>
+            seminar.getImages('all').then(imgs=>
             {
                 $("#slide-loading").hide();
                 slideCount = imgs.length;
@@ -86,22 +65,15 @@
 
             });
 
-            event.getSeminars().then(seminars =>
+            seminar.getEvents().then(events =>
             {
-                if(seminars.length > 0)$("#correlated-seminars").show();
+                if(events.length > 0)$("#correlated-seminars").show();
                 else return;
                 let seminarsList = $("#correlated-seminars ul");
 
-                for(let seminar of seminars) createCorrelatedCard(seminarsList, seminar.coverImage, seminar.title, seminar.description, `/seminars/${seminar.seminarId}`);
+                for(let event of events) createCorrelatedCard(seminarsList, event.coverImage, event.title, event.description, `/events/${event.eventId}`);
             });
 
-            event.getEventsOnSameDate().then(events =>
-            {
-                if(events.length > 0)$("#correlated-events").show();
-                else return;
-                let eventsList = $("#correlated-events ul");
-                for(let event of events) createCorrelatedCard(eventsList, event.coverImage, event.title, event.description, `/events/${event.eventId}`);
-            })
         });
 
         function createCorrelatedCard(list, img, title, description, link)
@@ -186,14 +158,6 @@
                 </div>
                 <span id="date"></span>
             </div>
-            <div class="event-price">
-                <span id="eventprice"></span>
-                <div style="width: 90px; height: 48px; display:flex; justify-content: center">
-                    <a href="#" class="cart-btn">BUY</a>
-                    <img id="buy-loading" style="display: none" src="/assets/images/icons/loading.gif">
-                    <img id="buy-check" style="display: none" src="/assets/images/icons/check.gif">
-                </div>
-            </div>
         </div>
         <div class="event-left-column">
 
@@ -211,13 +175,7 @@
 
     <div class="correlated">
         <div id="correlated-seminars">
-            <span>CORRELATED SEMINARS</span>
-            <ul>
-
-            </ul>
-        </div>
-        <div id="correlated-events">
-            <span>EVENTS ON SAME DAY</span>
+            <span>CORRELATED EVENTS</span>
             <ul>
 
             </ul>

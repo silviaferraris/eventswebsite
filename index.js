@@ -438,7 +438,7 @@ app.get('/events/of_seminar', (req, res) =>
 app.get('/events/of_performer', (req, res) =>
 {
     let performer_id = req.query.performer_id;
-    db(EVENTS_PERFORMERS_VIEW).select('*').where({performer_id: performer_id}).then(result => JSON.stringify(result)).catch(cause => send500Page(res, cause));
+    db(EVENTS_PERFORMERS_VIEW).select('*').where({performer_id: performer_id}).then(result => res.send(JSON.stringify(result))).catch(cause => send500Page(res, cause));
 });
 
 app.get('/events/:event_id', (req, res) =>
@@ -622,18 +622,24 @@ app.get('/seminars/next_seminars/:limit(\\d+|all)', (req, res) =>
     db(SEMINARS_PERFORMERS_VIEW).select('*').where('date', '>=', parseDateForDB(new Date())).orderBy('date').limit(limit).then(result => res.send(JSON.stringify(result))).catch(cause => send500Page(res, cause));
 });
 
-app.get('/seminars/:seminar_id', (req, res) =>
-{
-    res.cookie('semid', req.seminar_id);
-    sendPage(res, 'public/pages/seminars/seminar.html', 200);
-});
-
 app.get('/seminars/:seminar_id/data', (req, res) =>
 {
-    db(SEMINARS_PERFORMERS_VIEW).select('*').where({id: req.seminar_id}).then(result =>
+    let selector = '*';
+    if(req.query.noimages === 'true')selector = ['id', 'title', 'description', 'date', 'performer_id', 'uuid', 'location', 'images_number', 'performer_first_name', 'performer_last_name'];
+
+    db(SEMINARS_PERFORMERS_VIEW).select(selector).where({id: req.seminar_id}).then(result =>
     {
         if(result.length === 0)return res.status(404).end();
         res.send(JSON.stringify(result[0]));
+    }).catch(cause => send500Page(res, cause));
+});
+
+app.get('/seminars/:seminar_id/cover_image', async (req, res) =>
+{
+    db(SEMINARS_TABLE).select('cover_image').where({id: req.seminar_id}).then(result =>
+    {
+        if(result.length > 0)res.send(JSON.stringify(result[0]));
+        else res.status(404).end();
     }).catch(cause => send500Page(res, cause));
 });
 
@@ -643,6 +649,12 @@ app.get('/seminars/:seminar_id/images/:range(\\d+-\\d+|all)', async (req, res) =
     let limit = req.params.range === 'all' ? Number.MAX_SAFE_INTEGER : Number.parseInt(req.params.range.split('-')[1])+1;
 
     db(SEMINARS_IMAGES_TABLE).select('image').where({seminar_id: req.seminar_id}).orderBy('id').offset(offset).limit(limit).then(result => res.send(JSON.stringify(result))).catch(cause => send500Page(res, cause));
+});
+
+app.get('/seminars/:seminar_id', (req, res) =>
+{
+    res.cookie('semid', req.seminar_id);
+    sendPage(res, 'public/pages/seminars/seminar.html', 200);
 });
 
 app.get('/performers/all', (req, res) =>
