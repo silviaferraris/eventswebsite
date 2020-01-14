@@ -44,14 +44,15 @@ class Seminar
         });
     }
 
-    fetchData()
+    fetchData(noimages)
     {
         return new Promise(((resolve, reject) =>
         {
             if(this.data)resolve(this.data);
             else
             {
-                util.fetch200(`/seminars/${this._seminarId}/data`).then(async response =>
+                if(!noimages)noimages = 'false';
+                util.fetch200(`/seminars/${this._seminarId}/data?noimages=${noimages}`).then(async response =>
                 {
                     this.data = await response.json();
                     resolve(this.data);
@@ -60,6 +61,20 @@ class Seminar
                 });
             }
         }));
+    }
+
+    retrieveCoverImage()
+    {
+        return new Promise((resolve, reject) =>
+        {
+            if(this.data && this.data.cover_image)resolve(this.data.cover_image);
+            else
+            {
+                util.fetch200(`/seminars/${this._seminarId}/cover_image`).then(async response => {
+                    resolve((await response.json()).cover_image);
+                }).catch(cause => reject(cause));
+            }
+        });
     }
 
     getImages(range)
@@ -126,6 +141,16 @@ class Seminar
     get performerId()
     {
         if(this.data)return this.data.performer_id;
+    }
+
+    get performerFirstName()
+    {
+        if(this.data)return this.data.performer_first_name;
+    }
+
+    get performerLastName()
+    {
+        if(this.data)return this.data.performer_last_name;
     }
 
     get date()

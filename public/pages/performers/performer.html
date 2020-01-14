@@ -18,6 +18,8 @@
         let performer_id = getCookieValue('perid');
         let performer = new Performer(performer_id);
 
+        $("#correlated-events").hide();
+
         performer.fetchData().then(data =>
         {
             $('#perf-title').text(`${performer.firstName} ${performer.lastName}`);
@@ -25,6 +27,35 @@
             $('#performerbiography').text(performer.biography);
             $('#performer-photo').attr('src', performer.photo);
         });
+
+        performer.getEvents().then(events =>{
+
+            console.log(events);
+
+            if(events.length > 0)$("#correlated-events").show();
+            else return;
+            let eventsList = $("#correlated-events ul");
+            for(let event of events) createCorrelatedCard(eventsList, event.coverImage, event.title, event.description, `/events/${event.eventId}`);
+        }).catch(cause =>
+        {
+            console.log(cause);
+        });
+
+        function createCorrelatedCard(list, img, title, description, link)
+        {
+            let card = $(`<li class="correlated-card">
+                                <a href="${link}">
+                                    <div class="card-img">
+                                            <img src="${img}">
+                                    </div>
+                                    <div class="card-description">
+                                        <h2>${title}</h2>
+                                        <span>${description}</span>
+                                    </div>
+                                </a>
+                            </li>`);
+            list.append(card);
+        }
     </script>
 
 </head>
@@ -48,6 +79,14 @@
             </div>
         </div>
     </main>
+    <div class="correlated">
+        <div id="correlated-events">
+            <span>CORRELATED EVENTS</span>
+            <ul>
+
+            </ul>
+        </div>
+    </div>
 
 </div>
 
