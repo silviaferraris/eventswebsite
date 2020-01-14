@@ -185,6 +185,10 @@ header{
     cursor: pointer;
 }
 
+.sf-dropdown-menu-mobile a{
+    color: #1e1e1e;
+}
+
 .sf-navbar-item-mobile a:hover{
     color: #CD9999;
     cursor: pointer;
@@ -267,6 +271,11 @@ header{
     list-style-type: none;
     padding: 10px 20px 10px 0;
     transform: scale(0);
+}
+
+.sf-dropdown-menu a{
+    color: #191919;
+    text-shadow: none;
 }
 
 .sf-dropdown-menu-mobile{
@@ -444,7 +453,7 @@ header{
     .toggle-mobile-menu{
         display: block;
     }
-    .sf-navbar-item :not(.toggle-mobile-menu):not(.logo):not(.navbar-cart-icon){
+    .sf-navbar-item :not(.toggle-mobile-menu):not(.logo):not(.navbar-cart-icon):not(.cart-icon-link){
         display: none;
     }
     .sf-navbar-item .user-menu{
