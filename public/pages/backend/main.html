@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>doc</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+
+    #main-title{
+      color: #232323;
+      font-size: 44px;
+    }
+
+    .subtitle{
+      color: #232323;
+      font-size: 24px;
+    }
+
+
+    #group-info-table {
+      font-family: sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #group-info-table td, #group-info-table th {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    #group-info-table tr:hover {
+      background-color: #ddd;
+    }
+
+    #group-info-table th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      background-color: rgba(0, 30, 175, 0.31);
+      color: white;
+    }
+
+    .list-item{
+      margin: 6px;
+      font-size: 18px;
+      color: #232323;
+    }
+
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <h1 id="main-title">Documentation of the Backend part</h1>
+  <blockquote>
+    <p class="subtitle"><strong>Deliverable D1</strong> # General group information</p>
+    <table id="group-info-table">
+      <tr>
+        <th>Member n.</th>
+        <th>Role</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Matricola</th>
+        <th>Email address</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>administrator</td>
+        <td>Silvia</td>
+        <td>Ferraris</td>
+        <td>854767</td>
+        <td>silvia1.ferraris@mail.polimi.it</td>
+      </tr>
+    </table>
+  </blockquote>
+  <p class="subtitle"><strong>Links to other deliverables</strong></p>
+  <ul>
+    <li class="list-item"><strong>Deliverable D0:</strong><a href="https://silviaferrariswebsite.herokuapp.com/"> https://silviaferrariswebsite.herokuapp.com/</a></li>
+    <li class="list-item"><strong>Deliverable D2:</strong><a href="https://silviaferrariswebsite.herokuapp.com/backend/spec.yaml"> https://silviaferrariswebsite.herokuapp.com/backend/spec.yaml</a></li>
+    <li class="list-item"><strong>Deliverable D3:</strong><a href="https://silviaferrariswebsite.herokuapp.com/backend/swaggerui/"> https://silviaferrariswebsite.herokuapp.com/backend/swaggerui/</a></li>
+    <li class="list-item"><strong>Deliverable D4:</strong>the source code of D0 is available as a zip file at <a href="https://example.com/backend/app.zip">this address</a>.</li>
+    <li class="list-item"><strong>Deliverable D5:</strong><a href="https://github.com/silviaferraris/eventswebsite"> https://github.com/silviaferraris/eventswebsite</a></li>
+    <li class="list-item">## Specification ### Web Architecture Describe here, with a diagram, the components of your web application and how they interact. Highlight which parts belong to the application layer, data layer or presentation layer. How did you ensure that HTML is not rendered server side? ### API #### REST compliance Describe here to what extent did you follow REST principles and what are the reasons for which you might have decided to diverge. Note, you must not describe the whole API here, just the design decisions. #### OpenAPI Resource models Describe here synthetically, which models you have introduced for resources. ### Data model Describe with an ER diagram the model used in the data layer of your web application. How these map to the OpenAPI data model? ## Implementation ### Tools used For code the backend application I use, javascript with the nodejs framework and WebStorm IDE. ### Discussion Describe here:</li>
+    <li class="list-item">How did you make sure your web application adheres to the provided OpenAPI specification? Which method did you use to test all APIs endpoints against the expected response?</li>
+    <li class="list-item">Why do you think your web application adheres to common practices to partition a REST-based web application (static assets vs. application data)</li>
+    <li class="list-item">Describe synthetically why and how did you manage session state, what are the state change triggering actions (e.g., POST to login etc..).</li>
+    <li class="list-item">Which technology did you use (relational or a no-SQL database) for managing the data model? ## Other information ### Task assignment Describe here how development tasks have been subdivided among members of the group, e.g.: &gt; - Foo worked on front end (80%) and OpenAPI Spec (20% of the time) &gt; - Bar worked on …. ### Analysis of existing API Describe here the research of (full or part of) existing APIs that are similar in objectives and scope to the one implemented, that have possibly guided implementation choices (these should not be necessarily OpenAPI implementations). Toy APIs (such as the Swagger’s Pet Store) or the example shown during lectures are not a valid response. Use TWO or more items of the form: &gt; We took (full/partial) inspiration from API <XYZ>(link) for the part of the &gt; API that manages <ABC> because of <REASON>. Or &gt; For the part of the API that manages <ABC> we considered/studied <XYZ>(link) &gt; because of <REASON> but wasn’t completely fitting to our purpose because of &gt; <REASON>. ### Learning outcome What was the most important thing all the members have learned while developing this part of the project, what questions remained unanswered, how you will use what you’ve learned in your everyday life?</li>
+  </ul>
+</body>
+</html>
