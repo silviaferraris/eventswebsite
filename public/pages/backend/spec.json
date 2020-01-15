@@ -1,0 +1,1966 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "Varazzers Festival API",
+    "description" : "API for hypermedia project.",
+    "contact" : {
+      "email" : "silvia1.ferraris@mail.polimi.it"
+    },
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "https://virtserver.swaggerhub.com/silviaferraris/silviaferrarisapi/1.0.0",
+    "description" : "SwaggerHub API Auto Mocking"
+  }, {
+    "url" : "https://silviaferrariswebsite.herokuapp.com/",
+    "description" : "Varazzers Festival API"
+  } ],
+  "tags" : [ {
+    "name" : "events",
+    "description" : "Data about events"
+  }, {
+    "name" : "seminars",
+    "description" : "Data abount seminars"
+  }, {
+    "name" : "performers",
+    "description" : "Data abount performers"
+  }, {
+    "name" : "cart",
+    "description" : "Operation and data about the cart of the user"
+  }, {
+    "name" : "user",
+    "description" : "Operations about user"
+  }, {
+    "name" : "admin",
+    "description" : "Operations for manage the website (only for admin users)"
+  } ],
+  "paths" : {
+    "/user/login" : {
+      "post" : {
+        "tags" : [ "user" ],
+        "summary" : "Logs user into the system",
+        "operationId" : "loginUser",
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "header",
+          "description" : "The username for login",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "password",
+          "in" : "header",
+          "description" : "The password for login",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "301" : {
+            "description" : "successful operation"
+          },
+          "401" : {
+            "description" : "Invalid username/password supplied"
+          }
+        }
+      }
+    },
+    "/user/logout" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Logs out current logged in user session",
+        "operationId" : "logoutUser",
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/user/add_new" : {
+      "post" : {
+        "tags" : [ "user" ],
+        "summary" : "user registration",
+        "description" : "Create a new user and save the cart if present.",
+        "operationId" : "addNewUser",
+        "parameters" : [ {
+          "name" : "temp_cart",
+          "in" : "query",
+          "description" : "The cart to save",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "User data",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/User"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "400" : {
+            "description" : "missing data or invalid username"
+          },
+          "default" : {
+            "description" : "successful operation, redirect to login page"
+          }
+        }
+      }
+    },
+    "/user/data" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Get current logged user data",
+        "operationId" : "getUserData",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "User not logged"
+          }
+        }
+      }
+    },
+    "/user/imlogged" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Check if user is logged",
+        "operationId" : "imLogged",
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/check_username" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Check if an username alredy exist",
+        "operationId" : "checkUsername",
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "query",
+          "description" : "The username to check",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "silviaf96"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "return true if the username is valid",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/cart" : {
+      "get" : {
+        "tags" : [ "cart" ],
+        "summary" : "Return the content of user's cart",
+        "operationId" : "getCart",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/inline_response_200_2"
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "User not logged"
+          }
+        }
+      }
+    },
+    "/user/cart/tot_items" : {
+      "get" : {
+        "tags" : [ "cart" ],
+        "summary" : "Return the total number of items that the user has in the cart",
+        "operationId" : "getCartTotalItems",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_3"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "User not logged"
+          }
+        }
+      }
+    },
+    "/user/cart/save_temp_cart" : {
+      "get" : {
+        "tags" : [ "cart" ],
+        "summary" : "Save the local cart of user in the database",
+        "operationId" : "saveTempCart",
+        "parameters" : [ {
+          "name" : "temp_cart",
+          "in" : "query",
+          "description" : "The cart to save",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "successful operation"
+          },
+          "401" : {
+            "description" : "User not logged"
+          },
+          "409" : {
+            "description" : "User cart is not empty"
+          }
+        }
+      }
+    },
+    "/user/cart/remove_event" : {
+      "get" : {
+        "tags" : [ "cart" ],
+        "summary" : "Remove an event from the cart of current logged user",
+        "operationId" : "removeEventFromCart",
+        "parameters" : [ {
+          "name" : "event_id",
+          "in" : "query",
+          "description" : "The event to remove",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "quantity",
+          "in" : "query",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation, return the new quantity of event in cart",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_4"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "wrong paramaters format"
+          },
+          "401" : {
+            "description" : "User not logged"
+          }
+        }
+      }
+    },
+    "/user/cart/add_event" : {
+      "get" : {
+        "tags" : [ "cart" ],
+        "summary" : "Add an event to the cart of current logged user",
+        "operationId" : "addEventToCart",
+        "parameters" : [ {
+          "name" : "event_id",
+          "in" : "query",
+          "description" : "The event to remove",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "quantity",
+          "in" : "query",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation, return the new quantity of event in cart",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_4"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "wrong paramaters format"
+          },
+          "401" : {
+            "description" : "User not logged"
+          }
+        }
+      }
+    },
+    "/user/cart/clear" : {
+      "get" : {
+        "tags" : [ "cart" ],
+        "summary" : "Remove all events from the cart of current logged user",
+        "operationId" : "clearCart",
+        "responses" : {
+          "204" : {
+            "description" : "successful operation"
+          },
+          "401" : {
+            "description" : "User not logged"
+          }
+        }
+      }
+    },
+    "/user/cart/checkout" : {
+      "get" : {
+        "tags" : [ "cart" ],
+        "summary" : "Checkout of the cart",
+        "operationId" : "checkout",
+        "responses" : {
+          "204" : {
+            "description" : "do not do anityng if the cart is empty"
+          },
+          "302" : {
+            "description" : "If the user is not logged, redirect to signup page, else redirect to putchase confirmation page"
+          },
+          "400" : {
+            "description" : "wrong paramaters format"
+          }
+        }
+      }
+    },
+    "/events/all" : {
+      "get" : {
+        "tags" : [ "events" ],
+        "summary" : "return all events",
+        "operationId" : "getAllEvents",
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Event"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/next_date" : {
+      "get" : {
+        "tags" : [ "events" ],
+        "summary" : "return the date, the id and the title of the event of the next avaiable date",
+        "operationId" : "getNextDateEvent",
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_5"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/types" : {
+      "get" : {
+        "tags" : [ "events" ],
+        "summary" : "return all event types",
+        "operationId" : "getEventTypes",
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/by_type" : {
+      "get" : {
+        "tags" : [ "events" ],
+        "summary" : "return all events of specific type",
+        "operationId" : "getEventsByType",
+        "parameters" : [ {
+          "name" : "type",
+          "in" : "query",
+          "description" : "type of event",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "artistic"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Event"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/on_date" : {
+      "get" : {
+        "tags" : [ "events" ],
+        "summary" : "return all events of specific date",
+        "operationId" : "getEventsByDate",
+        "parameters" : [ {
+          "name" : "date",
+          "in" : "query",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Event"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/of_seminar" : {
+      "get" : {
+        "tags" : [ "events" ],
+        "summary" : "return all events correlated with a seminar",
+        "operationId" : "getEventsOfSeminar",
+        "parameters" : [ {
+          "name" : "seminar_id",
+          "in" : "query",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "musicproductioncourse"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Event"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/of_performer" : {
+      "get" : {
+        "tags" : [ "events" ],
+        "summary" : "return all events permormed by a performer",
+        "operationId" : "getEventsByPerformer",
+        "parameters" : [ {
+          "name" : "performer_id",
+          "in" : "query",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "generazionedisagio"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Event"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{event_id}" : {
+      "get" : {
+        "tags" : [ "events" ],
+        "summary" : "return the event page",
+        "operationId" : "getEventPage",
+        "parameters" : [ {
+          "name" : "event_id",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "indifferenza"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/html" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/next_events/{range}" : {
+      "get" : {
+        "tags" : [ "events" ],
+        "summary" : "return the next events",
+        "operationId" : "getNextEvents",
+        "parameters" : [ {
+          "name" : "range",
+          "in" : "path",
+          "description" : "define the quantity of events to show",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "(\\d+-\\d+|all)",
+            "type" : "string",
+            "example" : "all"
+          }
+        }, {
+          "name" : "noimages",
+          "in" : "query",
+          "description" : "if false, the images will not be loaded",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "example" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Event"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{event_id}/data" : {
+      "get" : {
+        "tags" : [ "events" ],
+        "summary" : "return the data of the event",
+        "operationId" : "getEventData",
+        "parameters" : [ {
+          "name" : "event_id",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "indifferenza"
+          }
+        }, {
+          "name" : "noimages",
+          "in" : "query",
+          "description" : "if false, the images will not be loaded",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "example" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Event"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{event_id}/images/{range}" : {
+      "get" : {
+        "tags" : [ "events" ],
+        "summary" : "return the images of the event",
+        "operationId" : "getEventImages",
+        "parameters" : [ {
+          "name" : "event_id",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "indifferenza"
+          }
+        }, {
+          "name" : "range",
+          "in" : "path",
+          "description" : "define the quantity of images to download",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "(\\d+-\\d+|all)",
+            "type" : "string",
+            "example" : "all"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string",
+                    "format" : "byte"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{event_id}/cover_image" : {
+      "get" : {
+        "tags" : [ "events" ],
+        "summary" : "return the cover image of the event",
+        "operationId" : "getEventCoverImage",
+        "parameters" : [ {
+          "name" : "event_id",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "indifferenza"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "string",
+                  "format" : "byte"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "cover image not found"
+          }
+        }
+      }
+    },
+    "/events/{event_id}/on_same_date" : {
+      "get" : {
+        "tags" : [ "events" ],
+        "summary" : "return the events of same date of events with id = event_id",
+        "operationId" : "getEventOnSameDate",
+        "parameters" : [ {
+          "name" : "event_id",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "indifferenza"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Event"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seminars/all" : {
+      "get" : {
+        "tags" : [ "seminars" ],
+        "summary" : "return all seminars",
+        "operationId" : "getAllSeminars",
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Seminar"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seminars/next_date" : {
+      "get" : {
+        "tags" : [ "seminars" ],
+        "summary" : "return the date of the seminar of the next avaiable date",
+        "operationId" : "getNextDateSeminar",
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_6"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seminars/on_date" : {
+      "get" : {
+        "tags" : [ "seminars" ],
+        "summary" : "return all seminars of specific date",
+        "operationId" : "getSeminarsByDate",
+        "parameters" : [ {
+          "name" : "date",
+          "in" : "query",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Seminar"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seminars/of_event" : {
+      "get" : {
+        "tags" : [ "seminars" ],
+        "summary" : "return all seminars correlated with an event",
+        "operationId" : "getSeminarsOfEvent",
+        "parameters" : [ {
+          "name" : "event_id",
+          "in" : "query",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "indifferenza"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Seminar"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seminars/of_performer" : {
+      "get" : {
+        "tags" : [ "seminars" ],
+        "summary" : "return all seminars permormed by a performer",
+        "operationId" : "getSeminarsByPerformer",
+        "parameters" : [ {
+          "name" : "performer_id",
+          "in" : "query",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "generazionedisagio"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Seminar"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seminars/{seminar_id}" : {
+      "get" : {
+        "tags" : [ "seminars" ],
+        "summary" : "return the seminar page",
+        "operationId" : "getSeminarPage",
+        "parameters" : [ {
+          "name" : "seminar_id",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "musicproductioncourse"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/html" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seminars/next_seminars/{limit}" : {
+      "get" : {
+        "tags" : [ "seminars" ],
+        "summary" : "return the next seminars",
+        "operationId" : "getNextSeminar",
+        "parameters" : [ {
+          "name" : "limit",
+          "in" : "path",
+          "description" : "define the quantity of seminar to download",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "(\\d+|all)",
+            "type" : "string",
+            "example" : "all"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Seminar"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seminars/{seminar_id}/data" : {
+      "get" : {
+        "tags" : [ "seminars" ],
+        "summary" : "return the data of the seminar",
+        "operationId" : "getSeminarData",
+        "parameters" : [ {
+          "name" : "seminar_id",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "musicproductioncourse"
+          }
+        }, {
+          "name" : "noimages",
+          "in" : "query",
+          "description" : "if false, the images will not be loaded",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "example" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Seminar"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seminars/{seminar_id}/images/{range}" : {
+      "get" : {
+        "tags" : [ "seminars" ],
+        "summary" : "return the images of the seminar",
+        "operationId" : "getSeminarImages",
+        "parameters" : [ {
+          "name" : "seminar_id",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "musicproductioncourse"
+          }
+        }, {
+          "name" : "range",
+          "in" : "path",
+          "description" : "define the quantity of images to download",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "(\\d+-\\d+|all)",
+            "type" : "string",
+            "example" : "all"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string",
+                    "format" : "byte"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seminars/{seminar_id}/cover_image" : {
+      "get" : {
+        "tags" : [ "seminars" ],
+        "summary" : "return the cover image of the seminar",
+        "operationId" : "getSeminarCoverImage",
+        "parameters" : [ {
+          "name" : "seminar_id",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "musicproductioncourse"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "string",
+                  "format" : "byte"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "cover image not found"
+          }
+        }
+      }
+    },
+    "/seminars/{seminar_id}/on_same_date" : {
+      "get" : {
+        "tags" : [ "seminars" ],
+        "summary" : "return the seminars of same date of seminar with id = seminar_id",
+        "operationId" : "getSeminarsOnSameDate",
+        "parameters" : [ {
+          "name" : "seminar_id",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "musicproductioncourse"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Seminar"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/performers/all" : {
+      "get" : {
+        "tags" : [ "performers" ],
+        "summary" : "return all performers",
+        "operationId" : "getAllPerformers",
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Performer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/performers/of_event" : {
+      "get" : {
+        "tags" : [ "performers" ],
+        "summary" : "return the performer that perform the event in query",
+        "operationId" : "getPerformerOfEvent",
+        "parameters" : [ {
+          "name" : "event_id",
+          "in" : "query",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "indifferenza"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Performer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/performers/of_seminar" : {
+      "get" : {
+        "tags" : [ "performers" ],
+        "summary" : "return the performer thet perform the seminar in query",
+        "operationId" : "getPeeformerOfSeminar",
+        "parameters" : [ {
+          "name" : "seminar_id",
+          "in" : "query",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "musicproductioncourse"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Performer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/performers/{performer_id}" : {
+      "get" : {
+        "tags" : [ "performers" ],
+        "summary" : "return the performer page",
+        "operationId" : "getPerformerPage",
+        "parameters" : [ {
+          "name" : "performer_id",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "generazionedisagio"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/html" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/performers/{performer_id}/data" : {
+      "get" : {
+        "tags" : [ "performers" ],
+        "summary" : "return the data of the performer",
+        "operationId" : "getPerformerData",
+        "parameters" : [ {
+          "name" : "performer_id",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "generazionedisagio"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Performer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/event/add_new" : {
+      "post" : {
+        "tags" : [ "admin" ],
+        "summary" : "Create a new event",
+        "operationId" : "createEvent",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "header",
+          "description" : "The id of new event",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "title",
+          "in" : "header",
+          "description" : "The title of new event",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "description",
+          "in" : "header",
+          "description" : "The description of new event",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "date",
+          "in" : "header",
+          "description" : "The date of new event",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }, {
+          "name" : "performer_id",
+          "in" : "header",
+          "description" : "The id of the performer of new event",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "event_type",
+          "in" : "header",
+          "description" : "The type of new event",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "Music", "Sport", "Health", "Theatre", "Artistic" ]
+          }
+        }, {
+          "name" : "price",
+          "in" : "header",
+          "description" : "The price of new event",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "location",
+          "in" : "header",
+          "description" : "The location of new event",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "cover_image",
+          "in" : "header",
+          "description" : "The cover image of the new event",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        }, {
+          "name" : "images",
+          "in" : "header",
+          "description" : "The images of the new event",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "byte"
+            }
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "successful operation, event created correctly"
+          },
+          "400" : {
+            "description" : "Error in parameters",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string",
+                  "description" : "Error description"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized user"
+          }
+        }
+      }
+    },
+    "/admin/seminar/add_new" : {
+      "post" : {
+        "tags" : [ "admin" ],
+        "summary" : "Create a new seminar",
+        "operationId" : "createSeminar",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "header",
+          "description" : "The id of new seminar",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "title",
+          "in" : "header",
+          "description" : "The title of new seminar",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "description",
+          "in" : "header",
+          "description" : "The description of new seminar",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "date",
+          "in" : "header",
+          "description" : "The date of new seminar",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }, {
+          "name" : "performer_id",
+          "in" : "header",
+          "description" : "The id of the performer of new seminar",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "location",
+          "in" : "header",
+          "description" : "The location of new event",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "cover_image",
+          "in" : "header",
+          "description" : "The cover image of the new seminar",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        }, {
+          "name" : "images",
+          "in" : "header",
+          "description" : "The images of the new seminar",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "byte"
+            }
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "successful operation, seminar created correctly"
+          },
+          "400" : {
+            "description" : "Error in parameters",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string",
+                  "description" : "Error description"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized user"
+          }
+        }
+      }
+    },
+    "/admin/performer/add_new" : {
+      "post" : {
+        "tags" : [ "admin" ],
+        "summary" : "Create a new performer",
+        "operationId" : "createPerformer",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "header",
+          "description" : "The id of new performer",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "first_name",
+          "in" : "header",
+          "description" : "The name of the performer",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "last_name",
+          "in" : "header",
+          "description" : "The surname of the performer",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "biography",
+          "in" : "header",
+          "description" : "The biography of the performer",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "photo",
+          "in" : "header",
+          "description" : "The photo of the performer",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "successful operation, performer created correctly"
+          },
+          "400" : {
+            "description" : "Error in parameters",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string",
+                  "description" : "Error description"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized user"
+          }
+        }
+      }
+    },
+    "/admin/event/check_id" : {
+      "get" : {
+        "tags" : [ "admin" ],
+        "summary" : "Check if the id in query alredy exist in events ids",
+        "operationId" : "checkEventId",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "query",
+          "description" : "The id to check",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_7"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/seminar/check_id" : {
+      "get" : {
+        "tags" : [ "admin" ],
+        "summary" : "Check if the id in query alredy exist in seminars ids",
+        "operationId" : "checkSeminarId",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "query",
+          "description" : "The id to check",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_7"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/performer/check_id" : {
+      "get" : {
+        "tags" : [ "admin" ],
+        "summary" : "Check if the id in query alredy exist in performers ids",
+        "operationId" : "checkPerformerId",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "query",
+          "description" : "The id to check",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_7"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "Event" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "date" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "performer_id" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "Music", "Artistic", "Sport", "Theatre", "Health" ]
+          },
+          "price" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "uuid" : {
+            "type" : "string"
+          },
+          "location" : {
+            "type" : "string"
+          },
+          "images_number" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "cover_image" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        }
+      },
+      "Seminar" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "date" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "performer_id" : {
+            "type" : "string"
+          },
+          "price" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "uuid" : {
+            "type" : "string"
+          },
+          "location" : {
+            "type" : "string"
+          },
+          "images_number" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "cover_image" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        }
+      },
+      "Performer" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "first_name" : {
+            "type" : "string"
+          },
+          "last_name" : {
+            "type" : "string"
+          },
+          "biography" : {
+            "type" : "string"
+          },
+          "photo" : {
+            "type" : "string",
+            "format" : "byte"
+          },
+          "uuid" : {
+            "type" : "string"
+          }
+        }
+      },
+      "User" : {
+        "type" : "object",
+        "properties" : {
+          "username" : {
+            "type" : "string"
+          },
+          "first_name" : {
+            "type" : "string"
+          },
+          "last_name" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "birthday" : {
+            "type" : "string"
+          },
+          "avatar" : {
+            "type" : "string"
+          },
+          "admin" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "inline_response_200" : {
+        "type" : "object",
+        "properties" : {
+          "logged" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "inline_response_200_1" : {
+        "type" : "object",
+        "properties" : {
+          "exist" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "inline_response_200_2" : {
+        "type" : "object",
+        "properties" : {
+          "event_id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "quantity" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "inline_response_200_3" : {
+        "type" : "object",
+        "properties" : {
+          "tot" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "inline_response_200_4" : {
+        "type" : "object",
+        "properties" : {
+          "quantity" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "inline_response_200_5" : {
+        "type" : "object",
+        "properties" : {
+          "found" : {
+            "type" : "boolean"
+          },
+          "date" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "title" : {
+            "type" : "string"
+          }
+        }
+      },
+      "inline_response_200_6" : {
+        "type" : "object",
+        "properties" : {
+          "found" : {
+            "type" : "boolean"
+          },
+          "date" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "inline_response_200_7" : {
+        "type" : "object",
+        "properties" : {
+          "exist" : {
+            "type" : "boolean",
+            "description" : "true if the id alredy exist"
+          }
+        }
+      }
+    }
+  }
+}
