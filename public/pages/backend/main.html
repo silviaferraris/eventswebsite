@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Documentation</title>
+  <style>
+
+    body{
+      padding-left: 30px;
+      padding-right: 30px;
+    }
+
+    #main-title{
+      color: #232323;
+      font-size: 44px;
+    }
+
+    .subtitle{
+      display: inline-block;
+      color: #232323;
+      font-size: 26px;
+      font-weight: bold;
+      margin-top: 40px;
+      margin-bottom: 10px;
+    }
+
+    #group-info-table {
+      font-family: sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #group-info-table td, #group-info-table th {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    #group-info-table tr:hover {
+      background-color: #ddd;
+    }
+
+    #group-info-table th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      background-color: rgba(0, 30, 175, 0.31);
+      color: white;
+    }
+
+    .list-item{
+      margin: 6px;
+      font-size: 18px;
+      color: #232323;
+    }
+
+    .list-item strong{
+      display: inline-block;
+      min-width: 180px;
+    }
+
+    .specification-list{
+      list-style-type: none;
+    }
+
+    .specification-list li{
+      margin-top: 6px;
+      margin-bottom: 6px;
+    }
+
+    .specification-list li p{
+      font-size: 18px;
+    }
+
+    .db{
+      width: 400px;
+      height: 800px;
+    }
+
+  </style>
+
+</head>
+<body>
+  <h1 id="main-title">Documentation of the Backend part</h1>
+
+  <span class="subtitle">Group information</span>
+  <table id="group-info-table">
+    <tr>
+      <th>Member n.</th>
+      <th>Role</th>
+      <th>First name</th>
+      <th>Last name</th>
+      <th>Matricola</th>
+      <th>Email address</th>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>administrator</td>
+      <td>Silvia</td>
+      <td>Ferraris</td>
+      <td>854767</td>
+      <td>silvia1.ferraris@mail.polimi.it</td>
+    </tr>
+  </table>
+
+  <span class="subtitle">Links to other deliverables</span>
+  <ul>
+    <li class="list-item"><strong>Web App (D0):</strong><a href="https://silviaferrariswebsite.herokuapp.com/"> https://silviaferrariswebsite.herokuapp.com/</a></li>
+    <li class="list-item"><strong>Yaml file (D2):</strong><a href="https://silviaferrariswebsite.herokuapp.com/backend/spec.yaml"> https://silviaferrariswebsite.herokuapp.com/backend/spec.yaml</a></li>
+    <li class="list-item"><strong>Swagger UI (D3):</strong><a href="https://silviaferrariswebsite.herokuapp.com/backend/swaggerui/"> https://silviaferrariswebsite.herokuapp.com/backend/swaggerui/</a></li>
+    <li class="list-item"><strong>App source code (D4):</strong><a href="https://silviaferrariswebsite.herokuapp.com/backend/app.zip"> https://silviaferrariswebsite.herokuapp.com/backend/app.zip</a></li>
+    <li class="list-item"><strong>Repository (D5):</strong><a href="https://github.com/silviaferraris/eventswebsite"> https://github.com/silviaferraris/eventswebsite</a></li>
+  </ul>
+
+  <span class="subtitle">Specification</span>
+  <ul class="specification-list">
+    <li>
+      <h2>WebStorm</h2>
+      <p>WebStorm is a famous IDE for web development that support html, css, javascript.</p>
+    </li>
+    <li>
+      <h2>Javascript ES6</h2>
+      <p>I use javascript es6 that support modules.<br>The modules allowed me to simplify the code and reduce redundancies, being able to create a code through the object-oriented paradigm.<br>
+        This approach, in addition, it has made it possible to group and reduce API calls into specific files, subdivided by category.</p>
+    </li>
+    <li>
+      <h2>JQuery</h2>
+      <p>To simplify the syntax of client side, I use the framework JQuery that allow to select and edit DOM elements properties in a very intuitive mode.<br>
+        The framework is also used to create some animation into the pages.</p>
+    </li>
+    <li>
+      <h2>Node.js</h2>
+      <p>Node.js is a framework that allow to execute javascript code stand-alone.<br>I use this framework, together with the express library, to code the backend of the application.<br>
+        All the API that I wrote, respect the REST principles.<br>
+        The HTML of each page of application is rendered client-side, and this is ensured because the API do not access the html files of the pages, except for sending the html code to the client.</p>
+    </li>
+    <li>
+      <h2>Other backend frameworks</h2>
+      <ul>
+        <li><strong>knex:</strong> to establish a connection with the database and execute the queries</li>
+        <li><strong>session:</strong> to create the sessions for the logged users</li>
+        <li><strong>passport:</strong> to manage the the authentication of the user during the login</li>
+        <li><strong>swaggerUi:</strong> to generate the interactive swagger documentation with examples</li>
+      </ul>
+    </li>
+    <li>
+      <h2>PostgreSQL</h2>
+      <p>I decided to use PostreSQL because is highly compatible with Heroku (The cloud that host the application).</p>
+    </li>
+    <li>
+      <h2>NOTES</h2>
+      <p>I decided to not use the frameworks Bootstrap and Ajax, because although they could have simplified me a lot of work, I think that in an educational project this instruments are too powerful.<br>
+        I wrote by scratch all the html, css and javascript of the client side, having to face challenges (e.g. animation optimization) that I learned to manage.<br><br>
+      I also implemented a dashboard to insert the events, seminars and performers without access directly to the database, simplify and speeding up the insertion of the data. The dashboard and the related API is only accessible by the admin users.</p>
+    </li>
+  </ul>
+
+  <div style="display: flex; flex-direction: column">
+    <span class="subtitle">Database diagram</span>
+    <img class="db" src="/assets/images/doc/database-diagram.svg">
+  </div>
+
+</body>
+</html>

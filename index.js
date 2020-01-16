@@ -1,4 +1,6 @@
 const express = require("express");
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./public/pages/backend/spec.json');
 const app = express();
 const admin = express();
 const fs = require('fs');
@@ -20,6 +22,8 @@ const db = knex({
         database : 'deudf3nt0i7irb'
     }
 });
+
+
 
 const hashKey = 'lavagna';
 
@@ -93,6 +97,8 @@ app.use('/pages/', (req, res, next) =>
     res.status(403).end();
 });
 
+
+app.use('/backend/swaggerui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.static("public"));
 app.use(express.static("public/pages"));
 
@@ -218,12 +224,6 @@ app.post('/user/add_new', async (req, res) =>
     });
 
 });
-
-function saveTempCart(tempCart, user_id)
-{
-
-
-}
 
 app.get('/user/data', (req, res) =>
 {
