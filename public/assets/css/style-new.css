@@ -453,7 +453,7 @@ header{
     .toggle-mobile-menu{
         display: block;
     }
-    .sf-navbar-item :not(.toggle-mobile-menu):not(.logo):not(.navbar-cart-icon):not(.cart-icon-link){
+    .sf-navbar-item :not(.toggle-mobile-menu):not(.logo):not(.navbar-cart-icon):not(.cart-icon-link):not(.logo-link){
         display: none;
     }
     .sf-navbar-item .user-menu{

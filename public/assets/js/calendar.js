@@ -177,7 +177,7 @@ $('.calendarnumber').click(function ()
         for(let seminar of seminarsValue)
         {
             let seminarCard = $(`<li class="calendar-seminar-card">
-                                    <a href="/seminars/${seminar.seminarId}"><h4>${seminar.title}</h4><span>${seminar.performer_first_name} ${seminar.performer_last_name}</span></a>
+                                    <a href="/seminars/${seminar.id}"><h4>${seminar.title}</h4><span>${seminar.performer_first_name} ${seminar.performer_last_name}</span></a>
                                  </li>`);
             seminarInfoList.append(seminarCard);
         }
