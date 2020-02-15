@@ -127,7 +127,12 @@
       color: #232323;
       margin-bottom: 8px;
     }
-
+    .section-subtitle-big{
+      font-size: 1.8vw;
+      letter-spacing: 2px;
+      color: #232323;
+      margin-bottom: 8px;
+    }
     table{
       text-align: left;
       border-collapse: collapse;
@@ -181,6 +186,9 @@
       .section-subtitle{
         font-size: 18px;
       }
+      .section-subtitle-big{
+        font-size: 22px;
+      }
     }
 
     @media (max-width: 400px) {
@@ -233,6 +241,7 @@
 
     <section class="document-section">
       <div class="section-title">SPECIFICATION</div>
+      <div class="section-subtitle-big">WEB ARCHITECTURE</div>
       <div class="section-subtitle">PRESENTATION LAYER</div>
       <p>
         The we application contains both static and dynamic pages.
@@ -256,6 +265,10 @@
       <div class="section-subtitle">DATA LAYER</div>
       <p>Application data management takes place through the use of a relational database (PostgresSQL) whose model is represented below:</p>
       <img alt="Database diagram" id="database-diagram" src="/assets/images/doc/database-diagram-new.svg">
+
+      <div class="section-subtitle-big">WEB ARCHITECTURE</div>
+
+
     </section>
 
     <section class="document-section">
@@ -266,8 +279,16 @@
 
     <section class="document-section">
       <div class="section-title">OTHER INFORMATION</div>
-
-
+      <div class="section-subtitle">ANALYSIS OF EXISTING API</div>
+      <p>I improved my knowledge about RESTFUL API principles and I took inspiration from the videos of the following website:
+        <a href="https://thecodingtrain.com/Courses/data-and-apis/">https://thecodingtrain.com/Courses/data-and-apis/</a> which contains the best practices around how to plan, design, build, manage the APIs</p>
+      <p>I actually didn't take inspiration from any other existing APIS.</p>
+      <div class="section-subtitle">LEARNING OUTCOME</div>
+      <p>From this project I learned to use Node.js, the modules EXPRESS, KNEX, PASSPORT in order to manage the authentication. I also
+      learned to produce the documentation of the API with OPENAPI SWAGGER. <br>
+      I improved my coding skills with Javascript.<br>
+      Thanks to this part of the project, and the whole project in general, I decided to implement the Website of
+      my family business.</p>
     </section>
 
   </div>
