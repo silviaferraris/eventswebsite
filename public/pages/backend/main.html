@@ -84,7 +84,7 @@
   <style>
 
     body{
-      background-color: #f0f0f0;
+      background-color: #f3f3f3;
     }
 
     *{
@@ -97,12 +97,12 @@
       max-width: 1200px;
       margin: auto;
       padding: 10px;
-      background-color: #f5f5f5;
+      background-color: #ffffff;
       box-shadow: 0 4px 7px 0 rgba(0, 0, 0, 0.60);
     }
 
     #main-title{
-      font-size: 3vw;
+      font-size: 40px;
       letter-spacing: 2px;
       text-align: left;
       margin-bottom: 15px;
@@ -115,23 +115,26 @@
     }
 
     .section-title{
-      font-size: 2vw;
+      font-size: 28px;
       letter-spacing: 2px;
       color: #232323;
-      margin-bottom: 12px;
+      margin-top: 15px;
+      margin-bottom: 0;
     }
 
     .section-subtitle{
-      font-size: 1vw;
+      font-size: 20px;
       letter-spacing: 2px;
       color: #232323;
-      margin-bottom: 8px;
+      margin-top: 15px;
+      margin-bottom: 4px;
     }
     .section-subtitle-big{
-      font-size: 1.8vw;
+      font-size: 24px;
       letter-spacing: 2px;
       color: #232323;
-      margin-bottom: 8px;
+      margin-top: 15px;
+      margin-bottom: 4px;
     }
     table{
       text-align: left;
@@ -157,13 +160,23 @@
     ul li{
       margin-bottom: 5px;
       margin-top: 5px;
+      font-family: Verdana, Geneva, sans-serif
     }
 
     p{
+      margin-top: 0;
+      margin-bottom: 25px;
       font-size: 16px;
+      font-family: Verdana, Geneva, sans-serif
     }
 
+    a{
+      font-family: Verdana, Geneva, sans-serif
+    }
+
+
     #database-diagram{
+      margin-top: 20px;
       width: 100%;
     }
 
@@ -175,28 +188,6 @@
       grid-column-gap: 6px;
       grid-row-gap: 5px;
     }
-
-    @media (min-width: 1200px) {
-      #main-title{
-        font-size: 38px;
-      }
-      .section-title{
-        font-size: 24px;
-      }
-      .section-subtitle{
-        font-size: 18px;
-      }
-      .section-subtitle-big{
-        font-size: 22px;
-      }
-    }
-
-    @media (max-width: 400px) {
-      #main-title{
-        font-size: 20px;
-      }
-    }
-
 
   </style>
 
@@ -244,14 +235,14 @@
       <div class="section-subtitle-big">WEB ARCHITECTURE</div>
       <div class="section-subtitle">PRESENTATION LAYER</div>
       <p>
-        The we application contains both static and dynamic pages.
-        Both are provided statically by the server, but the dynamic ones, contains javascript code, which through requests to the server, receives the data in JSON format and render the dynamic contents of the page.
+        The we application contains both static and dynamic pages.<br>
+        Both are provided statically by the server, but the dynamic ones, contains javascript code, which through requests to the server, receives the data in JSON format and render the dynamic contents of the page.<br>
         To ensure that no pages can be rendered on the server side, all APIs respond only in JSON format or provide HTML page files statically.
       </p>
       <div class="section-subtitle">APPLICATION LAYER</div>
       <p>
-        There are two main groups of APIs:
-        Those within the "/admin/*" path that are accessible only by administrator users and contain all the functions for the operation of the dashboard, capable of modifying the data of events, seminars and performers within the database.
+        There are two main groups of APIs:<br>
+        Those within the "/admin/*" path that are accessible only by administrator users and contain all the functions for the operation of the dashboard, capable of modifying the data of events, seminars and performers within the database.<br>
         The others, accessible to any user and are organized in:</p>
         <ul>
           <li>"/user/*": which contain all the functions useful for registered users, as well as the functions for registering a new user, login in and logout</li>
@@ -266,7 +257,19 @@
       <p>Application data management takes place through the use of a relational database (PostgresSQL) whose model is represented below:</p>
       <img alt="Database diagram" id="database-diagram" src="/assets/images/doc/database-diagram-new.svg">
 
-      <div class="section-subtitle-big">WEB ARCHITECTURE</div>
+      <div class="section-subtitle-big">API</div>
+      <div class="section-subtitle">REST PRINCIPLES</div>
+      <p>
+        The application APIs follow all REST principles as much as possible.<br>
+        The client is completely independent from the server, and can request resources using unique URL for each resource.<br>
+        The requests are all stateless, and almost all are cacheable.<br>
+        The URLs of all APIs are organized on levels: For example, all the APIs that provide resources for events have the "events/*" URL, while those for managing the user and his cart have the "user/*" and "user/cart/*" URLs.
+      </p>
+      <div class="section-subtitle">OPENAPI RESOURCE MODELS</div>
+      <p>
+        I've introduced the following models: Event, Seminar, Performer, User. <br>
+        Each model contains all the information about 
+      </p>
 
 
     </section>
@@ -281,8 +284,8 @@
       <div class="section-title">OTHER INFORMATION</div>
       <div class="section-subtitle">ANALYSIS OF EXISTING API</div>
       <p>I improved my knowledge about RESTFUL API principles and I took inspiration from the videos of the following website:
-        <a href="https://thecodingtrain.com/Courses/data-and-apis/">https://thecodingtrain.com/Courses/data-and-apis/</a> which contains the best practices around how to plan, design, build, manage the APIs</p>
-      <p>I actually didn't take inspiration from any other existing APIS.</p>
+        <a href="https://thecodingtrain.com/Courses/data-and-apis/">https://thecodingtrain.com/Courses/data-and-apis/</a> which contains the best practices around how to plan, design, build, manage the APIs<br>
+      I actually didn't take inspiration from any other existing APIS.</p>
       <div class="section-subtitle">LEARNING OUTCOME</div>
       <p>From this project I learned to use Node.js, the modules EXPRESS, KNEX, PASSPORT in order to manage the authentication. I also
       learned to produce the documentation of the API with OPENAPI SWAGGER. <br>
