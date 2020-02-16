@@ -254,8 +254,7 @@
       <p>The server is connected to a relational database (PostgresSQL) and uses the knex module to generate SQL queries.</p>
 
       <div class="section-subtitle">DATA LAYER</div>
-      <p>Application data management takes place through the use of a relational database (PostgresSQL) whose model is represented below:</p>
-      <img alt="Database diagram" id="database-diagram" src="/assets/images/doc/database-diagram-new.svg">
+      <p>Application data management takes place through the use of a relational database (PostgresSQL) that is integrated in Heroku, the platform that host the application.</p>
 
       <div class="section-subtitle-big">API</div>
       <div class="section-subtitle">REST PRINCIPLES</div>
@@ -268,20 +267,84 @@
       <div class="section-subtitle">OPENAPI RESOURCE MODELS</div>
       <p>
         I've introduced the following models: Event, Seminar, Performer, User. <br>
-        Each model contains all the information about 
+        Each model contains all the information about the relative object.<br>
+        In details:
       </p>
-
-
+      <ul>
+        <li><strong>Event</strong> (id, title, description, date, performer_id, price, uuid, location, images_number, cover_image)</li>
+        <li><strong>Seminar</strong> (id, title, description, date, performer_id, uuid, location, images_number, cover_image)</li>
+        <li><strong>Performer</strong> (id, first_name, last_name, biography, photo, uuid)</li>
+        <li><strong>User</strong> (username, first_name, last_name, email, birthday, avatar, admin)</li>
+      </ul>
+      <div class="section-subtitle-big">DATA MODEL</div>
+      <img alt="Database diagram" id="database-diagram" src="/assets/images/doc/database-diagram-new.svg">
+      <p>
+        The OpenApi resource models reflects the structure of the main database tables.<br>
+        The events and seminars tables both have one associated table each (EventsImages and SeminarsImages) which contain all the images (except the cover image that is directly in the main tables) saved with Base64 encoding.<br>
+        The events and seminars tables are also linked by the EventsSeminars table which associates the related seminars with each event.<br>
+        The performers table contains the data of all available performers, and associates them, through the performer_id, with the events and seminars tables.<br>
+        Finally, the UsersEvents table contains the cart data of all users.
+        <br>
+        <br>
+        The database contains also two materialized view (eventsPerformerView and seminarsPerformerView) that add to the Events and Seminars table the performer fist name and last name for optimize some queries.
+      </p>
     </section>
 
     <section class="document-section">
       <div class="section-title">IMPLEMENTATION</div>
+      <div class="section-subtitle-big">TOOLS USED</div>
+      <p>To implement the backend of the application I used javascript with the Node.js framework.<br>
+        In details I used the modules:
+      </p>
+      <ul>
+        <li><strong>Express:</strong> for create and managing the routes of all APIs</li>
+        <li><strong>Passport:</strong> to manage the authentication of the users during the login</li>
+        <li><strong>Express Session:</strong> to create the session for the logged users</li>
+        <li><strong>Knex:</strong> for establish the connection with the database e for create and send the query to it.</li>
+      </ul>
+      <p>
+        In order to access and manage the PostgresSQL database, I used the pgAdmin application.<br>
+        Finally I used the swaggerUi module to generate the documentation from the yaml file.
+      </p>
+      <div class="section-subtitle-big">DISCUSSION</div>
+      <ul>
 
+        <li>
+          <strong>How did you make sure your web application adheres to the provided OpenAPI specification? Which method did you use to test all APIs endpoints against the expected response?</strong>
+          <p>I documented all the APIs using <a href="http://editor.swagger.io/">OpenApi Swagger Editor</a><br>
+            I tested the APIs with the test that I've included in the swagger UI documentation, and with the <a href="https://www.postman.com/">Postman</a> application
+          </p>
+        </li>
 
+        <li>
+          <strong>Why do you think your web application adheres to common practices to partition a REST-based web application (static assets vs. application data)?</strong>
+          <p>
+            I think my web application adheres to common practices to partition a REST-based web application because all the APIs endpoints are responding to a specific resource with JSON formatted data, while the all the static resource all served from the public folder by a function of the express module.
+          </p>
+        </li>
+
+        <li>
+          <strong>Describe synthetically why and how did you manage session state, what are the state change triggering actions (e.g., POST to login etc..).</strong>
+          <p>The session are managed by the Express Session module that create a temporary cookie on the browser of each logged user.<br>
+            By default the session cookie expires when the client close the browser, but the client can request to the login API to create a cookie that not expires when the browser is closed.<br>
+            The endpoints that trigger a state change are: the POST endpoint "/user/login" when the session is created and the GET endpoint "/user/logout" when the session is destroyed.
+          </p>
+        </li>
+
+        <li>
+          <strong>Which technology did you use (relational or a no-SQL database) for managing the data model?</strong>
+          <p>I used the relational database PostgresSQL, and for managing the data model I used mainly pgAdmin application.<br>
+            In order to insert new events, seminars and performers data to the database I develop a dashboard on my web application that use the "/admin/*" endpoints APIs to modify the content of the Events, Seminars and Performers table of my database.
+          </p>
+        </li>
+
+      </ul>
     </section>
 
     <section class="document-section">
       <div class="section-title">OTHER INFORMATION</div>
+      <div class="section-subtitle">TASK ASSIGNMENT</div>
+      <p>I developed this web application alone, so I created all the backend, frontend and the documentation</p>
       <div class="section-subtitle">ANALYSIS OF EXISTING API</div>
       <p>I improved my knowledge about RESTFUL API principles and I took inspiration from the videos of the following website:
         <a href="https://thecodingtrain.com/Courses/data-and-apis/">https://thecodingtrain.com/Courses/data-and-apis/</a> which contains the best practices around how to plan, design, build, manage the APIs<br>
@@ -294,55 +357,6 @@
       my family business.</p>
     </section>
 
-  </div>
-
-
-  <span class="subtitle">Specification</span>
-  <ul class="specification-list">
-    <li>
-      <h2>WebStorm</h2>
-      <p>WebStorm is a famous IDE for web development that support html, css, javascript.</p>
-    </li>
-    <li>
-      <h2>Javascript ES6</h2>
-      <p>I use javascript es6 that support modules.<br>The modules allowed me to simplify the code and reduce redundancies, being able to create a code through the object-oriented paradigm.<br>
-        This approach, in addition, it has made it possible to group and reduce API calls into specific files, subdivided by category.</p>
-    </li>
-    <li>
-      <h2>JQuery</h2>
-      <p>To simplify the syntax of client side, I use the framework JQuery that allow to select and edit DOM elements properties in a very intuitive mode.<br>
-        The framework is also used to create some animation into the pages.</p>
-    </li>
-    <li>
-      <h2>Node.js</h2>
-      <p>Node.js is a framework that allow to execute javascript code stand-alone.<br>I use this framework, together with the express library, to code the backend of the application.<br>
-        All the API that I wrote, respect the REST principles.<br>
-        The HTML of each page of application is rendered client-side, and this is ensured because the API do not access the html files of the pages, except for sending the html code to the client.</p>
-    </li>
-    <li>
-      <h2>Other backend frameworks</h2>
-      <ul>
-        <li><strong>knex:</strong> to establish a connection with the database and execute the queries</li>
-        <li><strong>session:</strong> to create the sessions for the logged users</li>
-        <li><strong>passport:</strong> to manage the the authentication of the user during the login</li>
-        <li><strong>swaggerUi:</strong> to generate the interactive swagger documentation with examples</li>
-      </ul>
-    </li>
-    <li>
-      <h2>PostgreSQL</h2>
-      <p>I decided to use PostreSQL because is highly compatible with Heroku (The cloud that host the application).</p>
-    </li>
-    <li>
-      <h2>NOTES</h2>
-      <p>I decided to not use the frameworks Bootstrap and Ajax, because although they could have simplified me a lot of work, I think that in an educational project this instruments are too powerful.<br>
-        I wrote by scratch all the html, css and javascript of the client side, having to face challenges (e.g. animation optimization) that I learned to manage.<br><br>
-      I also implemented a dashboard to insert the events, seminars and performers without access directly to the database, simplify and speeding up the insertion of the data. The dashboard and the related API is only accessible by the admin users.</p>
-    </li>
-  </ul>
-
-  <div style="display: flex; flex-direction: column">
-    <span class="subtitle">Database diagram</span>
-    <img class="db" src="/assets/images/doc/database-diagram.svg">
   </div>
 
 </body>
