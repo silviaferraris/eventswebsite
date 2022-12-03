@@ -1,4 +1,4 @@
-VARAZZERS FESTIVAL WEBSITE
+#VARAZZERS FESTIVAL WEBSITE
 
 This is the repository for the Hypermedia and Web Applications Project of the academic year 2018/2019 (Computer Science Engineering
 at Politecnico di Milano). 
